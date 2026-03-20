@@ -2,7 +2,7 @@ const CACHE = 'emabol-v1';
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(['/']))
+    caches.open(CACHE).then(cache => cache.addAll(['/Emabol-Champ/']))
   );
   self.skipWaiting();
 });

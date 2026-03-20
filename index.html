@@ -9,8 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Emabol"/>
 <meta name="application-name" content="Emabol Champ"/>
-<link rel="manifest" href="/manifest.json"/>
-<link rel="apple-touch-icon" href="/icons/icon-192x192.png"/>
+<link rel="manifest" href="/Emabol-Champ/manifest.json"/>
+<link rel="apple-touch-icon" href="/Emabol-Champ/icons/icon-192x192.png"/>
 <title>⚽ Emabol Champ</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;800;900&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
@@ -2866,7 +2866,7 @@ window.afterSQL = async function() {
 // ── Service Worker ────────────────────────────────────────────────────────────
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
+    navigator.serviceWorker.register('/Emabol-Champ/sw.js').catch(() => {});
   });
 }
 // ── Install banner — works on Android & iOS ──────────────────────────────────
