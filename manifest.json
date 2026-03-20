@@ -9,39 +9,43 @@
   "background_color": "#05050f",
   "theme_color": "#05050f",
   "lang": "es",
+  "dir": "ltr",
   "categories": [
-    "sports"
+    "sports",
+    "games"
   ],
+  "prefer_related_applications": false,
+  "id": "/Emabol-Champ/",
   "icons": [
     {
       "src": "/Emabol-Champ/icons/icon-72x72.png",
       "type": "image/png",
       "sizes": "72x72",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/Emabol-Champ/icons/icon-96x96.png",
       "type": "image/png",
       "sizes": "96x96",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/Emabol-Champ/icons/icon-128x128.png",
       "type": "image/png",
       "sizes": "128x128",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/Emabol-Champ/icons/icon-144x144.png",
       "type": "image/png",
       "sizes": "144x144",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/Emabol-Champ/icons/icon-152x152.png",
       "type": "image/png",
       "sizes": "152x152",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/Emabol-Champ/icons/icon-192x192.png",
@@ -53,7 +57,7 @@
       "src": "/Emabol-Champ/icons/icon-384x384.png",
       "type": "image/png",
       "sizes": "384x384",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/Emabol-Champ/icons/icon-512x512.png",
@@ -67,13 +71,28 @@
       "src": "/Emabol-Champ/icons/screenshot-1.png",
       "type": "image/png",
       "sizes": "1080x1920",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "Pantalla de inicio"
     },
     {
       "src": "/Emabol-Champ/icons/screenshot-2.png",
       "type": "image/png",
       "sizes": "1080x1920",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "Ranking"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Pr\u00f3ximo partido",
+      "short_name": "Partido",
+      "url": "/Emabol-Champ/",
+      "icons": [
+        {
+          "src": "/Emabol-Champ/icons/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
     }
   ]
 }
