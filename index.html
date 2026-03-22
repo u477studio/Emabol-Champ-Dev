@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_66.html -->
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_69.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -50,7 +50,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 #intro-ov.gone{opacity:0;pointer-events:none;transition:opacity .7s ease}
 </style>
-<link rel="manifest" href="blob:null/de99dc1b-9196-420c-a3a7-a53094f9769a"></head>
+<link rel="manifest" href="blob:null/d5ac4f63-ecb1-45ba-a7cc-a030f6ba2503"></head>
 <body>
 
   <div style="font-size:12px;color:#5a5a7a;letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -2399,59 +2399,51 @@ async function sMatch() {
   </div>${renderNav()}`);
 }
 
+// Shared recalc logic used by cerrarVotacion and manual button
+async function _recalcularSilencioso() {
+  const [partidos, convs] = await Promise.all([
+    getAll('partidos'), getAll('convocatorias')
+  ]);
+  await _req('DELETE', '/ranking?id=neq.NONE');
+  const newRk = {};
+  for(const p of partidos) {
+    const pEa = Array.isArray(p.equipo_a) ? p.equipo_a : [];
+    const pEb = Array.isArray(p.equipo_b) ? p.equipo_b : [];
+    const cv = convs.find(cv=>cv.tid===p.tid&&cv.fecha===p.fecha);
+    const cvEa = cv?.equipo_a||[], cvEb = cv?.equipo_b||[];
+    const ea = pEa.length ? pEa : cvEa;
+    const eb = pEb.length ? pEb : cvEb;
+    const jugaron = [...new Set([...ea,...eb])];
+    const gan = p.gan;
+    const ganadores = gan==='a'?ea:gan==='b'?eb:[];
+    const isEmpate = gan==='EMPATE';
+    for(const jid of jugaron) {
+      const key = jid+'|'+p.tid;
+      if(!newRk[key]) newRk[key]={jid,tid:p.tid,pts:0,g:0,c:0,f:0};
+      newRk[key].pts += 1;
+      newRk[key].c  += 1;
+      if(ganadores.includes(jid)){ newRk[key].pts+=3; newRk[key].g+=1; }
+      if(isEmpate) newRk[key].pts += 1;
+    }
+    if(p.fig) {
+      const key = p.fig+'|'+p.tid;
+      if(!newRk[key]) newRk[key]={jid:p.fig,tid:p.tid,pts:0,g:0,c:0,f:0};
+      newRk[key].pts += 2;
+      newRk[key].f  += 1;
+    }
+  }
+  await Promise.all(Object.values(newRk).map(row=>upsertRow('ranking',{id:uid(),...row})));
+}
+
 window.recalcularRanking = async function() {
   if(!confirm('¿Recalcular el ranking completo desde cero? Esto borrará los puntos actuales y los recalculará en base a los partidos guardados.')) return;
   setContent(loading('Recalculando...'));
   try {
-    const [partidos, convs, js] = await Promise.all([
-      getAll('partidos'), getAll('convocatorias'), getAll('jugadores')
-    ]);
-    // Delete all ranking rows
-    await _req('DELETE', '/ranking?id=neq.NONE');
-    // Rebuild from each partido
-    const newRk = {}; // key: jid+'|'+tid → {pts,g,c,f}
-    for(const p of partidos) {
-      // Best source: equipo_a/b stored in partido itself
-      // Fallback: equipo_a/b from convocatoria
-      // Last resort: p.conv (may include non-players in old data)
-      const pEa = Array.isArray(p.equipo_a) ? p.equipo_a : [];
-      const pEb = Array.isArray(p.equipo_b) ? p.equipo_b : [];
-      const cv = convs.find(cv=>cv.tid===p.tid&&cv.fecha===p.fecha);
-      const cvEa = cv?.equipo_a||[], cvEb = cv?.equipo_b||[];
-      const ea = pEa.length ? pEa : cvEa;
-      const eb = pEb.length ? pEb : cvEb;
-      const jugaron = [...new Set([...ea,...eb])];
-      const gan = p.gan; // 'a','b','EMPATE'
-      const ganadores = gan==='a'?ea:gan==='b'?eb:[];
-      const isEmpate = gan==='EMPATE';
-      for(const jid of jugaron) {
-        const key = jid+'|'+p.tid;
-        if(!newRk[key]) newRk[key]={jid,tid:p.tid,pts:0,g:0,c:0,f:0};
-        newRk[key].pts += 1;                              // jugó +1
-        newRk[key].c  += 1;
-        if(ganadores.includes(jid)){ newRk[key].pts+=3; newRk[key].g+=1; } // ganó +3
-        if(isEmpate) newRk[key].pts += 1;                // empate +1
-      }
-      // figura
-      if(p.fig) {
-        const key = p.fig+'|'+p.tid;
-        if(!newRk[key]) newRk[key]={jid:p.fig,tid:p.tid,pts:0,g:0,c:0,f:0};
-        newRk[key].pts += 2;
-        newRk[key].f  += 1;
-      }
-    }
-    // Save all ranking rows
-    for(const [key, row] of Object.entries(newRk)) {
-      await upsertRow('ranking', {id:uid(), ...row});
-    }
+    await _recalcularSilencioso();
     alert('✅ Ranking recalculado correctamente.');
     sMatch();
-  } catch(e) {
-    alert('Error: '+_errMsg(e));
-    sMatch();
-  }
+  } catch(e){ alert('Error: '+_errMsg(e)); }
 };
-
 window.abrirVotacion = async function(pid) {
   try {
     const [partidos, convs] = await Promise.all([getAll('partidos'), getAll('convocatorias')]);
@@ -2485,18 +2477,11 @@ window.cerrarVotacion = async function(pid) {
     const ganadores = entries.filter(([,v])=>v===maxVotos).map(([jid])=>jid);
     // 2 pts split among tied winners (floor if odd)
     const ptsPorFig = Math.floor(2/ganadores.length) || 1;
-    // Update ranking
-    for(const jid of ganadores){
-      const existing = ranking.find(r=>r.jid===jid&&r.tid===p.tid);
-      await upsertRow('ranking', {
-        id: existing?.id||uid(), jid, tid:p.tid,
-        pts: (existing?.pts||0)+ptsPorFig,
-        g: existing?.g||0, c: existing?.c||0,
-        f: (existing?.f||0)+1
-      });
-    }
+    // Ranking de figura se actualiza via recalcularRanking
     // Save fig (first winner) and close voting
     await upsertRow('partidos', {...p, votacion_abierta:false, fig: ganadores[0]});
+    // Auto recalcular ranking
+    await _recalcularSilencioso();
     sMatch();
   } catch(e){ alert('Error: '+_errMsg(e)); }
 };
@@ -2579,20 +2564,7 @@ window.guardarResultado = async function(cvid) {
       votacion_abierta: false
     });
 
-    // Update ranking (sin figura todavía)
-    const existingRk = await getAll('ranking').catch(()=>[]);
-    for(const [jid, pts] of Object.entries(updates)){
-      const existing = existingRk.find(r=>r.jid===jid&&r.tid===cv.tid);
-      const isGanador = ganadores.includes(jid);
-      await upsertRow('ranking', {
-        id: existing?.id || uid(),
-        jid, tid: cv.tid,
-        pts: (existing?.pts||0) + pts,
-        g:   (existing?.g||0) + (isGanador?1:0),
-        c:   (existing?.c||0) + 1,  // partidos jugados
-        f:   (existing?.f||0)
-      });
-    }
+    // Ranking se actualiza solo via recalcularRanking
 
     var btn = document.querySelector(`[onclick="guardarResultado('${cvid}')"]`);
     if(btn){ btn.textContent='✅ GUARDADO'; btn.style.background='linear-gradient(135deg,#00ff88,#00cc66)'; btn.disabled=true; }
