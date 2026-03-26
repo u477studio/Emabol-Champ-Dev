@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_73.html -->
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_74.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -50,7 +50,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 #intro-ov.gone{opacity:0;pointer-events:none;transition:opacity .7s ease}
 </style>
-<link rel="manifest" href="blob:null/2802ef43-0d6f-4e29-8421-a1b4a08a32f8"></head>
+<link rel="manifest" href="blob:null/dd39b1ab-76b5-4deb-803b-e3b85131a083"></head>
 <body>
 
   <div style="font-size:12px;color:#5a5a7a;letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -76,13 +76,13 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
     <button class="btn btn-gold" onclick="doLogin()" style="font-size:15px;letter-spacing:2px">INGRESAR</button>
     <p style="font-size:10px;color:var(--dim);text-align:center;margin-top:12px">Formato: nombre + primera letra del apellido (ej: gabrielc)</p>
     <div style="display:flex;justify-content:center;gap:10px;margin-top:20px">
-      <button onclick="setLang(" es");slogin()"="" style="padding:8px 18px;border-radius:8px;border:2px solid #f5c518;background:#f5c51820;color:#f5c518;font-family:&#39;Barlow Condensed&#39;,sans-serif;font-weight:900;font-size:14px;cursor:pointer">
-        <div style="font-size:22px;line-height:1">🇪🇸</div>
-        <div style="margin-top:3px">ES</div>
+      <button onclick="setLang(" es");slogin()"="" style="padding:10px 20px;border-radius:10px;border:2px solid #f5c518;background:#f5c51820;color:#f5c518;font-family:&#39;Barlow Condensed&#39;,sans-serif;font-weight:900;font-size:13px;cursor:pointer;display:inline-flex;flex-direction:column;align-items:center;gap:4px">
+        <img src="./index_files/es.png" width="28" height="20" style="border-radius:3px;display:block" alt="ES">
+        ES
       </button>
-      <button onclick="setLang(" en");slogin()"="" style="padding:8px 18px;border-radius:8px;border:2px solid #3a3a5e;background:transparent;color:#5a5a7a;font-family:&#39;Barlow Condensed&#39;,sans-serif;font-weight:900;font-size:14px;cursor:pointer">
-        <div style="font-size:22px;line-height:1">🇺🇸</div>
-        <div style="margin-top:3px">EN</div>
+      <button onclick="setLang(" en");slogin()"="" style="padding:10px 20px;border-radius:10px;border:2px solid #3a3a5e;background:transparent;color:#5a5a7a;font-family:&#39;Barlow Condensed&#39;,sans-serif;font-weight:900;font-size:13px;cursor:pointer;display:inline-flex;flex-direction:column;align-items:center;gap:4px">
+        <img src="./index_files/us.png" width="28" height="20" style="border-radius:3px;display:block" alt="EN">
+        EN
       </button>
     </div>
   </div>
@@ -194,8 +194,7 @@ const I18N = {
 function detectLang() {
   const saved = localStorage.getItem('emb_lang');
   if(saved && I18N[saved]) return saved;
-  const browser = (navigator.language || navigator.userLanguage || 'es').slice(0,2).toLowerCase();
-  return I18N[browser] ? browser : 'es';
+  return 'es'; // Default to Spanish — user can switch manually
 }
 let LANG = detectLang();
 function tr(key) { return (I18N[LANG] && I18N[LANG][key]) || (I18N['es'][key]) || key; }
@@ -679,13 +678,13 @@ function sLogin(){
     <button class="btn btn-gold" onclick="doLogin()" style="font-size:15px;letter-spacing:2px">${tr("login_btn")}</button>
     <p style="font-size:10px;color:var(--dim);text-align:center;margin-top:12px">${tr("login_hint")}</p>
     <div style="display:flex;justify-content:center;gap:10px;margin-top:20px">
-      <button onclick="setLang(\"es\");sLogin()" style="padding:8px 18px;border-radius:8px;border:2px solid ${LANG==="es"?"#f5c518":"#3a3a5e"};background:${LANG==="es"?"#f5c51820":"transparent"};color:${LANG==="es"?"#f5c518":"#5a5a7a"};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer">
-        <div style="font-size:22px;line-height:1">🇪🇸</div>
-        <div style="margin-top:3px">ES</div>
+      <button onclick="setLang(\"es\");sLogin()" style="padding:10px 20px;border-radius:10px;border:2px solid ${LANG==="es"?"#f5c518":"#3a3a5e"};background:${LANG==="es"?"#f5c51820":"transparent"};color:${LANG==="es"?"#f5c518":"#5a5a7a"};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer;display:inline-flex;flex-direction:column;align-items:center;gap:4px">
+        <img src="https://flagcdn.com/w40/es.png" width="28" height="20" style="border-radius:3px;display:block" alt="ES"/>
+        ES
       </button>
-      <button onclick="setLang(\"en\");sLogin()" style="padding:8px 18px;border-radius:8px;border:2px solid ${LANG==="en"?"#f5c518":"#3a3a5e"};background:${LANG==="en"?"#f5c51820":"transparent"};color:${LANG==="en"?"#f5c518":"#5a5a7a"};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer">
-        <div style="font-size:22px;line-height:1">🇺🇸</div>
-        <div style="margin-top:3px">EN</div>
+      <button onclick="setLang(\"en\");sLogin()" style="padding:10px 20px;border-radius:10px;border:2px solid ${LANG==="en"?"#f5c518":"#3a3a5e"};background:${LANG==="en"?"#f5c51820":"transparent"};color:${LANG==="en"?"#f5c518":"#5a5a7a"};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer;display:inline-flex;flex-direction:column;align-items:center;gap:4px">
+        <img src="https://flagcdn.com/w40/us.png" width="28" height="20" style="border-radius:3px;display:block" alt="EN"/>
+        EN
       </button>
     </div>
   </div>
