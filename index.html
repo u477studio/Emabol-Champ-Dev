@@ -179,7 +179,7 @@ function detectLang() {
   return I18N[browser] ? browser : 'es';
 }
 let LANG = detectLang();
-function t(key) { return (I18N[LANG] && I18N[LANG][key]) || (I18N['es'][key]) || key; }
+function tr(key) { return (I18N[LANG] && I18N[LANG][key]) || (I18N['es'][key]) || key; }
 function setLang(lang) {
   if(!I18N[lang]) return;
   LANG = lang;
@@ -494,12 +494,12 @@ function setContent(html){document.getElementById('app').innerHTML=html+renderNa
 function renderNav(){
   if(!ME||R==='/login'||R==='/setup')return'';
   const items=[
-    {i:'🏠',l:t('home'),p:'/home'},
-    ...(ME&&ME.admin?[{i:'👥',l:t('players'),p:'/players'}]:[]),
-    {i:'🏆',l:t('ranking'),p:'/ranking'},
-    {i:'🏟️',l:t('tournaments'),p:'/torneos'},
-    {i:'⚽',l:t('matches'),p:'/match'},
-    {i:'❓',l:t('help'),p:'/ayuda'},
+    {i:'🏠',l:tr('home'),p:'/home'},
+    ...(ME&&ME.admin?[{i:'👥',l:tr('players'),p:'/players'}]:[]),
+    {i:'🏆',l:tr('ranking'),p:'/ranking'},
+    {i:'🏟️',l:tr('tournaments'),p:'/torneos'},
+    {i:'⚽',l:tr('matches'),p:'/match'},
+    {i:'❓',l:tr('help'),p:'/ayuda'},
   ];
   return`<nav class="nav">${items.map(x=>`<button class="ni${R===x.p||R.startsWith(x.p+'/')?' on':''}" onclick="go('${x.p}')"><span class="ni-ico">${x.i}</span>${x.l}</button>`).join('')}</nav>`;
 }
@@ -2549,7 +2549,7 @@ async function _recalcularSilencioso() {
 
 window.recalcularRanking = async function() {
   if(!confirm('¿Recalcular el ranking completo desde cero? Esto borrará los puntos actuales y los recalculará en base a los partidos guardados.')) return;
-  setContent(loading(t('loading')));
+  setContent(loading(tr('loading')));
   try {
     await _recalcularSilencioso();
     alert('✅ Ranking recalculado correctamente.');
@@ -2999,24 +2999,24 @@ async function sTorneos() {
           <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:${color};letter-spacing:1px">${t.nombre}</div>
           <div style="font-size:11px;color:#5a5a7a;margin-top:2px">${t.deporte||'Fútbol'} · ${t.dia||''} · ${t.ini||''} → ${t.fin||''}</div>
         </div>
-        <span style="font-size:10px;font-weight:900;color:${archived?'#5a5a7a':color};background:${archived?'#1a1a2e':''+color+'22'};padding:4px 8px;border-radius:6px;letter-spacing:1px">${archived ? t('tour_finished_label') : t('tour_active_label')}</span>
+        <span style="font-size:10px;font-weight:900;color:${archived?'#5a5a7a':color};background:${archived?'#1a1a2e':''+color+'22'};padding:4px 8px;border-radius:6px;letter-spacing:1px">${archived ? tr('tour_finished_label') : tr('tour_active_label')}</span>
       </div>
       ${isActive ? `<div style="font-size:11px;color:${color};text-align:right">▶ TORNEO ACTUAL</div>` : ''}
-      ${!archived ? `<button onclick="event.stopPropagation();window.entrarTorneo('${t.id}')" style="width:100%;padding:10px;border-radius:9px;border:none;background:${color};color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer;margin-top:8px">${t('tour_enter')}</button>` : ''}
-      ${archived ? `<button onclick="event.stopPropagation();window.verHistorialTorneo('${t.id}')" style="width:100%;padding:10px;border-radius:9px;border:1px solid #3a3a5e;background:transparent;color:#a0a0b8;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer;margin-top:8px">${t('tour_view')}</button>` : ''}
+      ${!archived ? `<button onclick="event.stopPropagation();window.entrarTorneo('${t.id}')" style="width:100%;padding:10px;border-radius:9px;border:none;background:${color};color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer;margin-top:8px">${tr('tour_enter')}</button>` : ''}
+      ${archived ? `<button onclick="event.stopPropagation();window.verHistorialTorneo('${t.id}')" style="width:100%;padding:10px;border-radius:9px;border:1px solid #3a3a5e;background:transparent;color:#a0a0b8;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer;margin-top:8px">${tr('tour_view')}</button>` : ''}
     </div>`;
   };
 
-  const adminBtn = ME?.admin ? `<button onclick="go('/torneo-new')" style="width:100%;padding:12px;border-radius:10px;border:2px dashed #f5c518;background:transparent;color:#f5c518;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer;margin-bottom:16px">${t('tour_create')}</button>` : '';
+  const adminBtn = ME?.admin ? `<button onclick="go('/torneo-new')" style="width:100%;padding:12px;border-radius:10px;border:2px dashed #f5c518;background:transparent;color:#f5c518;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer;margin-bottom:16px">${tr('tour_create')}</button>` : '';
 
   setContent(`<div class="screen up" style="padding:44px 15px 18px">
-    <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:26px;margin-bottom:4px">${t('tour_select')}</h2>
+    <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:26px;margin-bottom:4px">${tr('tour_select')}</h2>
     <p style="font-size:12px;color:#5a5a7a;margin-bottom:16px">Elegí el torneo para ver y participar</p>
     ${adminBtn}
-    <div style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:3px;margin-bottom:10px">${t('tour_active')}</div>
-    ${activos.length ? activos.map(t2=>makeCard(t2,false)).join('') : `<p style="color:#5a5a7a;text-align:center;padding:20px 0">${t('tour_no_active')}</p>`}
+    <div style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:3px;margin-bottom:10px">${tr('tour_active')}</div>
+    ${activos.length ? activos.map(t2=>makeCard(t2,false)).join('') : `<p style="color:#5a5a7a;text-align:center;padding:20px 0">${tr('tour_no_active')}</p>`}
     ${historial.length ? `
-      <div style="font-size:10px;font-weight:900;color:#5a5a7a;letter-spacing:3px;margin:16px 0 10px">${t('tour_finished')}</div>
+      <div style="font-size:10px;font-weight:900;color:#5a5a7a;letter-spacing:3px;margin:16px 0 10px">${tr('tour_finished')}</div>
       ${historial.map(t2=>makeCard(t2,true)).join('')}
     ` : ''}
   </div>${renderNav()}`);
@@ -3061,37 +3061,37 @@ async function sTorneoForm(tid) {
   const colors = ['#f5c518','#00ff88','#00d4ff','#ff4444','#ff8c00','#a855f7','#ec4899'];
 
   setContent(`<div class="screen up" style="padding:44px 15px 18px">
-    <button class="bk" onclick="go('/torneos')" style="margin-bottom:14px">${t('back')}</button>
-    <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">${existing ? t('tour_edit') : t('tour_create')}</h2>
+    <button class="bk" onclick="go('/torneos')" style="margin-bottom:14px">${tr('back')}</button>
+    <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">${existing ? tr('tour_edit') : tr('tour_create')}</h2>
 
-    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${t('tour_name')} *</label>
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_name')} *</label>
     <input id="tf-nombre" value="${val('nombre')}" placeholder="Ej: Liga Verano 2026" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px;box-sizing:border-box"/>
 
-    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${t('tour_sport')}</label>
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_sport')}</label>
     <select id="tf-deporte" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px">
       ${deportes.map(d=>`<option value="${d}" ${val('deporte','Fútbol')===d?'selected':''}>${d}</option>`).join('')}
     </select>
 
-    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${t('tour_day')}</label>
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_day')}</label>
     <select id="tf-dia" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px">
       ${dias.map(d=>`<option value="${d}" ${val('dia')===d?'selected':''}>${d}</option>`).join('')}
     </select>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
       <div>
-        <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${t('tour_start')}</label>
+        <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_start')}</label>
         <input id="tf-ini" value="${val('ini')}" placeholder="DD/MM/AAAA" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin-top:6px;box-sizing:border-box"/>
       </div>
       <div>
-        <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${t('tour_end')}</label>
+        <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_end')}</label>
         <input id="tf-fin" value="${val('fin')}" placeholder="DD/MM/AAAA" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin-top:6px;box-sizing:border-box"/>
       </div>
     </div>
 
-    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${t('tour_max')}</label>
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_max')}</label>
     <input id="tf-max" type="number" value="${val('max_jugadores','16')}" min="2" max="100" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px;box-sizing:border-box"/>
 
-    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${t('tour_color')}</label>
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_color')}</label>
     <div style="display:flex;gap:10px;margin:8px 0 14px;flex-wrap:wrap">
       ${colors.map(col=>`<button onclick="document.querySelectorAll('.color-btn').forEach(b=>b.style.border='2px solid transparent');this.style.border='2px solid #fff';document.getElementById('tf-color').value='${col}'" class="color-btn" style="width:36px;height:36px;border-radius:50%;background:${col};border:${val('color','#f5c518')===col?'2px solid #fff':'2px solid transparent'};cursor:pointer"></button>`).join('')}
       <input id="tf-color" value="${val('color','#f5c518')}" style="display:none"/>
@@ -3100,8 +3100,8 @@ async function sTorneoForm(tid) {
     <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">EMOJI</label>
     <input id="tf-emoji" value="${val('emoji','⚽')}" maxlength="4" style="width:80px;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:20px;text-align:center;margin:6px 0 20px"/>
 
-    <button onclick="window.guardarTorneo('${tid||''}')" style="width:100%;padding:14px;border-radius:10px;border:none;background:linear-gradient(135deg,#f5c518,#c9a000);color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;cursor:pointer;margin-bottom:8px">${t('tour_save')}</button>
-    ${existing ? `<button onclick="window.archivarTorneo('${tid}')" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ff4444;background:transparent;color:#ff4444;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">${t('tour_archive')}</button>` : ''}
+    <button onclick="window.guardarTorneo('${tid||''}')" style="width:100%;padding:14px;border-radius:10px;border:none;background:linear-gradient(135deg,#f5c518,#c9a000);color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;cursor:pointer;margin-bottom:8px">${tr('tour_save')}</button>
+    ${existing ? `<button onclick="window.archivarTorneo('${tid}')" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ff4444;background:transparent;color:#ff4444;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">${tr('tour_archive')}</button>` : ''}
   </div>${renderNav()}`);
 }
 
@@ -3123,18 +3123,18 @@ window.guardarTorneo = async function(tid) {
   try {
     await upsertRow('torneos', row);
     go('/torneos');
-  } catch(e) { alert(t('error') + _errMsg(e)); }
+  } catch(e) { alert(tr('error') + _errMsg(e)); }
 };
 
 window.archivarTorneo = async function(tid) {
-  if(!confirm(t('confirm_archive'))) return;
+  if(!confirm(tr('confirm_archive'))) return;
   try {
     const torneos = await getAll('torneos');
     const torneo = torneos.find(t=>t.id===tid);
     if(torneo) await upsertRow('torneos', {...torneo, estado:'archivado'});
     if(CURRENT_TORNEO?.id === tid) CURRENT_TORNEO = null;
     go('/torneos');
-  } catch(e) { alert(t('error') + _errMsg(e)); }
+  } catch(e) { alert(tr('error') + _errMsg(e)); }
 };
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
@@ -3143,7 +3143,7 @@ window.archivarTorneo = async function(tid) {
     url: 'https://vecekftrreilocwrdqni.supabase.co',
     key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlY2VrZnRycmVpbG9jd3JkcW5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxODg0MjksImV4cCI6MjA4ODc2NDQyOX0.2HhAwKhESlkXBe5dNnk0vNuwlY31wWnPC2eJ0g5cQPw'
   };
-  setContent(loading(t('connecting')));
+  setContent(loading(tr('connecting')));
   try {
     await _req('GET', '/torneos?select=id&limit=1');
   } catch(e) {
