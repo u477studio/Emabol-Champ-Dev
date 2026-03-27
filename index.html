@@ -1,12 +1,6 @@
-
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_80.html -->
-<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="manifest" href="blob:null/487be3ca-0dda-4540-b6b4-6c5ec36df12e"></head><body>,
-    "alter table torneos add column if not exists sport_config_id text;",
-    "alter table torneos add column if not exists formato text not null default 'liga';",
-    "alter table torneos add column if not exists jugadores_por_equipo int not null default 5;",
-    "alter table torneos add column if not exists ranking_tipo text not null default 'individual';"
-
-
+<!DOCTYPE html>
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_81.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#05050f">
@@ -56,8 +50,8 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 #intro-ov.gone{opacity:0;pointer-events:none;transition:opacity .7s ease}
 </style>
-
-
+<link rel="manifest" href="blob:null/e93118a2-8fc4-46e2-99e6-31a76f05b25c"></head>
+<body>
 
   <div style="font-size:12px;color:#5a5a7a;letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
 
@@ -2964,7 +2958,14 @@ window.sSetupSQL = function() {
     "alter table torneos add column if not exists deporte text not null default 'Fútbol';",
     "alter table torneos add column if not exists max_jugadores int not null default 16;",
     "alter table torneos add column if not exists color text not null default '#f5c518';",
-    "alter table torneos add column if not exists estado text not null default 'activo';"
+    "alter table torneos add column if not exists estado text not null default 'activo';",
+    "create table if not exists sport_configs (id text primary key, nombre text not null, deporte text not null, jugadores_por_equipo int not null default 5, posiciones jsonb not null default '[\"Jugador\"]', ranking_tipo text not null default 'individual', icono text not null default '⚽', activo boolean not null default true);",
+    "alter table sport_configs enable row level security;",
+    "do $$ begin if not exists (select 1 from pg_policies where policyname='pub_sport_configs') then create policy pub_sport_configs on sport_configs for all using (true) with check (true); end if; end $$;",
+    "alter table torneos add column if not exists sport_config_id text;",
+    "alter table torneos add column if not exists formato text not null default 'liga';",
+    "alter table torneos add column if not exists jugadores_por_equipo int not null default 5;",
+    "alter table torneos add column if not exists ranking_tipo text not null default 'individual';"
 
   ].join("\n");
   window._sql = sql;
