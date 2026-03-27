@@ -781,6 +781,16 @@ function fmtFecha(d) {
   return dias[d.getDay()]+' '+d.getDate()+' '+meses[d.getMonth()];
 }
 
+// Format DD/MM/YYYY → "Sáb 21 Mar" (short, from string)
+function fmtFechaCorta(str) {
+  if(!str) return '';
+  const d = parseFecha(str);
+  if(!d) return str;
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return dias[d.getDay()]+' '+d.getDate()+' '+meses[d.getMonth()];
+}
+
 // Get next scheduled match date for a torneo based on its dia and ini
 function proximoPartido(tidOrTorneo) {
   const t = (typeof tidOrTorneo === 'object') 
@@ -795,13 +805,25 @@ function proximoPartido(tidOrTorneo) {
   // Try normalized, then original lowercased
   const normMap = {'lunes':1,'martes':2,'miercoles':3,'jueves':4,'viernes':5,'sabado':6,'domingo':0,
                    'miércoles':3,'sábado':6};
-  const targetDay = normMap[(t.dia||'').toLowerCase()] ?? normMap[diaKey];
-  if(targetDay === undefined) return t.ini || '';
+  // Support multiple days: "Miércoles y Sábados"
+  const diaStr = (t.dia||'').toLowerCase();
+  const targetDays = [];
+  for(const [k,v] of Object.entries(normMap)) {
+    if(diaStr.includes(k) && !targetDays.includes(v)) targetDays.push(v);
+  }
+  if(!targetDays.length) return t.ini || '';
   const today = new Date(); today.setHours(0,0,0,0);
-  const d = new Date(today);
-  let tries = 0;
-  while(d.getDay() !== targetDay && tries < 14) { d.setDate(d.getDate()+1); tries++; }
-  return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear();
+  // Find the nearest upcoming match day
+  let nearest = null, nearestDays = 999;
+  for(const td of targetDays) {
+    const d = new Date(today);
+    let tries = 0;
+    while(d.getDay() !== td && tries < 14) { d.setDate(d.getDate()+1); tries++; }
+    const diff = Math.round((d - today) / 86400000);
+    if(diff < nearestDays) { nearestDays = diff; nearest = d; }
+  }
+  if(!nearest) return t.ini || '';
+  return nearest.getDate().toString().padStart(2,'0')+'/'+(nearest.getMonth()+1).toString().padStart(2,'0')+'/'+nearest.getFullYear();
 }
 
 async function sHome(){
@@ -1473,6 +1495,37 @@ function renderEquipoRankingTable(rows, torneo) {
   </table>`;
 }
 
+
+
+// Generate all match dates for a torneo between ini and fin
+// t.dia can be 'Miércoles', 'Sábado', or 'Miércoles y Sábados' etc.
+function fixtureFor(t, maxDates=30) {
+  if(!t || !t.ini || !t.fin) return [];
+  const diasSemana = {'lunes':1,'martes':2,'miércoles':3,'jueves':4,'viernes':5,'sábado':6,'domingo':0,
+                      'miercoles':3,'sabado':6};
+  // Parse target weekdays (support multiple: "Miércoles y Sábados")
+  const diaStr = (t.dia||'').toLowerCase();
+  const targetDays = [];
+  for(const [k,v] of Object.entries(diasSemana)) {
+    if(diaStr.includes(k)) { if(!targetDays.includes(v)) targetDays.push(v); }
+  }
+  if(!targetDays.length) return [];
+  const ini = parseFecha(t.ini);
+  const fin = parseFecha(t.fin);
+  if(!ini || !fin) return [];
+  const dates = [];
+  const d = new Date(ini);
+  while(d <= fin && dates.length < maxDates) {
+    if(targetDays.includes(d.getDay())) {
+      const dd = d.getDate().toString().padStart(2,'0');
+      const mm = (d.getMonth()+1).toString().padStart(2,'0');
+      const yy = d.getFullYear();
+      dates.push(dd+'/'+mm+'/'+yy);
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return dates;
+}
 
 async function sProximos() {
   setContent(loading('Cargando partidos...'));
