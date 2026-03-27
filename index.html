@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_88.html -->
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_89.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -50,7 +50,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 #intro-ov.gone{opacity:0;pointer-events:none;transition:opacity .7s ease}
 </style>
-<link rel="manifest" href="blob:null/e303be83-db1f-4906-babc-d345885cf5b4"></head>
+<link rel="manifest" href="blob:null/1d3b34a4-4ca6-448b-8dc2-1278c9373cb1"></head>
 <body>
 
   <div style="font-size:12px;color:#5a5a7a;letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -917,9 +917,9 @@ async function sHome(){
   }
 
   // Only show active torneos, filtered by CURRENT_TORNEO if set
-  const activeTorneos = CURRENT_TORNEO
-    ? ts.filter(t => t.id === CURRENT_TORNEO.id)
-    : ts.filter(t => t.estado !== 'archivado');
+  // sHome always shows ALL active torneos so players see upcoming matches
+  // CURRENT_TORNEO is used for ranking/match context but home shows everything
+  const activeTorneos = ts.filter(t => t.estado !== 'archivado');
   const matchCards = activeTorneos.map(t=>{
     const color = t.id==='t1'?'#00d4ff':'#c084fc';
     const bg    = t.id==='t1'?'linear-gradient(135deg,#001525 0%,#003050 100%)':'linear-gradient(135deg,#1a0030 0%,#2d004d 100%)';
