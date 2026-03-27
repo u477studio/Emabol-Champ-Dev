@@ -1,6 +1,12 @@
-<!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_78.html -->
-<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_80.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="manifest" href="blob:null/487be3ca-0dda-4540-b6b4-6c5ec36df12e"></head><body>,
+    "alter table torneos add column if not exists sport_config_id text;",
+    "alter table torneos add column if not exists formato text not null default 'liga';",
+    "alter table torneos add column if not exists jugadores_por_equipo int not null default 5;",
+    "alter table torneos add column if not exists ranking_tipo text not null default 'individual';"
+
+
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#05050f">
@@ -50,8 +56,8 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 #intro-ov.gone{opacity:0;pointer-events:none;transition:opacity .7s ease}
 </style>
-<link rel="manifest" href="blob:null/86ff5931-f939-4b18-934c-37f75ca89183"></head>
-<body>
+
+
 
   <div style="font-size:12px;color:#5a5a7a;letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
 
@@ -220,7 +226,7 @@ function setLang(lang) {
   localStorage.setItem('emb_lang', lang);
 }
 
-const APP_VERSION_CODE = 4; // increment with each release
+const APP_VERSION_CODE = 5; // increment with each release
 const APP_VERSION = 'v1.0.' + APP_VERSION_CODE;
 
 (function(){
@@ -388,6 +394,25 @@ async function seedData() {
     if(!tids.includes('t2'))
       await upsertRow('torneos', {id:'t2',nombre:'EMABOL LEYENDAS DEL SÁBADO',dia:'SÁBADOS',ini:'21/03/2026',fin:'06/06/2026',emoji:'☀️'});
   } catch(e) { console.warn('torneo seed error', e.message); }
+
+  // ── Sport configs seed ──────────────────────────────────────────────────────
+  try {
+    const scids = await getAll('sport_configs').then(r=>r.map(x=>x.id)).catch(()=>[]);
+    const sportConfigs = [
+      {id:'sc1', nombre:'Fútbol 5', deporte:'Fútbol', jugadores_por_equipo:5, posiciones:['Arquero','Jugador'], ranking_tipo:'individual', icono:'⚽', activo:true},
+      {id:'sc2', nombre:'Fútbol 8', deporte:'Fútbol', jugadores_por_equipo:8, posiciones:['Arquero','Jugador'], ranking_tipo:'individual', icono:'⚽', activo:true},
+      {id:'sc3', nombre:'Fútbol 11', deporte:'Fútbol', jugadores_por_equipo:11, posiciones:['Arquero','Defensor','Mediocampista','Delantero'], ranking_tipo:'individual', icono:'⚽', activo:true},
+      {id:'sc4', nombre:'Pádel dobles', deporte:'Pádel', jugadores_por_equipo:2, posiciones:['Jugador'], ranking_tipo:'equipo', icono:'🎾', activo:true},
+      {id:'sc5', nombre:'Tenis dobles', deporte:'Tenis', jugadores_por_equipo:2, posiciones:['Jugador'], ranking_tipo:'equipo', icono:'🎾', activo:true},
+      {id:'sc6', nombre:'Tenis singles', deporte:'Tenis', jugadores_por_equipo:1, posiciones:['Jugador'], ranking_tipo:'individual', icono:'🎾', activo:true},
+      {id:'sc7', nombre:'Basketball 3x3', deporte:'Basketball', jugadores_por_equipo:3, posiciones:['Base','Alero','Pivote'], ranking_tipo:'individual', icono:'🏀', activo:true},
+      {id:'sc8', nombre:'Basketball 5x5', deporte:'Basketball', jugadores_por_equipo:5, posiciones:['Base','Alero','Pivote'], ranking_tipo:'individual', icono:'🏀', activo:true},
+      {id:'sc9', nombre:'Vóley 6x6', deporte:'Vóley', jugadores_por_equipo:6, posiciones:['Jugador','Líbero'], ranking_tipo:'individual', icono:'🏐', activo:true},
+    ];
+    for(const sc of sportConfigs) {
+      if(!scids.includes(sc.id)) await upsertRow('sport_configs', sc);
+    }
+  } catch(e) { console.warn('sport_configs seed error', e.message); }
 
   // ── One-time fix: clear auto-seeded convocados (no ts) ─────────────────
   try {
@@ -3046,7 +3071,8 @@ async function sTorneos() {
         <span style="font-size:28px">${t.emoji||'⚽'}</span>
         <div style="flex:1">
           <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:${color};letter-spacing:1px">${t.nombre}</div>
-          <div style="font-size:11px;color:#5a5a7a;margin-top:2px">${t.deporte||'Fútbol'} · ${t.dia||''} · ${t.ini||''} → ${t.fin||''}</div>
+          <div style="font-size:11px;color:#5a5a7a;margin-top:2px">${t.deporte||'Fútbol'} ${t.jugadores_por_equipo?t.jugadores_por_equipo+'v'+t.jugadores_por_equipo:''} · ${t.dia||''} · ${t.ini||''} → ${t.fin||''}</div>
+          <div style="font-size:10px;color:#3a3a5e;margin-top:2px">${t.formato==='liga'?'🏆 Liga':t.formato==='copa'?'🥊 Copa':t.formato==='grupos'?'🌍 Grupos':'🔄 Round robin'} · ${t.ranking_tipo==='equipo'?'👥 Por equipo':'👤 Individual'}</div>
         </div>
         <span style="font-size:10px;font-weight:900;color:${archived?'#5a5a7a':color};background:${archived?'#1a1a2e':''+color+'22'};padding:4px 8px;border-radius:6px;letter-spacing:1px">${archived ? tr('tour_finished_label') : tr('tour_active_label')}</span>
       </div>
@@ -3102,11 +3128,19 @@ async function restoreTorneo() {
 
 // ── Admin: Create/Edit Tournament ─────────────────────────────────────────────
 async function sTorneoForm(tid) {
-  const torneos = await getAll('torneos').catch(()=>[]);
+  const [torneos, sportConfigs] = await Promise.all([
+    getAll('torneos').catch(()=>[]),
+    getAll('sport_configs').catch(()=>[])
+  ]);
   const existing = tid ? torneos.find(t=>t.id===tid) : null;
   const val = (field, def='') => existing ? (existing[field]||def) : def;
-  const deportes = ['Fútbol','Pádel','Tenis','Basketball','Vóley','Otro'];
   const dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  const formatos = [
+    {id:'liga', label:'🏆 Liga (todos contra todos)'},
+    {id:'copa', label:'🥊 Copa (eliminación directa)'},
+    {id:'grupos', label:'🌍 Grupos + eliminatorias'},
+    {id:'round_robin', label:'🔄 Round robin + final'},
+  ];
   const colors = ['#f5c518','#00ff88','#00d4ff','#ff4444','#ff8c00','#a855f7','#ec4899'];
 
   setContent(`<div class="screen up" style="padding:44px 15px 18px">
@@ -3116,10 +3150,36 @@ async function sTorneoForm(tid) {
     <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_name')} *</label>
     <input id="tf-nombre" value="${val('nombre')}" placeholder="Ej: Liga Verano 2026" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px;box-sizing:border-box"/>
 
-    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_sport')}</label>
-    <select id="tf-deporte" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px">
-      ${deportes.map(d=>`<option value="${d}" ${val('deporte','Fútbol')===d?'selected':''}>${d}</option>`).join('')}
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">PLANTILLA DE DEPORTE</label>
+    <div id="sc-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 14px">
+      ${sportConfigs.filter(sc=>sc.activo).map(sc=>`
+        <button type="button" onclick="window.selectSportConfig('${sc.id}')" id="sc-btn-${sc.id}"
+          style="padding:10px 8px;border-radius:10px;border:2px solid ${val('sport_config_id')===sc.id?'#f5c518':'#3a3a5e'};background:${val('sport_config_id')===sc.id?'#f5c51815':'#0d0d1a'};color:${val('sport_config_id')===sc.id?'#f5c518':'#a0a0b8'};cursor:pointer;text-align:center">
+          <div style="font-size:22px">${sc.icono}</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;margin-top:4px">${sc.nombre}</div>
+          <div style="font-size:10px;color:#5a5a7a;margin-top:2px">${sc.jugadores_por_equipo}v${sc.jugadores_por_equipo}</div>
+        </button>
+      `).join('')}
+    </div>
+    <input id="tf-sport-config-id" value="${val('sport_config_id','sc1')}" style="display:none"/>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">FORMATO</label>
+    <select id="tf-formato" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px">
+      ${formatos.map(f=>`<option value="${f.id}" ${val('formato','liga')===f.id?'selected':''}>${f.label}</option>`).join('')}
     </select>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">TIPO DE RANKING</label>
+    <div style="display:flex;gap:8px;margin:8px 0 14px">
+      <button type="button" id="btn-rk-individual" onclick="window.setRankingTipo('individual')"
+        style="flex:1;padding:10px;border-radius:9px;border:2px solid ${val('ranking_tipo','individual')==='individual'?'#f5c518':'#3a3a5e'};background:${val('ranking_tipo','individual')==='individual'?'#f5c51815':'transparent'};color:${val('ranking_tipo','individual')==='individual'?'#f5c518':'#a0a0b8'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">
+        👤 Individual
+      </button>
+      <button type="button" id="btn-rk-equipo" onclick="window.setRankingTipo('equipo')"
+        style="flex:1;padding:10px;border-radius:9px;border:2px solid ${val('ranking_tipo','individual')==='equipo'?'#f5c518':'#3a3a5e'};background:${val('ranking_tipo','individual')==='equipo'?'#f5c51815':'transparent'};color:${val('ranking_tipo','individual')==='equipo'?'#f5c518':'#a0a0b8'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">
+        👥 Por equipo
+      </button>
+    </div>
+    <input id="tf-ranking-tipo" value="${val('ranking_tipo','individual')}" style="display:none"/>
 
     <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_day')}</label>
     <select id="tf-dia" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px">
@@ -3154,19 +3214,55 @@ async function sTorneoForm(tid) {
   </div>${renderNav()}`);
 }
 
+window.selectSportConfig = function(scId) {
+  document.getElementById('tf-sport-config-id').value = scId;
+  // Update button styles
+  document.querySelectorAll('[id^="sc-btn-"]').forEach(btn => {
+    const isSelected = btn.id === 'sc-btn-' + scId;
+    btn.style.border = '2px solid ' + (isSelected ? '#f5c518' : '#3a3a5e');
+    btn.style.background = isSelected ? '#f5c51815' : '#0d0d1a';
+    btn.style.color = isSelected ? '#f5c518' : '#a0a0b8';
+  });
+  // Auto-set ranking tipo based on sport config
+  getAll('sport_configs').then(scs => {
+    const sc = scs.find(s=>s.id===scId);
+    if(sc) window.setRankingTipo(sc.ranking_tipo || 'individual');
+  }).catch(()=>{});
+};
+
+window.setRankingTipo = function(tipo) {
+  document.getElementById('tf-ranking-tipo').value = tipo;
+  ['individual','equipo'].forEach(t => {
+    const btn = document.getElementById('btn-rk-' + t);
+    if(!btn) return;
+    const isSelected = t === tipo;
+    btn.style.border = '2px solid ' + (isSelected ? '#f5c518' : '#3a3a5e');
+    btn.style.background = isSelected ? '#f5c51815' : 'transparent';
+    btn.style.color = isSelected ? '#f5c518' : '#a0a0b8';
+  });
+};
+
 window.guardarTorneo = async function(tid) {
   const nombre = document.getElementById('tf-nombre')?.value?.trim();
   if(!nombre){ alert('El nombre es obligatorio.'); return; }
+  const scId = document.getElementById('tf-sport-config-id')?.value || 'sc1';
+  // Get sport config data
+  const scs = await getAll('sport_configs').catch(()=>[]);
+  const sc = scs.find(s=>s.id===scId) || {deporte:'Fútbol', jugadores_por_equipo:5, icono:'⚽'};
   const row = {
     id: tid || uid(),
     nombre,
-    deporte: document.getElementById('tf-deporte')?.value || 'Fútbol',
+    deporte: sc.deporte,
+    sport_config_id: scId,
+    jugadores_por_equipo: sc.jugadores_por_equipo,
+    formato: document.getElementById('tf-formato')?.value || 'liga',
+    ranking_tipo: document.getElementById('tf-ranking-tipo')?.value || 'individual',
     dia: document.getElementById('tf-dia')?.value || 'Sábado',
     ini: document.getElementById('tf-ini')?.value || '',
     fin: document.getElementById('tf-fin')?.value || '',
     max_jugadores: parseInt(document.getElementById('tf-max')?.value||'16'),
     color: document.getElementById('tf-color')?.value || '#f5c518',
-    emoji: document.getElementById('tf-emoji')?.value || '⚽',
+    emoji: document.getElementById('tf-emoji')?.value || sc.icono || '⚽',
     estado: 'activo'
   };
   try {
