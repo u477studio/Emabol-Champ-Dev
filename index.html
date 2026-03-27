@@ -722,7 +722,7 @@ window.doLogin=async function(){
   const btn=document.querySelector('.btn-gold');
   if(btn){btn.textContent='...';btn.disabled=true;}
   const res=await loginAsync(u,p);
-  if(res.ok){ go(res.adminFirst ? '/torneos' : '/home'); }
+  if(res.ok){ go(ME && ME.admin ? '/torneos' : '/home'); }
   else{
     e.textContent=res.msg||'Error al ingresar';e.style.display='block';
     if(btn){btn.textContent='INGRESAR';btn.disabled=false;}
