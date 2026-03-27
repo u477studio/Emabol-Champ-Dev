@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_81.html -->
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_82.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -19,7 +19,7 @@
 :root{--bg:#05050f;--card:#0d0d1a;--surf:#12121f;--gold:#f5c518;--green:#00ff88;--blue:#00d4ff;--red:#ff4444;--txt:#fff;--muted:#a0a0b8;--dim:#5a5a7a;--bdr:#2a2a3e}
 html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Barlow',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
 #app{height:100dvh;max-width:480px;margin:0 auto;display:flex;flex-direction:column;position:relative;background:var(--bg)}
-.screen{flex:1;overflow-y:auto;padding-bottom:80px}
+.screen{flex:1;overflow-y:auto;padding-bottom:90px}
 h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1px}
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 20px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:1.5px;cursor:pointer;border:none;width:100%;transition:opacity .15s,transform .1s}
 .btn:active{opacity:.8;transform:scale(.98)}
@@ -50,7 +50,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 #intro-ov.gone{opacity:0;pointer-events:none;transition:opacity .7s ease}
 </style>
-<link rel="manifest" href="blob:null/e93118a2-8fc4-46e2-99e6-31a76f05b25c"></head>
+<link rel="manifest" href="blob:null/15305762-e52d-47cd-9802-fd9ebda460c9"></head>
 <body>
 
   <div style="font-size:12px;color:#5a5a7a;letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -1130,7 +1130,7 @@ async function sPlayers(){if(!ME||!ME.admin){go('/home');return;}
       </div>
     </div>`;
   }
-  setContent(`<div class="screen up" style="padding:44px 15px 18px">
+  setContent(`<div class="screen up" style="padding:44px 15px 90px">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px">
     <div><p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">👥 PLANTILLA</p>
       <h2 style="font-size:19px;font-family:'Barlow Condensed',sans-serif">${js.length} JUGADORES</h2></div>
@@ -1276,7 +1276,7 @@ async function sPForm(p){
 function renderPF(){
   const pb=['ARQ','JUG'].map(p=>{const pc=PC[p]||'#00d4ff',s=FS.pos===p;return`<button onclick="setFP('${p}')" id="pb${p}" style="padding:11px 8px;border-radius:9px;cursor:pointer;border:2px solid ${s?pc:'#2a2a3e'};background:${s?pc+'18':'#0d0d1a'};color:${s?pc:'var(--dim)'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;width:100%">${p==='ARQ'?'Arquero':'Jugador'}</button>`;}).join('');
   const pv={id:'0',nombre:FS.nombre||'NUEVO',pos:FS.pos,convocado:FS.conv,foto:FS.foto,rating:75,stats:{}};
-  setContent(`<div class="screen up" style="padding:44px 15px 18px">
+  setContent(`<div class="screen up" style="padding:44px 15px 90px">
   <button class="bk" onclick="go(-1)" style="margin-bottom:13px">← VOLVER</button>
   <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">${FS.mode==='create'?'➕ NUEVO JUGADOR':'✏️ EDITAR JUGADOR'}</h2>
   <label class="lbl">NOMBRE *</label>
@@ -1598,7 +1598,7 @@ async function sProximos() {
     </div>`;
   }).join('');
 
-  setContent(`<div class="screen up" style="padding:44px 15px 18px">
+  setContent(`<div class="screen up" style="padding:44px 15px 90px">
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;letter-spacing:1px;margin-bottom:16px">⚽ PARTIDOS</h2>
     ${votingBanners}
     ${html}
@@ -2569,7 +2569,7 @@ async function sMatch() {
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:18px;margin:16px 0 12px">⭐ FIGURA DEL PARTIDO</h2>
     ${votingCards}` : '';
 
-  setContent(`<div class="screen up" style="padding:44px 15px 18px">
+  setContent(`<div class="screen up" style="padding:44px 15px 90px">
     <button class="bk" onclick="go('/home')" style="margin-bottom:14px">← VOLVER</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">📊 CARGAR RESULTADO</h2>
     ${cardsOrphaned}
@@ -2863,7 +2863,7 @@ async function sAyuda() {
       </div>
     </div>`;
 
-  setContent(`<div class="screen up" style="padding:44px 15px 18px">
+  setContent(`<div class="screen up" style="padding:44px 15px 90px">
     <div style="margin-bottom:16px">
       <p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">❓ GUÍA</p>
       <h2 style="font-size:22px;font-family:'Barlow Condensed',sans-serif">AYUDA</h2>
@@ -3085,7 +3085,7 @@ async function sTorneos() {
 
   const adminBtn = ME?.admin ? `<button onclick="go('/torneo-new')" style="width:100%;padding:12px;border-radius:10px;border:2px dashed #f5c518;background:transparent;color:#f5c518;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer;margin-bottom:16px">${tr('tour_create')}</button>` : '';
 
-  setContent(`<div class="screen up" style="padding:44px 15px 18px">
+  setContent(`<div class="screen up" style="padding:44px 15px 90px">
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:26px;margin-bottom:4px">${tr('tour_select')}</h2>
     <p style="font-size:12px;color:#5a5a7a;margin-bottom:16px">Elegí el torneo para ver y participar</p>
     ${adminBtn}
@@ -3144,7 +3144,7 @@ async function sTorneoForm(tid) {
   ];
   const colors = ['#f5c518','#00ff88','#00d4ff','#ff4444','#ff8c00','#a855f7','#ec4899'];
 
-  setContent(`<div class="screen up" style="padding:44px 15px 18px">
+  setContent(`<div class="screen up" style="padding:44px 15px 90px">
     <button class="bk" onclick="go('/torneos')" style="margin-bottom:14px">${tr('back')}</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">${existing ? tr('tour_edit') : tr('tour_create')}</h2>
 
