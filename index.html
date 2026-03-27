@@ -854,7 +854,11 @@ async function sHome(){
       .sort((a,b)=>diasHasta(a.fecha)-diasHasta(b.fecha))[0]||null;
   }
 
-  const matchCards = ts.map(t=>{
+  // Only show active torneos, filtered by CURRENT_TORNEO if set
+  const activeTorneos = CURRENT_TORNEO
+    ? ts.filter(t => t.id === CURRENT_TORNEO.id)
+    : ts.filter(t => t.estado !== 'archivado');
+  const matchCards = activeTorneos.map(t=>{
     const color = t.id==='t1'?'#00d4ff':'#c084fc';
     const bg    = t.id==='t1'?'linear-gradient(135deg,#001525 0%,#003050 100%)':'linear-gradient(135deg,#1a0030 0%,#2d004d 100%)';
     const conv  = getNextConv(t.id);
