@@ -743,9 +743,13 @@ window.doLogin=async function(){
 // Autocomplete for player name
 window._allPlayers=[];
 async function loadPlayerNames(){
-  if(window._allPlayers.length) return;
-  try{ window._allPlayers=(await getAll('jugadores')).map(j=>j.nombre); }catch(e){}
+  if(window._allPlayers && window._allPlayers.length) return;
+  try{ 
+    const js = await getAll('jugadores');
+    window._allPlayers = js.map(j=>j.nombre);
+  }catch(e){ window._allPlayers = []; }
 }
+if(!window._allPlayers) window._allPlayers=[];
 window.onPlayerInput=function(val){
   loadPlayerNames();
   const box=document.getElementById('suggest-box');
