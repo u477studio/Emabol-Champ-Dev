@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_87.html -->
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_88.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -50,7 +50,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 #intro-ov.gone{opacity:0;pointer-events:none;transition:opacity .7s ease}
 </style>
-<link rel="manifest" href="blob:null/0db1e201-3a6f-45ff-8cf2-8fd688abaaf0"></head>
+<link rel="manifest" href="blob:null/e303be83-db1f-4906-babc-d345885cf5b4"></head>
 <body>
 
   <div style="font-size:12px;color:#5a5a7a;letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -302,6 +302,11 @@ async function _req(method, path, body) {
 }
 async function getAll(table) {
   var r = await _req('GET', '/' + table + '?select=*');
+  return _plain(r) || [];
+}
+async function getJugadores(withFoto) {
+  var fields = withFoto ? '*' : 'id,nombre,pos,rating,stats,convocado,clave,created_at';
+  var r = await _req('GET', '/jugadores?select=' + fields);
   return _plain(r) || [];
 }
 async function getOne(table, id) {
@@ -764,7 +769,7 @@ window._allPlayers=[];
 async function loadPlayerNames(){
   if(window._allPlayers && window._allPlayers.length) return;
   try{ 
-    const js = await getAll('jugadores');
+    const js = await getJugadores(false);
     window._allPlayers = js.map(j=>j.nombre);
   }catch(e){ window._allPlayers = []; }
 }
@@ -862,7 +867,7 @@ function proximoPartido(tidOrTorneo) {
 async function sHome(){
   setContent(loading());
   const [js, ts, convs, cfgRows, partidos, allRk] = await Promise.all([
-    getAll('jugadores').catch(()=>[]),
+    getJugadores(false).catch(()=>[]),
     getAll('torneos').catch(()=>[]),
     getAll('convocatorias').catch(()=>[]),
     getAll('config').catch(()=>[]),
@@ -1247,7 +1252,7 @@ async function sHome(){
 // ═══════ PLAYERS ═══════
 async function sPlayers(){if(!ME||!ME.admin){go('/home');return;}
   setContent(loading('Cargando jugadores...'));
-  const js=(await getAll('jugadores')).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+  const js=(await getJugadores(false)).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
   window._PLS=js;window._PF='ALL';
   // Build rank map from general ranking
   const allRk = await getAll('ranking').catch(()=>[]);
@@ -1462,7 +1467,7 @@ window.savePl=async function(){
 // ═══════ RANKING ═══════
 async function sRanking(p){
   setContent(loading(tr('loading')));
-  const[ts,allR,js]=await Promise.all([getAll('torneos'),getAll('ranking'),getAll('jugadores')]);
+  const[ts,allR,js]=await Promise.all([getAll('torneos'),getAll('ranking'),getJugadores(true)]);
   const jMap={};js.forEach(j=>jMap[j.id]=j);
   const view = p.view || 'general';
 
@@ -1611,7 +1616,7 @@ async function sProximos() {
   setContent(loading('Cargando partidos...'));
   let [ts, js, convs, partidos] = await Promise.all([
     getAll('torneos').catch(()=>[]),
-    getAll('jugadores').catch(()=>[]),
+    getJugadores(false).catch(()=>[]),
     getAll('convocatorias').catch(()=>[]),
     getAll('partidos').catch(()=>[])
   ]);
@@ -1807,7 +1812,7 @@ async function sConvocatoria(p) {
   setContent(loading('Cargando...'));
   const [ts, allJs, convs, partidos] = await Promise.all([
     getAll('torneos').catch(()=>[]),
-    getAll('jugadores').catch(()=>[]),
+    getJugadores(false).catch(()=>[]),
     getAll('convocatorias').catch(()=>[]),
     getAll('partidos').catch(()=>[])
   ]);
@@ -2461,7 +2466,7 @@ window.toggleAsistencia = async function(cvid, accion) {
 // ═══════ HISTORIAL ═══════
 async function sHistorial(){
   setContent(loading('Cargando historial...'));
-  const [partidos, js, ts] = await Promise.all([getAll('partidos'), getAll('jugadores'), getAll('torneos')]);
+  const [partidos, js, ts] = await Promise.all([getAll('partidos'), getJugadores(false), getAll('torneos')]);
   const jMap={}; js.forEach(j=>jMap[j.id]=j);
   const tMap={}; ts.forEach(t=>tMap[t.id]=t);
 
@@ -2522,7 +2527,7 @@ async function sMatch() {
 
   const [ts, allJs, convs, partidos] = await Promise.all([
     getAll('torneos').catch(()=>[]),
-    getAll('jugadores').catch(()=>[]),
+    getJugadores(false).catch(()=>[]),
     getAll('convocatorias').catch(()=>[]),
     getAll('partidos').catch(()=>[])
   ]);
@@ -3455,7 +3460,7 @@ async function sEquipos(tid) {
   const [torneo, equipos, jugadores] = await Promise.all([
     getAll('torneos').then(ts=>ts.find(t=>t.id===tid)),
     getAll('equipos').then(es=>es.filter(e=>e.tid===tid)),
-    getAll('jugadores').catch(()=>[])
+    getJugadores(false).catch(()=>[])
   ]);
   if(!torneo) { go('/torneos'); return; }
 
@@ -3499,7 +3504,7 @@ window.deleteEquipo = async function(eid, tid) {
 async function sEquipoForm(tid, equipoId) {
   const [equipos, jugadores, torneos] = await Promise.all([
     getAll('equipos').catch(()=>[]),
-    getAll('jugadores').catch(()=>[]),
+    getJugadores(false).catch(()=>[]),
     getAll('torneos').catch(()=>[])
   ]);
   const torneo = torneos.find(t=>t.id===tid);
