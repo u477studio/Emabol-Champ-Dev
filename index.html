@@ -535,7 +535,13 @@ function renderNav(){
     {i:'⚽',l:tr('matches'),p:'/match'},
     {i:'❓',l:tr('help'),p:'/ayuda'},
   ];
-  return`<nav class="nav">${items.map(x=>`<button class="ni${R===x.p||R.startsWith(x.p+'/')?' on':''}" onclick="go('${x.p}')"><span class="ni-ico">${x.i}</span>${x.l}</button>`).join('')}</nav>`;
+  // Show active torneo indicator if one is selected
+  const torneoBar = CURRENT_TORNEO ? `<div style="position:fixed;top:0;left:0;right:0;z-index:200;background:#0d0d1aee;border-bottom:2px solid ${CURRENT_TORNEO.color||'#f5c518'}60;padding:5px 16px;display:flex;align-items:center;gap:8px;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:800;color:${CURRENT_TORNEO.color||'#f5c518'};letter-spacing:1px;backdrop-filter:blur(8px)">
+    <span style="font-size:16px">${CURRENT_TORNEO.emoji||'⚽'}</span>
+    <span style="flex:1">${CURRENT_TORNEO.nombre}</span>
+    <button onclick="go('/torneos')" style="background:transparent;border:1px solid ${CURRENT_TORNEO.color||'#f5c518'}60;border-radius:5px;color:${CURRENT_TORNEO.color||'#f5c518'};font-size:9px;cursor:pointer;padding:2px 6px;font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1px">▼ CAMBIAR</button>
+  </div>` : '';
+  return torneoBar+`<nav class="nav">${items.map(x=>`<button class="ni${R===x.p||R.startsWith(x.p+'/')?' on':''}" onclick="go('${x.p}')"><span class="ni-ico">${x.i}</span>${x.l}</button>`).join('')}</nav>`;
 }
 window.go=function(p,params={}){
   if(!ME&&p!=='/login'&&p!=='/setup')p='/login';
@@ -584,6 +590,9 @@ async function render(){
     if(R==='/setup'){sSetup();return;}
     if(R==='/login'){sLogin();return;}
     if(R==='/home'){await sHome();return;}
+    if(R==='/ranking'||R==='/players'||R==='/match'){
+      if(!CURRENT_TORNEO){go('/torneos');return;}
+    }
     if(R==='/torneos'){await sTorneos();return;}
     if(R==='/torneo-new'){await sTorneoForm('');return;}
     if(R==='/torneo-edit'){await sTorneoForm(RP.tid);return;}
@@ -837,6 +846,18 @@ async function sHome(){
     getAll('ranking').catch(()=>[])
   ]);
   window._cachedTorneos = ts; // cache for proximoPartido
+
+  // If no torneo selected and there are active torneos, nudge user
+  if(!CURRENT_TORNEO) {
+    const activos = ts.filter(t=>t.estado!=='archivado');
+    if(activos.length > 0) {
+      // Auto-select first active torneo silently
+      CURRENT_TORNEO = activos[0];
+      const stored = JSON.parse(localStorage.getItem('emb_torneos')||'{}');
+      stored[ME?.jid||'admin'] = activos[0].id;
+      localStorage.setItem('emb_torneos', JSON.stringify(stored));
+    }
+  }
   const novedadesRaw = (cfgRows.find(r=>r.id==='novedades')||{}).valor||'';
   const novedadesHtml = novedadesRaw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
   const shareLink = getShareLink({url:_CFG.url, key:_CFG.key});
@@ -1200,7 +1221,7 @@ async function sPlayers(){if(!ME||!ME.admin){go('/home');return;}
       </div>
     </div>`;
   }
-  setContent(`<div class="screen up" style="padding:44px 15px 90px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px">
     <div><p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">👥 PLANTILLA</p>
       <h2 style="font-size:19px;font-family:'Barlow Condensed',sans-serif">${js.length} JUGADORES</h2></div>
@@ -1346,7 +1367,7 @@ async function sPForm(p){
 function renderPF(){
   const pb=['ARQ','JUG'].map(p=>{const pc=PC[p]||'#00d4ff',s=FS.pos===p;return`<button onclick="setFP('${p}')" id="pb${p}" style="padding:11px 8px;border-radius:9px;cursor:pointer;border:2px solid ${s?pc:'#2a2a3e'};background:${s?pc+'18':'#0d0d1a'};color:${s?pc:'var(--dim)'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;width:100%">${p==='ARQ'?'Arquero':'Jugador'}</button>`;}).join('');
   const pv={id:'0',nombre:FS.nombre||'NUEVO',pos:FS.pos,convocado:FS.conv,foto:FS.foto,rating:75,stats:{}};
-  setContent(`<div class="screen up" style="padding:44px 15px 90px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
   <button class="bk" onclick="go(-1)" style="margin-bottom:13px">← VOLVER</button>
   <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">${FS.mode==='create'?'➕ NUEVO JUGADOR':'✏️ EDITAR JUGADOR'}</h2>
   <label class="lbl">NOMBRE *</label>
@@ -1433,7 +1454,7 @@ async function sRanking(p){
     }
   }
 
-  setContent(`<div class="screen up" style="padding:44px 15px 90px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
     <div style="margin-bottom:16px">
       <p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">🏆 ${tr('ranking')}</p>
     </div>
@@ -1656,7 +1677,7 @@ async function sProximos() {
     </div>`;
   }).join('');
 
-  setContent(`<div class="screen up" style="padding:44px 15px 90px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;letter-spacing:1px;margin-bottom:16px">⚽ PARTIDOS</h2>
     ${votingBanners}
     ${html}
@@ -2627,7 +2648,7 @@ async function sMatch() {
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:18px;margin:16px 0 12px">⭐ FIGURA DEL PARTIDO</h2>
     ${votingCards}` : '';
 
-  setContent(`<div class="screen up" style="padding:44px 15px 90px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
     <button class="bk" onclick="go('/home')" style="margin-bottom:14px">← VOLVER</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">📊 CARGAR RESULTADO</h2>
     ${cardsOrphaned}
@@ -2943,7 +2964,7 @@ async function sAyuda() {
       </div>
     </div>`;
 
-  setContent(`<div class="screen up" style="padding:44px 15px 90px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
     <div style="margin-bottom:16px">
       <p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">❓ GUÍA</p>
       <h2 style="font-size:22px;font-family:'Barlow Condensed',sans-serif">AYUDA</h2>
@@ -3174,7 +3195,7 @@ async function sTorneos() {
 
   const adminBtn = ME?.admin ? `<button onclick="go('/torneo-new')" style="width:100%;padding:12px;border-radius:10px;border:2px dashed #f5c518;background:transparent;color:#f5c518;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer;margin-bottom:16px">${tr('tour_create')}</button>` : '';
 
-  setContent(`<div class="screen up" style="padding:44px 15px 90px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:26px;margin-bottom:4px">${tr('tour_select')}</h2>
     <p style="font-size:12px;color:#5a5a7a;margin-bottom:16px">Elegí el torneo para ver y participar</p>
     ${adminBtn}
@@ -3233,7 +3254,7 @@ async function sTorneoForm(tid) {
   ];
   const colors = ['#f5c518','#00ff88','#00d4ff','#ff4444','#ff8c00','#a855f7','#ec4899'];
 
-  setContent(`<div class="screen up" style="padding:44px 15px 90px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
     <button class="bk" onclick="go('/torneos')" style="margin-bottom:14px">${tr('back')}</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">${existing ? tr('tour_edit') : tr('tour_create')}</h2>
 
@@ -3401,7 +3422,7 @@ async function sEquipos(tid) {
     </div>`;
   }).join('');
 
-  setContent(`<div class="screen up" style="padding:44px 15px 90px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
     <button class="bk" onclick="go('/torneos')" style="margin-bottom:14px">${tr('back')}</button>
     <div style="margin-bottom:16px">
       <p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">👥 EQUIPOS</p>
@@ -3442,7 +3463,7 @@ async function sEquipoForm(tid, equipoId) {
     </button>`;
   }).join('');
 
-  setContent(`<div class="screen up" style="padding:44px 15px 90px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
     <button class="bk" onclick="go('/equipos',{tid:'${tid}'})" style="margin-bottom:14px">${tr('back')}</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">${existing?'EDITAR EQUIPO':'NUEVO EQUIPO'}</h2>
 
