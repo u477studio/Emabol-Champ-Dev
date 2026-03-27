@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_82.html -->
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_83.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -50,7 +50,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 #intro-ov.gone{opacity:0;pointer-events:none;transition:opacity .7s ease}
 </style>
-<link rel="manifest" href="blob:null/15305762-e52d-47cd-9802-fd9ebda460c9"></head>
+<link rel="manifest" href="blob:null/777a9d90-4c78-45ff-bf0e-e9f72b4f8111"></head>
 <body>
 
   <div style="font-size:12px;color:#5a5a7a;letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -220,7 +220,7 @@ function setLang(lang) {
   localStorage.setItem('emb_lang', lang);
 }
 
-const APP_VERSION_CODE = 5; // increment with each release
+const APP_VERSION_CODE = 6; // increment with each release
 const APP_VERSION = 'v1.0.' + APP_VERSION_CODE;
 
 (function(){
@@ -606,6 +606,8 @@ async function render(){
     if(R==='/torneos'){await sTorneos();return;}
     if(R==='/torneo-new'){await sTorneoForm('');return;}
     if(R==='/torneo-edit'){await sTorneoForm(RP.tid);return;}
+    if(R==='/equipos'){await sEquipos(RP.tid);return;}
+    if(R==='/equipo-form'){await sEquipoForm(RP.tid, RP.equipoId);return;}
     if(R==='/players'){await sPlayers();return;}
     if(R==='/player'){await sPlayer(RP);return;}
     if(R==='/player-form'){await sPForm(RP);return;}
@@ -1315,163 +1317,120 @@ window.savePl=async function(){
 
 // ═══════ RANKING ═══════
 async function sRanking(p){
-  setContent(loading('Cargando ranking...'));
+  setContent(loading(tr('loading')));
   const[ts,allR,js]=await Promise.all([getAll('torneos'),getAll('ranking'),getAll('jugadores')]);
   const jMap={};js.forEach(j=>jMap[j.id]=j);
-
-  // view: 'general' | torneo id
   const view = p.view || 'general';
 
-  // Build unified totals per player
-  const totals={};
-  allR.forEach(e=>{
-    if(!totals[e.jid]) totals[e.jid]={jid:e.jid,pts:0,g:0,c:0,f:0,t1:0,t2:0};
-    totals[e.jid].pts += e.pts||0;
-    totals[e.jid].g   += e.g||0;
-    totals[e.jid].c   += e.c||0;
-    totals[e.jid].f   += e.f||0;
-    // per-torneo pts for breakdown
-    totals[e.jid][e.tid] = (totals[e.jid][e.tid]||0) + (e.pts||0);
-  });
+  // Build ranking tabs per torneo
+  const activeTorneos = CURRENT_TORNEO ? [CURRENT_TORNEO] : ts.filter(t=>t.estado!=='archivado');
 
-  // Filter by torneo if not general
-  let ranked;
-  if(view==='general'){
-    ranked = Object.values(totals).sort((a,b)=>b.pts-a.pts||b.g-a.g||b.f-a.f);
+  const tabs = activeTorneos.map(t=>`
+    <button onclick="go('/ranking',{view:'${t.id}'})"
+      style="padding:8px 14px;border-radius:8px;border:none;background:${view===t.id?t.color||'#f5c518':'#1a1a2e'};color:${view===t.id?'#000':'#a0a0b8'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;cursor:pointer;white-space:nowrap">
+      ${t.emoji||'⚽'} ${t.nombre.split(' ').slice(0,2).join(' ')}
+    </button>`).join('');
+
+  // Render ranking for selected view
+  let rankHTML = '';
+
+  if(view==='general') {
+    // Cross-torneo general ranking (individual only)
+    const indivTorneos = ts.filter(t=>t.ranking_tipo!=='equipo');
+    const totals = {};
+    allR.filter(r=>r.jid&&indivTorneos.some(t=>t.id===r.tid)).forEach(r=>{
+      if(!totals[r.jid]) totals[r.jid]={jid:r.jid,pts:0,g:0,c:0,f:0};
+      totals[r.jid].pts+=r.pts; totals[r.jid].g+=r.g;
+      totals[r.jid].c+=r.c; totals[r.jid].f+=r.f;
+    });
+    const sorted = Object.values(totals).sort((a,b)=>b.pts-a.pts||b.g-a.g);
+    rankHTML = renderRankingTable(sorted, jMap, null);
   } else {
-    ranked = allR.filter(e=>e.tid===view).sort((a,b)=>b.pts-a.pts||(b.g||0)-(a.g||0));
+    const torneo = ts.find(t=>t.id===view);
+    const tRk = allR.filter(r=>r.tid===view);
+    if(torneo?.ranking_tipo==='equipo') {
+      // Equipo ranking
+      const eqTotals = {};
+      tRk.filter(r=>r.equipo_id).forEach(r=>{
+        if(!eqTotals[r.equipo_id]) eqTotals[r.equipo_id]={equipo_id:r.equipo_id,equipo_nombre:r.equipo_nombre,pts:0,g:0,c:0,f:0};
+        eqTotals[r.equipo_id].pts+=r.pts; eqTotals[r.equipo_id].g+=r.g;
+        eqTotals[r.equipo_id].c+=r.c;
+      });
+      const sorted = Object.values(eqTotals).sort((a,b)=>b.pts-a.pts||b.g-a.g);
+      rankHTML = renderEquipoRankingTable(sorted, torneo);
+    } else {
+      // Individual ranking for this torneo
+      const sorted = tRk.filter(r=>r.jid).sort((a,b)=>b.pts-a.pts||b.g-a.g);
+      rankHTML = renderRankingTable(sorted, jMap, torneo);
+    }
   }
 
-  // Tab buttons
-  const tabs = [
-    {id:'general', label:'🌐 GENERAL', color:'#f5c518'},
-    ...ts.map(t=>({id:t.id, label:t.emoji+' '+t.dia, color:t.id==='t1'?'#00d4ff':'#ff69b4'}))
-  ];
-  const tabBtns = tabs.map(t=>{
-    const active = view===t.id;
-    return `<button onclick="go('/ranking',{view:'${t.id}'})" style="padding:8px 12px;border-radius:20px;cursor:pointer;border:1px solid ${active?t.color:'#2a2a3e'};background:${active?t.color+'20':'#0d0d1a'};color:${active?t.color:'var(--dim)'};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10px;white-space:nowrap;flex-shrink:0">${t.label}</button>`;
-  }).join('');
-
-  const M=['🥇','🥈','🥉'],MC=['#FFD700','#C0C0C0','#CD7F32'];
-
-  // Extra col for general view: show t1/t2 breakdown
-  const isGeneral = view==='general';
-
-  function makeRow(e,i){
-    const j=jMap[e.jid];if(!j)return'';
-    const pc=PC[j.pos]||'#f5c518';
-    const av=j.foto
-      ?`<img src="${j.foto}" style="width:100%;height:100%;object-fit:cover" alt=""/>`
-      :`<span style="font-family:'Barlow Condensed',sans-serif;font-weight:900;color:#fff;font-size:13px">${(j.nombre||'?')[0]}</span>`;
-    const pts = e.pts||0, g=e.g||0, c=e.c||0, f=e.f||0;
-    const t1pts = e.t1||0, t2pts = e.t2||0;
-
-    // highlight top 3 rows
-    const rowBg = i===0?'linear-gradient(90deg,#2a1e0088,transparent)':i===1?'linear-gradient(90deg,#1e1e1e88,transparent)':i===2?'linear-gradient(90deg,#1a100088,transparent)':'transparent';
-
-    return `<div style="display:grid;grid-template-columns:32px 1fr 40px 28px 28px 28px;padding:10px 13px;border-bottom:1px solid #2a2a3e38;align-items:center;background:${rowBg}">
-      <div style="text-align:center">
-        ${i<3
-          ? `<span style="font-size:18px">${M[i]}</span>`
-          : `<span style="font-size:12px;font-weight:900;color:var(--dim);font-family:'Barlow Condensed',sans-serif">${i+1}</span>`
-        }
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;overflow:hidden">
-        <div style="width:32px;height:32px;border-radius:16px;border:2px solid ${i<3?MC[i]:pc+'55'};overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,${pc}28,${pc}0e);display:flex;align-items:center;justify-content:center">${av}</div>
-        <div style="overflow:hidden;min-width:0">
-          <p style="font-size:12px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${j.nombre}</p>
-          <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
-            <span style="font-size:9px;color:${pc};font-weight:700;letter-spacing:1px">${j.pos==='ARQ'?'Arquero':'Jugador'}</span>
-            ${isGeneral && (t1pts||t2pts) ? `<span style="font-size:9px;color:#5a5a7a">🌙${t1pts} ☀️${t2pts}</span>` : ''}
-          </div>
-        </div>
-      </div>
-      <div style="text-align:center">
-        <span style="font-size:16px;font-weight:900;color:#f5c518;font-family:'Barlow Condensed',sans-serif;text-shadow:0 0 8px #f5c51840">${pts}</span>
-      </div>
-      <span style="text-align:center;font-size:11px;font-weight:800;color:#a0a0b8;font-family:'Barlow Condensed',sans-serif">${g}</span>
-      <span style="text-align:center;font-size:11px;font-weight:800;color:#a0a0b8;font-family:'Barlow Condensed',sans-serif">${c}</span>
-      <span style="text-align:center;font-size:11px;font-weight:800;color:#00ff88;font-family:'Barlow Condensed',sans-serif">${f}</span>
-    </div>`;
-  }
-
-  const rows = ranked.map(makeRow).join('');
-  const subtitle = view==='general' ? `${ranked.length} jugadores · todos los torneos` : ts.find(t=>t.id===view)?.nombre||'';
-
-  setContent(`<div class="screen up" style="padding:44px 0 18px">
-  <div style="padding:0 15px 12px;display:flex;align-items:center;justify-content:space-between">
-    <div>
-      <p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">🏆 TABLA</p>
-      <h2 style="font-size:20px;font-family:'Barlow Condensed',sans-serif">${tr('ranking')}</h2>
-      <p style="font-size:10px;color:var(--dim);margin-top:1px">${subtitle}</p>
+  setContent(`<div class="screen up" style="padding:44px 15px 90px">
+    <div style="margin-bottom:16px">
+      <p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">🏆 ${tr('ranking')}</p>
     </div>
-    <button class="btn btn-dim" onclick="go('/ranking',{view:'${view}'})" style="width:auto;padding:7px 11px;font-size:11px">🔄</button>
-  </div>
-
-  <!-- tabs -->
-  <div style="display:flex;gap:6px;padding:0 15px;overflow-x:auto;margin-bottom:12px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
-    ${tabBtns}
-  </div>
-
-  <!-- header -->
-  <div style="display:grid;grid-template-columns:32px 1fr 40px 28px 28px 28px;padding:7px 13px;background:var(--surf);border-top:1px solid #f5c51838;border-bottom:1px solid #f5c51838;margin-bottom:2px">
-    ${['#','JUGADOR','PTS','G','C','⭐'].map((h,i)=>`<span style="font-size:9px;color:#f5c518;font-weight:800;letter-spacing:1px;font-family:'Barlow Condensed',sans-serif;text-align:${i===1?'left':'center'}">${h}</span>`).join('')}
-  </div>
-
-  ${rows || `<div style="text-align:center;padding:40px 0;color:var(--dim)"><p style="font-size:36px;margin-bottom:8px">🏆</p><p style="font-size:14px">Sin partidos cargados aún.</p></div>`}
-
-  <div style="margin:14px 15px;padding:11px 14px;background:var(--card);border-radius:11px;border:1px solid #f5c51828">
-    <p style="font-size:9px;color:#f5c518;font-weight:800;letter-spacing:2px;text-align:center;margin-bottom:6px">SISTEMA DE PUNTOS</p>
-    <div style="display:flex;justify-content:space-around">
-      <span style="font-size:10px;color:var(--dim)">✓ Convocado +1</span>
-      <span style="font-size:10px;color:var(--dim)">🏆 Ganó +3</span>
-      <span style="font-size:10px;color:var(--dim)">⭐ Figura +2</span>
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px">
+      <button onclick="go('/ranking',{view:'general'})"
+        style="padding:8px 14px;border-radius:8px;border:none;background:${view==='general'?'#f5c518':'#1a1a2e'};color:${view==='general'?'#000':'#a0a0b8'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;cursor:pointer;white-space:nowrap">
+        🌐 ${tr('general_table')}
+      </button>
+      ${tabs}
     </div>
-  </div>
-  </div>`);
+    ${rankHTML}
+  </div>${renderNav()}`);
 }
 
-// ═══════ PRÓXIMO PARTIDO / CONVOCATORIA ═══════
-
-// Helper: parse fecha string 'DD/MM/YYYY' → Date
-function parseFecha(f) {
-  if(!f) return null;
-  const p = f.split('/');
-  return new Date(+p[2], +p[1]-1, +p[0]);
-}
-function fmtFechaCorta(f) {
-  if(!f) return '';
-  const [dd,mm,aa] = f.split('/').map(Number);
-  const d = new Date(aa,mm-1,dd);
-  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  return `${dias[d.getDay()]} ${dd} de ${meses[mm-1]}`;
-}
-function fmtFecha(d) {
-  if(!d) return '';
-  return d.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
-}
-function diasHasta(fecha) {
-  const hoy = new Date(); hoy.setHours(0,0,0,0);
-  const d = parseFecha(fecha); if(!d) return 999;
-  d.setHours(0,0,0,0);
-  return Math.round((d-hoy)/(1000*60*60*24));
-}
-
-// Get next partido for each torneo
-function proximoPartido(tid) {
-  // t1=miércoles(3), t2=sábados(6)
-  const diaSemana = tid==='t1' ? 3 : 6;
-  const hoy = new Date(); hoy.setHours(0,0,0,0);
-  const d = new Date(hoy);
-  let diff = diaSemana - d.getDay();
-  if(diff <= 0) diff += 7;
-  d.setDate(d.getDate() + diff);
-  return d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'/');
+function renderRankingTable(rows, jMap, torneo) {
+  if(!rows.length) return `<p style="color:#5a5a7a;text-align:center;padding:20px">${tr('no_data')}</p>`;
+  const color = torneo?.color || '#f5c518';
+  return `<table style="width:100%;border-collapse:collapse">
+    <thead><tr style="font-size:10px;color:#5a5a7a;letter-spacing:1px">
+      <td style="padding:6px 4px">#</td>
+      <td style="padding:6px 4px">JUGADOR</td>
+      <td style="padding:6px 4px;text-align:center">${tr('pts')}</td>
+      <td style="padding:6px 4px;text-align:center">${tr('played')}</td>
+      <td style="padding:6px 4px;text-align:center">${tr('won_short')}</td>
+      <td style="padding:6px 4px;text-align:center">${tr('fig')}</td>
+    </tr></thead>
+    <tbody>${rows.map((r,i)=>{
+      const j = jMap[r.jid];
+      const isMe = ME?.jid===r.jid;
+      return `<tr style="border-top:1px solid #1a1a2e${isMe?';background:#f5c51808':''}">
+        <td style="padding:10px 4px;font-size:14px;color:${i<3?color:'#5a5a7a'};font-weight:900">${i+1}</td>
+        <td style="padding:10px 4px">
+          ${j?.foto?`<img src="${j.foto}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px" onerror="this.style.display='none'"/>`:''}
+          <span style="font-size:13px;color:${isMe?color:'#e0e0e0'};font-weight:${isMe?'900':'400'}">${j?.nombre||r.jid}</span>
+        </td>
+        <td style="padding:10px 4px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:${color}">${r.pts}</td>
+        <td style="padding:10px 4px;text-align:center;font-size:13px;color:#5a5a7a">${r.c}</td>
+        <td style="padding:10px 4px;text-align:center;font-size:13px;color:#5a5a7a">${r.g}</td>
+        <td style="padding:10px 4px;text-align:center;font-size:13px;color:#5a5a7a">${r.f||0}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
 }
 
-// Main screen: shows both torneos next match
-function fixtureFor(t){const ds=t.id==='t1'?3:6;const[dI,mI,aI]=t.ini.split('/').map(Number);const[dF,mF,aF]=t.fin.split('/').map(Number);const end=new Date(aF,mF-1,dF);const d=new Date(aI,mI-1,dI);let df=ds-d.getDay();if(df<0)df+=7;d.setDate(d.getDate()+df);const r=[];while(d<=end){r.push(d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'/'));d.setDate(d.getDate()+7);}return r;}
+function renderEquipoRankingTable(rows, torneo) {
+  if(!rows.length) return `<p style="color:#5a5a7a;text-align:center;padding:20px">${tr('no_data')}</p>`;
+  const color = torneo?.color || '#f5c518';
+  return `<table style="width:100%;border-collapse:collapse">
+    <thead><tr style="font-size:10px;color:#5a5a7a;letter-spacing:1px">
+      <td style="padding:6px 4px">#</td>
+      <td style="padding:6px 4px">EQUIPO</td>
+      <td style="padding:6px 4px;text-align:center">${tr('pts')}</td>
+      <td style="padding:6px 4px;text-align:center">${tr('played')}</td>
+      <td style="padding:6px 4px;text-align:center">${tr('won_short')}</td>
+    </tr></thead>
+    <tbody>${rows.map((r,i)=>`<tr style="border-top:1px solid #1a1a2e">
+      <td style="padding:10px 4px;font-size:14px;color:${i<3?color:'#5a5a7a'};font-weight:900">${i+1}</td>
+      <td style="padding:10px 4px;font-size:13px;color:#e0e0e0;font-weight:${i===0?'900':'400'}">${r.equipo_nombre||'Equipo'}</td>
+      <td style="padding:10px 4px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:${color}">${r.pts}</td>
+      <td style="padding:10px 4px;text-align:center;font-size:13px;color:#5a5a7a">${r.c}</td>
+      <td style="padding:10px 4px;text-align:center;font-size:13px;color:#5a5a7a">${r.g}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
 
 async function sProximos() {
   setContent(loading('Cargando partidos...'));
@@ -2581,12 +2540,17 @@ async function sMatch() {
 
 // Shared recalc logic used by cerrarVotacion and manual button
 async function _recalcularSilencioso() {
-  const [partidos, convs] = await Promise.all([
-    getAll('partidos'), getAll('convocatorias')
+  const [partidos, convs, torneos, equipos] = await Promise.all([
+    getAll('partidos'), getAll('convocatorias'),
+    getAll('torneos').catch(()=>[]),
+    getAll('equipos').catch(()=>[])
   ]);
   await _req('DELETE', '/ranking?id=neq.NONE');
   const newRk = {};
+
   for(const p of partidos) {
+    const torneo = torneos.find(t=>t.id===p.tid);
+    const isEquipoRanking = torneo?.ranking_tipo === 'equipo';
     const pEa = Array.isArray(p.equipo_a) ? p.equipo_a : [];
     const pEb = Array.isArray(p.equipo_b) ? p.equipo_b : [];
     const cv = convs.find(cv=>cv.tid===p.tid&&cv.fecha===p.fecha);
@@ -2596,23 +2560,40 @@ async function _recalcularSilencioso() {
     const jugaron = [...new Set([...ea,...eb])];
     const gan = p.gan;
     const ganadores = gan==='a'?ea:gan==='b'?eb:[];
-    const isEmpate = gan===tr('draw');
-    for(const jid of jugaron) {
-      const key = jid+'|'+p.tid;
-      if(!newRk[key]) newRk[key]={jid,tid:p.tid,pts:0,g:0,c:0,f:0};
-      newRk[key].pts += 1;
-      newRk[key].c  += 1;
-      if(ganadores.includes(jid)){ newRk[key].pts+=3; newRk[key].g+=1; }
-      if(isEmpate) newRk[key].pts += 1;
-    }
-    if(p.fig) {
-      const key = p.fig+'|'+p.tid;
-      if(!newRk[key]) newRk[key]={jid:p.fig,tid:p.tid,pts:0,g:0,c:0,f:0};
-      newRk[key].pts += 2;
-      newRk[key].f  += 1;
+    const isEmpate = gan==='EMPATE';
+
+    if(isEquipoRanking) {
+      const torEquipos = equipos.filter(e=>e.tid===p.tid);
+      const eqA = torEquipos.find(e=>(e.jugadores||[]).some(jid=>ea.includes(jid)));
+      const eqB = torEquipos.find(e=>(e.jugadores||[]).some(jid=>eb.includes(jid)));
+      const eqGanador = gan==='a'?eqA:gan==='b'?eqB:null;
+      for(const eq of [eqA,eqB].filter(Boolean)) {
+        const key = 'eq_'+eq.id+'|'+p.tid;
+        if(!newRk[key]) newRk[key]={equipo_id:eq.id,equipo_nombre:eq.nombre,tid:p.tid,pts:0,g:0,c:0,f:0};
+        newRk[key].pts += 1; newRk[key].c += 1;
+        if(eqGanador?.id===eq.id){ newRk[key].pts+=3; newRk[key].g+=1; }
+        if(isEmpate) newRk[key].pts += 1;
+      }
+    } else {
+      for(const jid of jugaron) {
+        const key = jid+'|'+p.tid;
+        if(!newRk[key]) newRk[key]={jid,tid:p.tid,pts:0,g:0,c:0,f:0};
+        newRk[key].pts += 1; newRk[key].c += 1;
+        if(ganadores.includes(jid)){ newRk[key].pts+=3; newRk[key].g+=1; }
+        if(isEmpate) newRk[key].pts += 1;
+      }
+      if(p.fig) {
+        const key = p.fig+'|'+p.tid;
+        if(!newRk[key]) newRk[key]={jid:p.fig,tid:p.tid,pts:0,g:0,c:0,f:0};
+        newRk[key].pts += 2; newRk[key].f += 1;
+      }
     }
   }
-  await Promise.all(Object.values(newRk).map(row=>upsertRow('ranking',{id:uid(),...row})));
+  await Promise.all(Object.values(newRk).map(row=>upsertRow('ranking',{
+    id:uid(), jid:row.equipo_id?null:row.jid, tid:row.tid,
+    pts:row.pts, g:row.g, c:row.c, f:row.f,
+    equipo_id:row.equipo_id||null, equipo_nombre:row.equipo_nombre||null
+  })));
 }
 
 window.recalcularRanking = async function() {
@@ -2965,7 +2946,12 @@ window.sSetupSQL = function() {
     "alter table torneos add column if not exists sport_config_id text;",
     "alter table torneos add column if not exists formato text not null default 'liga';",
     "alter table torneos add column if not exists jugadores_por_equipo int not null default 5;",
-    "alter table torneos add column if not exists ranking_tipo text not null default 'individual';"
+    "alter table torneos add column if not exists ranking_tipo text not null default 'individual';",
+    "create table if not exists equipos (id text primary key, tid text not null, nombre text not null, jugadores jsonb not null default '[]', color text not null default '#f5c518', created_at bigint not null default 0);",
+    "alter table equipos enable row level security;",
+    "do $$ begin if not exists (select 1 from pg_policies where policyname='pub_equipos') then create policy pub_equipos on equipos for all using (true) with check (true); end if; end $$;",
+    "alter table ranking add column if not exists equipo_id text;",
+    "alter table ranking add column if not exists equipo_nombre text;"
 
   ].join("\n");
   window._sql = sql;
@@ -3078,7 +3064,11 @@ async function sTorneos() {
         <span style="font-size:10px;font-weight:900;color:${archived?'#5a5a7a':color};background:${archived?'#1a1a2e':''+color+'22'};padding:4px 8px;border-radius:6px;letter-spacing:1px">${archived ? tr('tour_finished_label') : tr('tour_active_label')}</span>
       </div>
       ${isActive ? `<div style="font-size:11px;color:${color};text-align:right">▶ TORNEO ACTUAL</div>` : ''}
-      ${!archived ? `<button onclick="event.stopPropagation();window.entrarTorneo('${t.id}')" style="width:100%;padding:10px;border-radius:9px;border:none;background:${color};color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer;margin-top:8px">${tr('tour_enter')}</button>` : ''}
+      ${!archived ? `<div style="display:flex;gap:8px;margin-top:8px">
+        <button onclick="event.stopPropagation();window.entrarTorneo('${t.id}')" style="flex:1;padding:10px;border-radius:9px;border:none;background:${color};color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer">${tr('tour_enter')}</button>
+        ${ME?.admin && t.ranking_tipo==='equipo' ? `<button onclick="event.stopPropagation();go('/equipos',{tid:'${t.id}'})" style="padding:10px 14px;border-radius:9px;border:2px solid ${color};background:transparent;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">👥</button>` : ''}
+        ${ME?.admin ? `<button onclick="event.stopPropagation();go('/torneo-edit',{tid:'${t.id}'})" style="padding:10px 14px;border-radius:9px;border:2px solid #3a3a5e;background:transparent;color:#a0a0b8;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">✏️</button>` : ''}
+      </div>` : ''}
       ${archived ? `<button onclick="event.stopPropagation();window.verHistorialTorneo('${t.id}')" style="width:100%;padding:10px;border-radius:9px;border:1px solid #3a3a5e;background:transparent;color:#a0a0b8;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer;margin-top:8px">${tr('tour_view')}</button>` : ''}
     </div>`;
   };
@@ -3280,6 +3270,136 @@ window.archivarTorneo = async function(tid) {
     if(torneo) await upsertRow('torneos', {...torneo, estado:'archivado'});
     if(CURRENT_TORNEO?.id === tid) CURRENT_TORNEO = null;
     go('/torneos');
+  } catch(e) { alert(tr('error') + _errMsg(e)); }
+};
+
+
+// ═══════ EQUIPOS (team management for fixed-team tournaments) ═══════
+
+async function sEquipos(tid) {
+  const [torneo, equipos, jugadores] = await Promise.all([
+    getAll('torneos').then(ts=>ts.find(t=>t.id===tid)),
+    getAll('equipos').then(es=>es.filter(e=>e.tid===tid)),
+    getAll('jugadores').catch(()=>[])
+  ]);
+  if(!torneo) { go('/torneos'); return; }
+
+  const jMap = {};
+  jugadores.forEach(j=>{ jMap[j.id]=j; });
+  const colors = ['#f5c518','#00ff88','#00d4ff','#ff4444','#ff8c00','#a855f7','#ec4899','#ffffff'];
+
+  const equipoCards = equipos.map(eq => {
+    const members = (eq.jugadores||[]).map(jid => jMap[jid]?.nombre || jid).join(', ');
+    return `<div style="background:#0d0d1a;border:2px solid ${eq.color||'#3a3a5e'};border-radius:14px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:${eq.color||'#f5c518'}">${eq.nombre}</div>
+        <div style="display:flex;gap:6px">
+          <button onclick="window.editEquipo('${eq.id}','${tid}')" style="padding:5px 10px;border-radius:7px;border:1px solid #3a3a5e;background:transparent;color:#a0a0b8;font-size:11px;cursor:pointer">✏️</button>
+          <button onclick="window.deleteEquipo('${eq.id}','${tid}')" style="padding:5px 10px;border-radius:7px;border:1px solid #ff444430;background:transparent;color:#ff4444;font-size:11px;cursor:pointer">🗑️</button>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#5a5a7a">${members || 'Sin jugadores asignados'}</div>
+    </div>`;
+  }).join('');
+
+  setContent(`<div class="screen up" style="padding:44px 15px 90px">
+    <button class="bk" onclick="go('/torneos')" style="margin-bottom:14px">${tr('back')}</button>
+    <div style="margin-bottom:16px">
+      <p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">👥 EQUIPOS</p>
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px">${torneo.nombre}</h2>
+    </div>
+    ${equipoCards || `<p style="color:#5a5a7a;text-align:center;padding:20px 0">No hay equipos creados aún.</p>`}
+    <button onclick="window.newEquipo('${tid}')" style="width:100%;padding:13px;border-radius:10px;border:2px dashed #f5c518;background:transparent;color:#f5c518;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer;margin-top:8px">+ NUEVO EQUIPO</button>
+  </div>${renderNav()}`);
+}
+
+window.newEquipo = function(tid) { go('/equipo-form', {tid, equipoId:''}); };
+window.editEquipo = function(eid, tid) { go('/equipo-form', {tid, equipoId:eid}); };
+window.deleteEquipo = async function(eid, tid) {
+  if(!confirm('¿Eliminar este equipo?')) return;
+  await _req('DELETE', '/equipos?id=eq.'+eid);
+  sEquipos(tid);
+};
+
+async function sEquipoForm(tid, equipoId) {
+  const [equipos, jugadores, torneos] = await Promise.all([
+    getAll('equipos').catch(()=>[]),
+    getAll('jugadores').catch(()=>[]),
+    getAll('torneos').catch(()=>[])
+  ]);
+  const torneo = torneos.find(t=>t.id===tid);
+  const existing = equipoId ? equipos.find(e=>e.id===equipoId) : null;
+  const takenJids = equipos.filter(e=>e.id!==equipoId).flatMap(e=>e.jugadores||[]);
+  const available = jugadores.filter(j=>!takenJids.includes(j.id));
+  const maxPP = torneo?.jugadores_por_equipo || 2;
+  const selJids = existing?.jugadores || [];
+  const colors = ['#f5c518','#00ff88','#00d4ff','#ff4444','#ff8c00','#a855f7','#ec4899'];
+
+  const jugadoresGrid = available.map(j => {
+    const sel = selJids.includes(j.id);
+    return `<button type="button" id="jbtn-${j.id}" onclick="window.toggleJugadorEquipo('${j.id}',${maxPP})"
+      style="padding:8px 10px;border-radius:9px;border:2px solid ${sel?'#f5c518':'#3a3a5e'};background:${sel?'#f5c51815':'#0d0d1a'};color:${sel?'#f5c518':'#a0a0b8'};font-size:12px;cursor:pointer;text-align:left">
+      ${j.nombre}
+    </button>`;
+  }).join('');
+
+  setContent(`<div class="screen up" style="padding:44px 15px 90px">
+    <button class="bk" onclick="go('/equipos',{tid:'${tid}'})" style="margin-bottom:14px">${tr('back')}</button>
+    <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">${existing?'EDITAR EQUIPO':'NUEVO EQUIPO'}</h2>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">NOMBRE DEL EQUIPO *</label>
+    <input id="eq-nombre" value="${existing?.nombre||''}" placeholder="Ej: Los Pumas" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px;box-sizing:border-box"/>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">COLOR</label>
+    <div style="display:flex;gap:8px;margin:8px 0 14px;flex-wrap:wrap">
+      ${colors.map(col=>`<button type="button" onclick="document.querySelectorAll('.eq-color-btn').forEach(b=>b.style.border='2px solid transparent');this.style.border='2px solid #fff';document.getElementById('eq-color').value='${col}'" class="eq-color-btn" style="width:32px;height:32px;border-radius:50%;background:${col};border:${(existing?.color||'#f5c518')===col?'2px solid #fff':'2px solid transparent'};cursor:pointer"></button>`).join('')}
+      <input id="eq-color" value="${existing?.color||'#f5c518'}" style="display:none"/>
+    </div>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">JUGADORES (máx. ${maxPP})</label>
+    <input id="eq-jids" value='${JSON.stringify(selJids)}' style="display:none"/>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 20px">
+      ${jugadoresGrid}
+    </div>
+
+    <button onclick="window.guardarEquipo('${equipoId}','${tid}')" style="width:100%;padding:14px;border-radius:10px;border:none;background:linear-gradient(135deg,#f5c518,#c9a000);color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;cursor:pointer">GUARDAR EQUIPO</button>
+  </div>${renderNav()}`);
+}
+
+window.toggleJugadorEquipo = function(jid, maxPP) {
+  const input = document.getElementById('eq-jids');
+  let jids = JSON.parse(input.value || '[]');
+  const btn = document.getElementById('jbtn-'+jid);
+  if(jids.includes(jid)) {
+    jids = jids.filter(j=>j!==jid);
+    btn.style.border = '2px solid #3a3a5e';
+    btn.style.background = '#0d0d1a';
+    btn.style.color = '#a0a0b8';
+  } else {
+    if(jids.length >= maxPP) { alert('Máximo '+maxPP+' jugadores por equipo.'); return; }
+    jids.push(jid);
+    btn.style.border = '2px solid #f5c518';
+    btn.style.background = '#f5c51815';
+    btn.style.color = '#f5c518';
+  }
+  input.value = JSON.stringify(jids);
+};
+
+window.guardarEquipo = async function(equipoId, tid) {
+  const nombre = document.getElementById('eq-nombre')?.value?.trim();
+  if(!nombre) { alert('El nombre es obligatorio.'); return; }
+  const jids = JSON.parse(document.getElementById('eq-jids')?.value||'[]');
+  const row = {
+    id: equipoId || uid(),
+    tid,
+    nombre,
+    jugadores: jids,
+    color: document.getElementById('eq-color')?.value || '#f5c518',
+    created_at: Date.now()
+  };
+  try {
+    await upsertRow('equipos', row);
+    go('/equipos', {tid});
   } catch(e) { alert(tr('error') + _errMsg(e)); }
 };
 
