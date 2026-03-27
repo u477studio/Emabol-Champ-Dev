@@ -597,6 +597,7 @@ async function render(){
     if(R==='/torneo-new'){await sTorneoForm('');return;}
     if(R==='/torneo-edit'){await sTorneoForm(RP.tid);return;}
     if(R==='/equipos'){await sEquipos(RP.tid);return;}
+    if(R==='/habilitar-fechas'){await sHabilitarFechas(RP.tid);return;}
     if(R==='/equipo-form'){await sEquipoForm(RP.tid, RP.equipoId);return;}
     if(R==='/players'){await sPlayers();return;}
     if(R==='/player'){await sPlayer(RP);return;}
@@ -870,9 +871,21 @@ async function sHome(){
         if(cv.estado==='finalizado') return false;
         const d = parseFecha(cv.fecha);
         if(!d) return false;
-        return d >= today; // must be today or future
+        return d >= today;
       })
       .sort((a,b)=>diasHasta(a.fecha)-diasHasta(b.fecha))[0]||null;
+  }
+  function getActiveConvs(tid){
+    const today = new Date(); today.setHours(0,0,0,0);
+    return convs
+      .filter(cv=>{
+        if(cv.tid!==tid) return false;
+        if(cv.estado==='finalizado') return false;
+        const d = parseFecha(cv.fecha);
+        if(!d) return false;
+        return d >= today;
+      })
+      .sort((a,b)=>diasHasta(a.fecha)-diasHasta(b.fecha));
   }
 
   // Only show active torneos, filtered by CURRENT_TORNEO if set
@@ -883,6 +896,7 @@ async function sHome(){
     const color = t.id==='t1'?'#00d4ff':'#c084fc';
     const bg    = t.id==='t1'?'linear-gradient(135deg,#001525 0%,#003050 100%)':'linear-gradient(135deg,#1a0030 0%,#2d004d 100%)';
     const conv  = getNextConv(t.id);
+    const activeConvs = getActiveConvs(t.id);
     const fecha = conv?conv.fecha:proximoPartido(t);
     const dias  = diasHasta(fecha);
     // If dias is negative and no active conv, recalculate next match day
@@ -920,8 +934,14 @@ async function sHome(){
       ? ((conv.convocados_estado||[]).find(x=>x.jid===ME.jid)?.estado||'no_convocado')
       : null;
     let cta='';
-    if(ME&&ME.admin)
-      cta=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${fecha}'})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">${conv&&conv.estado==='confirmado'?'👁 VER EQUIPOS':'⚽ GESTIONAR CONVOCATORIA'}</button>`;
+    if(ME&&ME.admin) {
+      if(!conv) {
+        // No active convocatoria — show HABILITAR button
+        cta=`<button onclick="go('/habilitar-fechas',{tid:'${t.id}'})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">📅 HABILITAR FECHAS</button>`;
+      } else {
+        cta=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${conv.fecha}'})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">${conv.estado==='confirmado'?'👁 VER EQUIPOS':'⚽ GESTIONAR CONVOCATORIA'}</button>`;
+      }
+    }
     else if(conv&&conv.estado==='confirmado')
       cta=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${fecha}',ro:true})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">👁 VER EQUIPOS</button>`;
     else if(conv&&myEstCTA==='suspendido')
@@ -944,6 +964,18 @@ async function sHome(){
         <div style="flex-shrink:0">${badge}</div>
       </div>
       ${myStatus}${cta}
+      ${activeConvs.length > 1 ? `
+        <div style="margin-top:10px;padding:10px 12px;background:#0d0d1a;border:1px solid ${color}40;border-radius:10px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:10px;color:#5a5a7a;letter-spacing:1px">PRÓXIMA FECHA</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;color:${color}">${fmtFechaCorta(activeConvs[1].fecha)}</div>
+          </div>
+          ${ME&&ME.admin
+            ? `<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${activeConvs[1].fecha}'})" style="padding:7px 12px;border-radius:8px;border:1px solid ${color}60;background:transparent;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;cursor:pointer">GESTIONAR</button>`
+            : `<span style="font-size:11px;color:#5a5a7a">${activeConvs[1].estado==='confirmado'?'✓ CONFIRMADO':'Convocatoria abierta'}</span>`
+          }
+        </div>
+      ` : ''}
       ${(()=>{
         if(!conv||conv.estado!=='confirmado'||ME?.admin) return '';
         const ea=conv.equipo_a||[], eb=conv.equipo_b||[];
@@ -3521,6 +3553,135 @@ window.guardarEquipo = async function(equipoId, tid) {
     await upsertRow('equipos', row);
     go('/equipos', {tid});
   } catch(e) { alert(tr('error') + _errMsg(e)); }
+};
+
+
+// ═══════ HABILITAR CONVOCATORIAS ═══════
+async function sHabilitarFechas(tid) {
+  const [torneo, convs] = await Promise.all([
+    getAll('torneos').then(ts=>ts.find(t=>t.id===tid)),
+    getAll('convocatorias').catch(()=>[])
+  ]);
+  if(!torneo) { go('/home'); return; }
+
+  // Get fixture dates for this torneo
+  const allFechas = fixtureFor(torneo, 60);
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Only show future dates that don't already have an active convocatoria
+  const activeFechas = new Set(
+    convs.filter(cv=>cv.tid===tid && cv.estado!=='finalizado').map(cv=>cv.fecha)
+  );
+  const futureFechas = allFechas.filter(f => {
+    const d = parseFecha(f);
+    return d && d >= today && !activeFechas.has(f);
+  }).slice(0, 6); // show next 6 available
+
+  if(!futureFechas.length) {
+    setContent(`<div class="screen up" style="padding:76px 15px 90px">
+      <button class="bk" onclick="go('/home')" style="margin-bottom:14px">${tr('back')}</button>
+      <p style="color:#5a5a7a;text-align:center;padding:40px 0">No hay fechas disponibles para habilitar.</p>
+    </div>${renderNav()}`);
+    return;
+  }
+
+  const color = torneo.color || '#f5c518';
+
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
+    <button class="bk" onclick="go('/home')" style="margin-bottom:14px">${tr('back')}</button>
+    <div style="margin-bottom:20px">
+      <p style="font-size:10px;color:${color};font-weight:800;letter-spacing:3px">📅 HABILITAR FECHAS</p>
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px">${torneo.nombre}</h2>
+      <p style="font-size:12px;color:#5a5a7a;margin-top:4px">Elegí cuántas fechas habilitar para convocatoria</p>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:20px">
+      <button id="btn-1fecha" onclick="window.setFechasCount(1)" style="flex:1;padding:14px;border-radius:12px;border:2px solid ${color};background:${color}20;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;cursor:pointer">
+        1 FECHA
+      </button>
+      <button id="btn-2fechas" onclick="window.setFechasCount(2)" style="flex:1;padding:14px;border-radius:12px;border:2px solid #3a3a5e;background:transparent;color:#5a5a7a;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;cursor:pointer">
+        2 FECHAS
+      </button>
+    </div>
+
+    <div id="fechas-preview" style="margin-bottom:20px">
+      ${futureFechas.slice(0,1).map((f,i) => `
+        <div style="background:#0d0d1a;border:2px solid ${color}40;border-radius:12px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+          <div style="width:36px;height:36px;border-radius:50%;background:${color}20;border:2px solid ${color};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;color:${color};font-size:14px">${i+1}</div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;color:#fff">${fmtFechaCorta(f)}</div>
+            <div style="font-size:11px;color:#5a5a7a">${f}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <button onclick="window.confirmarHabilitar('${tid}')" style="width:100%;padding:14px;border-radius:10px;border:none;background:linear-gradient(135deg,${color},${color}aa);color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;cursor:pointer">
+      ✅ HABILITAR CONVOCATORIA
+    </button>
+  </div>${renderNav()}`);
+
+  // Store state
+  window._habilitar = { tid, torneo, futureFechas, count: 1, color };
+}
+
+window.setFechasCount = function(n) {
+  if(!window._habilitar) return;
+  window._habilitar.count = n;
+  const { futureFechas, color } = window._habilitar;
+
+  // Update button styles
+  document.getElementById('btn-1fecha').style.border = `2px solid ${n===1?color:'#3a3a5e'}`;
+  document.getElementById('btn-1fecha').style.background = n===1 ? color+'20' : 'transparent';
+  document.getElementById('btn-1fecha').style.color = n===1 ? color : '#5a5a7a';
+  document.getElementById('btn-2fechas').style.border = `2px solid ${n===2?color:'#3a3a5e'}`;
+  document.getElementById('btn-2fechas').style.background = n===2 ? color+'20' : 'transparent';
+  document.getElementById('btn-2fechas').style.color = n===2 ? color : '#5a5a7a';
+
+  // Update preview
+  const preview = document.getElementById('fechas-preview');
+  if(preview) {
+    preview.innerHTML = futureFechas.slice(0,n).map((f,i) => `
+      <div style="background:#0d0d1a;border:2px solid ${color}40;border-radius:12px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+        <div style="width:36px;height:36px;border-radius:50%;background:${color}20;border:2px solid ${color};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;color:${color};font-size:14px">${i+1}</div>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;color:#fff">${fmtFechaCorta(f)}</div>
+          <div style="font-size:11px;color:#5a5a7a">${f}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+};
+
+window.confirmarHabilitar = async function(tid) {
+  const { torneo, futureFechas, count } = window._habilitar || {};
+  if(!torneo || !futureFechas) return;
+
+  const fechasToCreate = futureFechas.slice(0, count);
+  try {
+    for(const fecha of fechasToCreate) {
+      // Check if convocatoria already exists for this date
+      const existing = await getAll('convocatorias')
+        .then(cs => cs.find(c=>c.tid===tid && c.fecha===fecha))
+        .catch(()=>null);
+      if(!existing) {
+        await upsertRow('convocatorias', {
+          id: uid(), tid, fecha,
+          hora: '20:00',
+          estado: 'en_proceso',
+          equipo_a: [], equipo_b: [],
+          equipo_a_nombre: 'AJAX', equipo_b_nombre: 'ROMA',
+          quieren_jugar: [], convocados_estado: [],
+          camisetero_ciclo_idx: null,
+          created_at: Date.now()
+        });
+      }
+    }
+    alert(`✅ ${fechasToCreate.length === 1 ? '1 fecha habilitada' : '2 fechas habilitadas'} correctamente.`);
+    go('/home');
+  } catch(e) {
+    alert('Error: ' + _errMsg(e));
+  }
 };
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
