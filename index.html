@@ -722,7 +722,7 @@ window.doLogin=async function(){
   const btn=document.querySelector('.btn-gold');
   if(btn){btn.textContent='...';btn.disabled=true;}
   const res=await loginAsync(u,p);
-  if(res.ok){go('/home');}
+  if(res.ok){ go(res.adminFirst ? '/torneos' : '/home'); }
   else{
     e.textContent=res.msg||'Error al ingresar';e.style.display='block';
     if(btn){btn.textContent='INGRESAR';btn.disabled=false;}
@@ -789,8 +789,13 @@ function proximoPartido(tidOrTorneo) {
   if(!t) return '';
   // If no dia configured, return ini date
   if(!t.dia) return t.ini || '';
-  const diasSemana = {'Lunes':1,'Martes':2,'Miércoles':3,'Jueves':4,'Viernes':5,'Sábado':6,'Domingo':0};
-  const targetDay = diasSemana[t.dia];
+  const diasSemana = {'lunes':1,'martes':2,'miércoles':3,'jueves':4,'viernes':5,'sábado':6,'domingo':0};
+  const diaKey = (t.dia||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace('miercoles','miércoles').replace('sabado','sábado');
+  // Try normalized, then original lowercased
+  const normMap = {'lunes':1,'martes':2,'miercoles':3,'jueves':4,'viernes':5,'sabado':6,'domingo':0,
+                   'miércoles':3,'sábado':6};
+  const targetDay = normMap[(t.dia||'').toLowerCase()] ?? normMap[diaKey];
   if(targetDay === undefined) return t.ini || '';
   const today = new Date(); today.setHours(0,0,0,0);
   const d = new Date(today);
