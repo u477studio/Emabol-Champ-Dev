@@ -815,8 +815,15 @@ async function sHome(){
   const shareLink = getShareLink({url:_CFG.url, key:_CFG.key});
 
   function getNextConv(tid){
+    const today = new Date(); today.setHours(0,0,0,0);
     return convs
-      .filter(cv=>cv.tid===tid && diasHasta(cv.fecha)>=0 && cv.estado!=='finalizado')
+      .filter(cv=>{
+        if(cv.tid!==tid) return false;
+        if(cv.estado==='finalizado') return false;
+        const d = parseFecha(cv.fecha);
+        if(!d) return false;
+        return d >= today; // must be today or future
+      })
       .sort((a,b)=>diasHasta(a.fecha)-diasHasta(b.fecha))[0]||null;
   }
 
@@ -826,6 +833,9 @@ async function sHome(){
     const conv  = getNextConv(t.id);
     const fecha = conv?conv.fecha:proximoPartido(t);
     const dias  = diasHasta(fecha);
+    // If dias is negative and no active conv, recalculate next match day
+    const fechaFinal = (dias < 0 && !conv) ? proximoPartido(t) : fecha;
+    const diasFinal  = (dias < 0 && !conv) ? diasHasta(fechaFinal) : dias;
     // Badge estado partido
     const myEstH = ME&&!ME.admin&&conv
       ? ((conv.convocados_estado||[]).find(x=>x.jid===ME.jid)?.estado||'no_convocado')
@@ -836,9 +846,9 @@ async function sHome(){
     else if(dias===0)
       badge=`<span style="background:${color}25;border:1px solid ${color};color:${color};padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">🔴 HOY</span>`;
     else if(dias<=3)
-      badge=`<span style="background:${color}20;border:1px solid ${color};color:${color};padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">🟢 EN ${dias} DÍA${dias!==1?'S':''}</span>`;
+      badge=`<span style="background:${color}20;border:1px solid ${color};color:${color};padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">🟢 EN ${diasFinal} DÍA${dias!==1?'S':''}</span>`;
     else
-      badge=`<span style="background:#1a1a2e;border:1px solid #3a3a5e;color:var(--dim);padding:4px 12px;border-radius:999px;font-size:10px;font-weight:800;font-family:'Barlow Condensed',sans-serif">📅 EN ${dias} DÍAS</span>`;
+      badge=`<span style="background:#1a1a2e;border:1px solid #3a3a5e;color:var(--dim);padding:4px 12px;border-radius:999px;font-size:10px;font-weight:800;font-family:'Barlow Condensed',sans-serif">📅 EN ${diasFinal} DÍAS</span>`;
 
     // Mi estado en este partido
     let myStatus='';
@@ -876,7 +886,7 @@ async function sHome(){
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
         <div style="flex:1;min-width:0;padding-right:8px">
           <p style="font-size:11px;color:${color};font-weight:800;letter-spacing:2px;font-family:'Barlow Condensed',sans-serif;margin-bottom:4px">${t.emoji} ${t.nombre}</p>
-          <p style="font-size:26px;font-weight:900;color:#fff;font-family:'Barlow Condensed',sans-serif;line-height:1;margin-bottom:6px">${fmtFecha(parseFecha(fecha))}</p>
+          <p style="font-size:26px;font-weight:900;color:#fff;font-family:'Barlow Condensed',sans-serif;line-height:1;margin-bottom:6px">${fmtFecha(parseFecha(fechaFinal))}</p>
           <p style="font-size:11px;color:var(--muted)">🕐 ${conv&&conv.hora?conv.hora:'20:00'} hs &nbsp;·&nbsp; ${conv?(conv.convocados_estado||[]).filter(x=>x.estado==='convocado').length:0} convocados</p>
         </div>
         <div style="flex-shrink:0">${badge}</div>
