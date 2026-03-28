@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_89.html -->
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_92.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -50,7 +50,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 #intro-ov.gone{opacity:0;pointer-events:none;transition:opacity .7s ease}
 </style>
-<link rel="manifest" href="blob:null/1d3b34a4-4ca6-448b-8dc2-1278c9373cb1"></head>
+<link rel="manifest" href="blob:null/487a1cab-6d2f-445c-aa0b-a560f7906276"></head>
 <body>
 
   <div style="font-size:12px;color:#5a5a7a;letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -300,14 +300,36 @@ async function _req(method, path, body) {
   if (!txt) return null;
   try { return JSON.parse(txt); } catch(e) { return null; }
 }
+// ── In-memory cache to reduce Supabase IO ────────────────────────────────────
+const _cache = {};
+const _CACHE_TTL = 60000; // 60 seconds
+
 async function getAll(table) {
+  const now = Date.now();
+  if(_cache[table] && (now - _cache[table].ts) < _CACHE_TTL) {
+    return _cache[table].data;
+  }
   var r = await _req('GET', '/' + table + '?select=*');
-  return _plain(r) || [];
+  var data = _plain(r) || [];
+  _cache[table] = { data, ts: now };
+  return data;
+}
+
+function invalidateCache(table) {
+  if(table) delete _cache[table];
+  else Object.keys(_cache).forEach(k => delete _cache[k]);
 }
 async function getJugadores(withFoto) {
+  const ckey = 'jugadores_' + (withFoto?'full':'slim');
+  const now = Date.now();
+  if(_cache[ckey] && (now - _cache[ckey].ts) < _CACHE_TTL) {
+    return _cache[ckey].data;
+  }
   var fields = withFoto ? '*' : 'id,nombre,pos,rating,stats,convocado,clave,created_at';
   var r = await _req('GET', '/jugadores?select=' + fields);
-  return _plain(r) || [];
+  var data = _plain(r) || [];
+  _cache[ckey] = { data, ts: now };
+  return data;
 }
 async function getOne(table, id) {
   var r = await _req('GET', '/' + table + '?select=*&id=eq.' + encodeURIComponent(id));
@@ -315,6 +337,8 @@ async function getOne(table, id) {
   return (rows && rows.length) ? rows[0] : null;
 }
 async function upsertRow(table, row) {
+  invalidateCache(table);
+  if(table === 'jugadores') { invalidateCache('jugadores_full'); invalidateCache('jugadores_slim'); }
   await _req('POST', '/' + table, _plain(row));
 }
 async function delRow(table, id) {
@@ -2725,7 +2749,7 @@ async function _recalcularSilencioso() {
     getAll('torneos').catch(()=>[]),
     getAll('equipos').catch(()=>[])
   ]);
-  await _req('DELETE', '/ranking?id=neq.NONE');
+  invalidateCache('ranking'); await _req('DELETE', '/ranking?id=neq.NONE');
   const newRk = {};
 
   for(const p of partidos) {
