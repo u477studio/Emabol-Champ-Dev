@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_94.html -->
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_96.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -50,7 +50,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 #intro-ov.gone{opacity:0;pointer-events:none;transition:opacity .7s ease}
 </style>
-<link rel="manifest" href="blob:null/15b000ba-ec0b-4f70-94f5-ae44f4e341cb"></head>
+<link rel="manifest" href="blob:null/854deabb-7efc-4887-95e4-9b5bebcb3efc"></head>
 <body>
 
   <div style="font-size:12px;color:#5a5a7a;letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -306,7 +306,9 @@ const _CACHE_TTL = 60000; // 60 seconds
 
 async function getAll(table) {
   const now = Date.now();
-  if(_cache[table] && (now - _cache[table].ts) < _CACHE_TTL) {
+  // Convocatorias change frequently — use shorter TTL
+  const ttl = table === 'convocatorias' ? 10000 : _CACHE_TTL;
+  if(_cache[table] && (now - _cache[table].ts) < ttl) {
     return _cache[table].data;
   }
   var r = await _req('GET', '/' + table + '?select=*');
@@ -337,9 +339,10 @@ async function getOne(table, id) {
   return (rows && rows.length) ? rows[0] : null;
 }
 async function upsertRow(table, row) {
+  await _req('POST', '/' + table, _plain(row));
+  // Invalidate AFTER write so next read gets fresh data
   invalidateCache(table);
   if(table === 'jugadores') { invalidateCache('jugadores_full'); invalidateCache('jugadores_slim'); }
-  await _req('POST', '/' + table, _plain(row));
 }
 async function delRow(table, id) {
   await _req('DELETE', '/' + table + '?id=eq.' + encodeURIComponent(id), null);
@@ -891,7 +894,7 @@ function proximoPartido(tidOrTorneo) {
 async function sHome(){
   setContent(loading());
   const [js, ts, convs, cfgRows, partidos, allRk] = await Promise.all([
-    getJugadores(false).catch(()=>[]),
+    getJugadores(true).catch(()=>[]),
     getAll('torneos').catch(()=>[]),
     getAll('convocatorias').catch(()=>[]),
     getAll('config').catch(()=>[]),
