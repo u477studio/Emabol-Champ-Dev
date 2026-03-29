@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_96.html -->
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_98.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -50,7 +50,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 #intro-ov.gone{opacity:0;pointer-events:none;transition:opacity .7s ease}
 </style>
-<link rel="manifest" href="blob:null/854deabb-7efc-4887-95e4-9b5bebcb3efc"></head>
+<link rel="manifest" href="blob:null/04e1bd48-60aa-49d4-af3a-b2c26872c02b"></head>
 <body>
 
   <div style="font-size:12px;color:#5a5a7a;letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -640,6 +640,18 @@ async function render(){
     if(!ME&&R!=='/login'&&R!=='/setup'){R='/login';RP={};}
     if(R==='/setup'){sSetup();return;}
     if(R==='/login'){sLogin();return;}
+    // Check maintenance for non-admin players
+    if(ME && !ME.admin) {
+      try {
+        const torneos = await getAll('torneos').catch(()=>[]);
+        const activeTorneos = torneos.filter(t=>t.estado!=='archivado');
+        const enMantenimiento = activeTorneos.filter(t=>t.app_estado==='mantenimiento');
+        if(enMantenimiento.length > 0 && enMantenimiento.length === activeTorneos.length) {
+          sMantenimiento(enMantenimiento[0].nombre);
+          return;
+        }
+      } catch(e) {}
+    }
     if(R==='/home'){await sHome();return;}
     if(R==='/ranking'||R==='/players'||R==='/match'){
       if(!CURRENT_TORNEO){go('/torneos');return;}
@@ -994,7 +1006,8 @@ async function sHome(){
         // No active convocatoria — show HABILITAR button
         cta=`<button onclick="go('/habilitar-fechas',{tid:'${t.id}'})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">📅 HABILITAR FECHAS</button>`;
       } else {
-        cta=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${conv.fecha}'})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">${conv.estado==='confirmado'?'👁 VER EQUIPOS':'⚽ GESTIONAR CONVOCATORIA'}</button>`;
+        cta=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${conv.fecha}'})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">${conv.estado==='confirmado'?'👁 VER EQUIPOS':'⚽ GESTIONAR CONVOCATORIA'}</button>
+        <button onclick="window.toggleMantenimiento('${t.id}')" style="width:100%;margin-top:6px;padding:9px;border-radius:10px;cursor:pointer;border:1.5px solid ${t.app_estado==='mantenimiento'?'#00ff88':'#ff8c00'};background:transparent;color:${t.app_estado==='mantenimiento'?'#00ff88':'#ff8c00'};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:1px">${t.app_estado==='mantenimiento'?'✅ ACTIVAR APP':'🔧 PONER EN MANTENIMIENTO'}</button>`;
       }
     }
     else if(conv&&conv.estado==='confirmado')
@@ -3154,6 +3167,7 @@ window.sSetupSQL = function() {
     "alter table torneos add column if not exists formato text not null default 'liga';",
     "alter table torneos add column if not exists jugadores_por_equipo int not null default 5;",
     "alter table torneos add column if not exists ranking_tipo text not null default 'individual';",
+    "alter table torneos add column if not exists app_estado text not null default 'productivo';",
     "create table if not exists equipos (id text primary key, tid text not null, nombre text not null, jugadores jsonb not null default '[]', color text not null default '#f5c518', created_at bigint not null default 0);",
     "alter table equipos enable row level security;",
     "do $$ begin if not exists (select 1 from pg_policies where policyname='pub_equipos') then create policy pub_equipos on equipos for all using (true) with check (true); end if; end $$;",
@@ -3408,7 +3422,10 @@ async function sTorneoForm(tid) {
     <input id="tf-emoji" value="${val('emoji','⚽')}" maxlength="4" style="width:80px;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:20px;text-align:center;margin:6px 0 20px"/>
 
     <button onclick="window.guardarTorneo('${tid||''}')" style="width:100%;padding:14px;border-radius:10px;border:none;background:linear-gradient(135deg,#f5c518,#c9a000);color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;cursor:pointer;margin-bottom:8px">${tr('tour_save')}</button>
-    ${existing ? `<button onclick="window.archivarTorneo('${tid}')" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ff4444;background:transparent;color:#ff4444;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">${tr('tour_archive')}</button>` : ''}
+    ${existing ? `
+      <button onclick="window.toggleMantenimiento('${tid}')" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid ${existing?.app_estado==='mantenimiento'?'#00ff88':'#ff8c00'};background:transparent;color:${existing?.app_estado==='mantenimiento'?'#00ff88':'#ff8c00'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer;margin-bottom:8px">${existing?.app_estado==='mantenimiento'?'✅ ACTIVAR APP':'🔧 PONER EN MANTENIMIENTO'}</button>
+      <button onclick="window.archivarTorneo('${tid}')" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ff4444;background:transparent;color:#ff4444;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">${tr('tour_archive')}</button>
+    ` : ''}
   </div>${renderNav()}`);
 }
 
@@ -3737,6 +3754,40 @@ window.confirmarHabilitar = async function(tid) {
   } catch(e) {
     alert('Error: ' + _errMsg(e));
   }
+};
+
+
+// ── Maintenance screen ────────────────────────────────────────────────────────
+function sMantenimiento(torneoNombre) {
+  const nombre = torneoNombre || 'la liga';
+  document.getElementById('app').innerHTML = `
+    <div style="min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;background:linear-gradient(180deg,#05050f,#0d0d1a,#05050f);text-align:center">
+      <div style="font-size:64px;margin-bottom:24px">🔧</div>
+      <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;color:#f5c518;letter-spacing:3px;margin-bottom:12px">EN MANTENIMIENTO</h1>
+      <p style="font-size:15px;color:#a0a0b8;line-height:1.8;max-width:300px;margin-bottom:8px">
+        <strong style="color:#fff">${nombre}</strong> está siendo actualizada.
+      </p>
+      <p style="font-size:14px;color:#5a5a7a;line-height:1.8;max-width:300px;margin-bottom:32px">
+        En breve volverá a estar operativa. ¡Gracias por tu paciencia! ⚽
+      </p>
+      <button onclick="window.location.reload()" style="padding:13px 28px;border-radius:10px;border:2px solid #f5c518;background:transparent;color:#f5c518;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:2px;cursor:pointer">
+        🔄 REINTENTAR
+      </button>
+    </div>`;
+}
+
+window.toggleMantenimiento = async function(tid) {
+  try {
+    const torneos = await getAll('torneos');
+    const t = torneos.find(x=>x.id===tid);
+    if(!t) return;
+    const nuevoEstado = t.app_estado === 'mantenimiento' ? 'productivo' : 'mantenimiento';
+    await upsertRow('torneos', {...t, app_estado: nuevoEstado});
+    invalidateCache('torneos');
+    const label = nuevoEstado === 'mantenimiento' ? '🔧 EN MANTENIMIENTO' : '✅ PRODUCTIVO';
+    alert(label + ' — ' + t.nombre);
+    await render();
+  } catch(e) { alert('Error: ' + _errMsg(e)); }
 };
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
