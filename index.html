@@ -1073,6 +1073,25 @@ function proximoPartido(tidOrTorneo) {
     ? tidOrTorneo 
     : (window._cachedTorneos||[]).find(x=>x.id===tidOrTorneo);
   if(!t) return '';
+  // If dias_horarios array exists, use it (newer format)
+  if(t.dias_horarios && t.dias_horarios.length) {
+    const normMap = {'lunes':1,'martes':2,'miercoles':3,'jueves':4,'viernes':5,'sabado':6,'domingo':0,'miércoles':3,'sábado':6};
+    const targets = t.dias_horarios.map(x=>{
+      const k = (x.dia||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      return normMap[k] ?? normMap[(x.dia||'').toLowerCase()];
+    }).filter(v=>v !== undefined);
+    if(targets.length){
+      const today = new Date(); today.setHours(0,0,0,0);
+      let nearest = null, nearestDays = 999;
+      for(const td of targets){
+        const d = new Date(today); let tries=0;
+        while(d.getDay()!==td && tries<14){d.setDate(d.getDate()+1);tries++;}
+        const diff = Math.round((d-today)/86400000);
+        if(diff < nearestDays){nearestDays=diff; nearest=d;}
+      }
+      if(nearest){ return nearest.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'/'); }
+    }
+  }
   // If no dia configured, return ini date
   if(!t.dia) return t.ini || '';
   const diasSemana = {'lunes':1,'martes':2,'miércoles':3,'jueves':4,'viernes':5,'sábado':6,'domingo':0};
@@ -3478,7 +3497,7 @@ async function sTorneos() {
         <span style="font-size:28px">${t.emoji||'⚽'}</span>
         <div style="flex:1">
           <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:${color};letter-spacing:1px">${t.nombre}</div>
-          <div style="font-size:11px;color:#5a5a7a;margin-top:2px">${t.deporte||'Fútbol'} ${t.jugadores_por_equipo?t.jugadores_por_equipo+'v'+t.jugadores_por_equipo:''} · ${t.dia||''} · ${t.ini||''} → ${t.fin||''}</div>
+          <div style="font-size:11px;color:#5a5a7a;margin-top:2px">${t.deporte||'Fútbol'} ${t.jugadores_por_equipo?t.jugadores_por_equipo+'v'+t.jugadores_por_equipo:''} · ${t.dias_horarios&&t.dias_horarios.length?t.dias_horarios.map(x=>x.dia.substring(0,3)+' '+x.hora).join(' · '):t.dia||''} · ${t.ini||''} → ${t.fin||''}</div>
           <div style="font-size:10px;color:#3a3a5e;margin-top:2px">${t.formato==='liga'?'🏆 Liga':t.formato==='copa'?'🥊 Copa':t.formato==='grupos'?'🌍 Grupos':'🔄 Round robin'} · ${t.ranking_tipo==='equipo'?'👥 Por equipo':'👤 Individual'}</div>
         </div>
         <span style="font-size:10px;font-weight:900;color:${archived?'#5a5a7a':color};background:${archived?'#1a1a2e':''+color+'22'};padding:4px 8px;border-radius:6px;letter-spacing:1px">${archived ? tr('tour_finished_label') : tr('tour_active_label')}</span>
@@ -3641,10 +3660,10 @@ async function sTorneoForm(tid) {
     </div>
     <input id="tf-ranking-tipo" value="${val('ranking_tipo','individual')}" style="display:none"/>
 
-    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_day')}</label>
-    <select id="tf-dia" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px">
-      ${dias.map(d=>`<option value="${d}" ${val('dia')===d?'selected':''}>${d}</option>`).join('')}
-    </select>
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">DÍAS Y HORARIOS</label>
+    <div id="tf-dias-chips" style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 8px"></div>
+    <div id="tf-dias-times" style="margin-bottom:14px"></div>
+    <input id="tf-dias-json" value="" style="display:none"/>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
       <div>
@@ -3666,8 +3685,23 @@ async function sTorneoForm(tid) {
       <input id="tf-color" value="${val('color','#f5c518')}" style="display:none"/>
     </div>
 
-    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">EMOJI</label>
-    <input id="tf-emoji" value="${val('emoji','⚽')}" maxlength="4" style="width:80px;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:20px;text-align:center;margin:6px 0 20px"/>
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">ÍCONO DEL TORNEO</label>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px" id="emoji-picks">
+      ${[...new Set(sportConfigs.filter(s=>s.activo).map(s=>s.icono))].concat(['🏆','🎯','🏅','🥋','🏒','🤺','🏃','🚴']).map(e=>`<button type="button" onclick="window.pickEmoji('${e}')" class="emoji-btn" style="width:42px;height:42px;border-radius:9px;border:${val('emoji','⚽')===e?'2px solid #f5c518':'1px solid #3a3a5e'};background:${val('emoji','⚽')===e?'#f5c51815':'#0d0d1a'};font-size:22px;cursor:pointer">${e}</button>`).join('')}
+    </div>
+    <input id="tf-emoji" value="${val('emoji','⚽')}" maxlength="4" style="width:72px;padding:10px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:20px;text-align:center;margin:4px 0 14px" placeholder="✏️"/>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">VOTACIÓN DE FIGURA</label>
+    <div onclick="window.toggleFigura()" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;cursor:pointer;margin:8px 0 20px">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;color:#fff">⭐ Votación de figura del partido</div>
+        <div style="font-size:11px;color:#5a5a7a;margin-top:2px">Los jugadores votan al MVP de cada partido</div>
+      </div>
+      <div id="figura-toggle" style="width:44px;height:24px;border-radius:12px;background:${val('votacion_figura','true')==='false'?'#3a3a5e':'#00ff88'};position:relative;transition:background .2s;flex-shrink:0">
+        <div style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:${val('votacion_figura','true')==='false'?'2':'22'}px;transition:left .2s"></div>
+      </div>
+    </div>
+    <input id="tf-votacion-figura" value="${val('votacion_figura','true')}" style="display:none"/>
 
     <button onclick="window.guardarTorneo('${tid||''}')" style="width:100%;padding:14px;border-radius:10px;border:none;background:linear-gradient(135deg,#f5c518,#c9a000);color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;cursor:pointer;margin-bottom:8px">${tr('tour_save')}</button>
     ${existing ? `
@@ -3675,6 +3709,10 @@ async function sTorneoForm(tid) {
       <button onclick="window.archivarTorneo('${tid}')" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ff4444;background:transparent;color:#ff4444;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">${tr('tour_archive')}</button>
     ` : ''}
   </div>${renderNav()}`);
+  // Init multi-day picker after DOM is ready
+  const _diasVal = existing?.dias_horarios || [];
+  const _diaLegacy = existing?.dia || '';
+  setTimeout(()=>window.initDiasPicker(_diasVal, _diaLegacy), 0);
 }
 
 window.selectSportConfig = function(scId) {
@@ -3705,6 +3743,75 @@ window.setRankingTipo = function(tipo) {
   });
 };
 
+window.pickEmoji = function(e) {
+  document.getElementById('tf-emoji').value = e;
+  document.querySelectorAll('.emoji-btn').forEach(b=>{b.style.border='1px solid #3a3a5e';b.style.background='#0d0d1a';});
+  event.currentTarget.style.border='2px solid #f5c518';
+  event.currentTarget.style.background='#f5c51815';
+};
+
+window.toggleFigura = function() {
+  const inp = document.getElementById('tf-votacion-figura');
+  const tgl = document.getElementById('figura-toggle');
+  const dot = tgl?.querySelector('div');
+  const on = inp.value !== 'false';
+  inp.value = on ? 'false' : 'true';
+  if(tgl) tgl.style.background = on ? '#3a3a5e' : '#00ff88';
+  if(dot) dot.style.left = on ? '2px' : '22px';
+};
+
+// ── Días y Horarios multi-picker ──────────────────────────────────────────────
+window._TF_DIAS = {}; // { 'Lunes': '20:00', ... }
+const _DIAS_FULL = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const _DIAS_SHORT = ['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'];
+
+window.initDiasPicker = function(diasHorariosVal, diaLegacy) {
+  window._TF_DIAS = {};
+  if(diasHorariosVal && diasHorariosVal.length) {
+    diasHorariosVal.forEach(x=>{ window._TF_DIAS[x.dia] = x.hora || '20:00'; });
+  } else if(diaLegacy) {
+    _DIAS_FULL.forEach(d=>{ if(diaLegacy.includes(d)) window._TF_DIAS[d]='20:00'; });
+  }
+  window.renderDiasPicker();
+};
+
+window.renderDiasPicker = function() {
+  const chips = document.getElementById('tf-dias-chips');
+  const times = document.getElementById('tf-dias-times');
+  if(!chips || !times) return;
+  chips.innerHTML = _DIAS_FULL.map((d,i)=>{
+    const sel = window._TF_DIAS[d] !== undefined;
+    return `<button type="button" onclick="window.toggleDia('${d}')"
+      style="padding:8px 12px;border-radius:8px;border:2px solid ${sel?'#00d4ff':'#3a3a5e'};background:${sel?'#00d4ff18':'transparent'};color:${sel?'#00d4ff':'#5a5a7a'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;cursor:pointer;letter-spacing:1px">${_DIAS_SHORT[i]}</button>`;
+  }).join('');
+  const selected = _DIAS_FULL.filter(d=>window._TF_DIAS[d] !== undefined);
+  times.innerHTML = selected.length ? selected.map(d=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:9px;border:1px solid #00d4ff30;background:#00d4ff08;margin-bottom:6px">
+      <span style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;color:#00d4ff;min-width:80px">${d}</span>
+      <input type="time" value="${window._TF_DIAS[d]||'20:00'}" onchange="window.setHoraDia('${d}',this.value)"
+        style="background:transparent;border:1px solid #3a3a5e;border-radius:6px;color:#fff;font-size:13px;padding:4px 8px;cursor:pointer"/>
+      <button type="button" onclick="window.toggleDia('${d}')" style="background:transparent;border:none;color:#ff4444;cursor:pointer;font-size:16px;padding:0 4px">✕</button>
+    </div>`).join('') : '';
+  window.saveDiasJson();
+};
+
+window.toggleDia = function(dia) {
+  if(window._TF_DIAS[dia] !== undefined) { delete window._TF_DIAS[dia]; }
+  else { window._TF_DIAS[dia] = '20:00'; }
+  window.renderDiasPicker();
+};
+
+window.setHoraDia = function(dia, hora) {
+  if(window._TF_DIAS[dia] !== undefined) window._TF_DIAS[dia] = hora;
+  window.saveDiasJson();
+};
+
+window.saveDiasJson = function() {
+  const arr = _DIAS_FULL.filter(d=>window._TF_DIAS[d]!==undefined).map(d=>({dia:d,hora:window._TF_DIAS[d]||'20:00'}));
+  const inp = document.getElementById('tf-dias-json');
+  if(inp) inp.value = JSON.stringify(arr);
+};
+
 window.guardarTorneo = async function(tid) {
   const nombre = document.getElementById('tf-nombre')?.value?.trim();
   if(!nombre){ alert('El nombre es obligatorio.'); return; }
@@ -3721,12 +3828,14 @@ window.guardarTorneo = async function(tid) {
     jugadores_por_equipo: sc.jugadores_por_equipo,
     formato: document.getElementById('tf-formato')?.value || 'liga',
     ranking_tipo: document.getElementById('tf-ranking-tipo')?.value || 'individual',
-    dia: document.getElementById('tf-dia')?.value || 'Sábado',
+    dias_horarios: (()=>{try{return JSON.parse(document.getElementById('tf-dias-json')?.value||'[]');}catch(e){return [];}}()),
+    dia: (()=>{try{const a=JSON.parse(document.getElementById('tf-dias-json')?.value||'[]');return a.length?a.map(x=>x.dia).join(' y '):'Sábado';}catch(e){return 'Sábado';}})(),
     ini: document.getElementById('tf-ini')?.value || '',
     fin: document.getElementById('tf-fin')?.value || '',
     max_jugadores: parseInt(document.getElementById('tf-max')?.value||'16'),
     color: document.getElementById('tf-color')?.value || '#f5c518',
     emoji: document.getElementById('tf-emoji')?.value || sc.icono || '⚽',
+    votacion_figura: document.getElementById('tf-votacion-figura')?.value !== 'false',
     estado: 'activo',
     ...(isNew && ME?.uid ? { creado_por: ME.uid } : {})
   };
