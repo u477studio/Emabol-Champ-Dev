@@ -1,5 +1,5 @@
-const CACHE_NAME = 'emabol-v2';
-const BASE = '/Emabol-Champ';
+const CACHE_NAME = 'emabol-dev-v1';
+const BASE = '/Emabol-Champ-Dev';
 
 const PRECACHE = [
   BASE + '/',

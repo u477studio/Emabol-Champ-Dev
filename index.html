@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_69.html -->
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_98.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -19,7 +19,7 @@
 :root{--bg:#05050f;--card:#0d0d1a;--surf:#12121f;--gold:#f5c518;--green:#00ff88;--blue:#00d4ff;--red:#ff4444;--txt:#fff;--muted:#a0a0b8;--dim:#5a5a7a;--bdr:#2a2a3e}
 html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Barlow',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
 #app{height:100dvh;max-width:480px;margin:0 auto;display:flex;flex-direction:column;position:relative;background:var(--bg)}
-.screen{flex:1;overflow-y:auto;padding-bottom:80px}
+.screen{flex:1;overflow-y:auto;padding-bottom:90px}
 h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1px}
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 20px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:1.5px;cursor:pointer;border:none;width:100%;transition:opacity .15s,transform .1s}
 .btn:active{opacity:.8;transform:scale(.98)}
@@ -30,7 +30,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 .inp{width:100%;padding:13px 16px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:15px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s}
 .inp:focus{border-color:var(--gold)}
 .lbl{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:2.5px;color:var(--gold);margin-bottom:8px;display:block}
-.nav{position:absolute;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid #f5c51840;display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,6px)}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid #f5c51840;display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,6px)}
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 7px;cursor:pointer;border:none;background:none;color:var(--dim);font-size:9px;font-weight:800;letter-spacing:1px;gap:3px;font-family:'Barlow Condensed',sans-serif}
 .ni.on{color:var(--gold)}
 .ni-ico{font-size:20px;line-height:1}
@@ -50,7 +50,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 #intro-ov.gone{opacity:0;pointer-events:none;transition:opacity .7s ease}
 </style>
-<link rel="manifest" href="blob:null/d5ac4f63-ecb1-45ba-a7cc-a030f6ba2503"></head>
+<link rel="manifest" href="blob:null/04e1bd48-60aa-49d4-af3a-b2c26872c02b"></head>
 <body>
 
   <div style="font-size:12px;color:#5a5a7a;letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -65,21 +65,162 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
     <p style="font-size:11px;color:var(--dim);letter-spacing:3px;margin-top:4px">LA LIGA · CUNA DE TITANES</p>
   </div>
   <div style="width:100%;max-width:340px">
-    <label class="lbl">USUARIO</label>
+    <label class="lbl">USERNAME</label>
     <div style="position:relative;margin-bottom:11px">
       <input class="inp" id="lu" placeholder="ej: gabrielc" style="margin-bottom:0" oninput="onPlayerInput(this.value)" onkeydown="if(event.key===&#39;Enter&#39;){document.getElementById(&#39;suggest-box&#39;).innerHTML=&#39;&#39;;document.getElementById(&#39;lp&#39;).focus();}">
       <div id="suggest-box" style="display:none;position:absolute;top:100%;left:0;right:0;background:#12121f;border:1px solid #f5c51840;border-radius:9px;overflow:hidden;z-index:99;margin-top:3px;box-shadow:0 8px 24px #00000080"></div>
     </div>
-    <label class="lbl">CONTRASEÑA</label>
+    <label class="lbl">PASSWORD</label>
     <input class="inp" id="lp" type="password" placeholder="••••••••" style="margin-bottom:16px" onkeydown="if(event.key===&#39;Enter&#39;)doLogin()">
     <p id="le" style="color:#ff4444;font-size:12px;text-align:center;margin-bottom:10px;display:none"></p>
-    <button class="btn btn-gold" onclick="doLogin()" style="font-size:15px;letter-spacing:2px">INGRESAR</button>
-    <p style="font-size:10px;color:var(--dim);text-align:center;margin-top:12px">Nombre + primera letra del apellido · Ej: <strong style="color:var(--muted)">gabrielc</strong></p>
+    <button class="btn btn-gold" onclick="doLogin()" style="font-size:15px;letter-spacing:2px">SIGN IN</button>
+    <p style="font-size:10px;color:var(--dim);text-align:center;margin-top:12px">Format: firstname + first letter of lastname (e.g. gabrielc)</p>
+    <div style="display:flex;justify-content:center;gap:10px;margin-top:20px">
+      <button onclick="switchLang(&#39;es&#39;)" style="padding:10px 20px;border-radius:10px;border:2px solid #3a3a5e;background:transparent;color:#5a5a7a;font-family:&#39;Barlow Condensed&#39;,sans-serif;font-weight:900;font-size:13px;cursor:pointer;display:inline-flex;flex-direction:column;align-items:center;gap:4px">
+        <img src="./index_files/es.png" width="28" height="20" style="border-radius:3px;display:block" alt="ES">
+        ES
+      </button>
+      <button onclick="switchLang(&#39;en&#39;)" style="padding:10px 20px;border-radius:10px;border:2px solid #f5c518;background:#f5c51820;color:#f5c518;font-family:&#39;Barlow Condensed&#39;,sans-serif;font-weight:900;font-size:13px;cursor:pointer;display:inline-flex;flex-direction:column;align-items:center;gap:4px">
+        <img src="./index_files/us.png" width="28" height="20" style="border-radius:3px;display:block" alt="EN">
+        EN
+      </button>
+    </div>
   </div>
   </div></div>
 
 <script>
-const APP_VERSION_CODE = 3; // increment with each release
+
+// ═══════ i18n — Multi-language support ═══════
+const I18N = {
+  es: {
+    // Nav
+    home: 'INICIO', players: 'JUGADORES', ranking: 'RANKING',
+    matches: 'PARTIDOS', help: 'AYUDA', tournaments: 'TORNEOS',
+    // Login
+    login_title: 'INGRESAR', login_user: 'Usuario', login_pass: 'Contraseña',
+    login_btn: 'INGRESAR', login_hint: 'Formato: nombre + primera letra del apellido (ej: gabrielc)',
+    login_err_notfound: 'Usuario no encontrado. Usá formato: nombre + primera letra del apellido (ej: gabrielc)',
+    login_err_pass: 'Contraseña incorrecta.',
+    login_err_conn: 'Error de conexión: ',
+    // Tournaments
+    tour_select: 'ELEGIR TORNEO', tour_active: 'ACTIVOS', tour_finished: 'HISTORIAL',
+    tour_create: '+ NUEVO TORNEO', tour_edit: 'EDITAR', tour_archive: 'ARCHIVAR',
+    tour_name: 'Nombre del torneo', tour_sport: 'Deporte', tour_day: 'Día de la semana',
+    tour_start: 'Fecha inicio', tour_end: 'Fecha fin', tour_max: 'Máx. jugadores',
+    tour_color: 'Color del torneo', tour_save: 'GUARDAR TORNEO',
+    tour_no_active: 'No hay torneos activos.',
+    tour_finished_label: 'FINALIZADO', tour_active_label: 'ACTIVO',
+    tour_enter: 'ENTRAR', tour_view: 'VER HISTORIAL',
+    // Home
+    next_match: 'PRÓXIMO PARTIDO', no_match: 'Sin partidos próximos.',
+    sign_up: '✋ ME APUNTO', signed: '✅ APUNTADO', not_going: '❌ NO VOY',
+    suspended: '🚫 SUSPENDIDO', convoked: '✓ CONVOCADO', not_convoked: 'No convocado',
+    // Match
+    load_result: 'CARGAR RESULTADO', open_voting: '🗳️ HABILITAR VOTACIÓN FIGURA',
+    close_voting: '🏆 CERRAR VOTACIÓN', recalc: '🔄 RECALCULAR RANKING DESDE CERO',
+    team_a: 'EQUIPO A', team_b: 'EQUIPO B', won: 'GANÓ', draw: 'EMPATE',
+    // Ranking
+    ranking_title: 'RANKING', pts: 'PTS', played: 'PJ', won_short: 'PG', fig: 'FIG',
+    // Players
+    players_title: 'JUGADORES', add_player: '+ AGREGAR JUGADOR', edit_player: 'EDITAR JUGADOR',
+    save: 'GUARDAR CAMBIOS', cancel: 'CANCELAR', back: '← VOLVER',
+    name: 'NOMBRE', position: 'POSICIÓN', status: 'ESTADO', photo: 'FOTO',
+    goalkeeper: 'Arquero', player: 'Jugador', convoked_status: 'CONVOCADO', not_convoked_status: 'NO CONVOCADO',
+    upload_photo: '🖼️ SUBIR FOTO',
+    // Profile
+    profile_title: 'MI PERFIL', language: 'IDIOMA', lang_es: 'Español', lang_en: 'English',
+    // Figure voting
+    vote_figure: '⭐ VOTAR FIGURA', vote_btn: 'VOTAR', voted: '✅ YA VOTASTE',
+    figure_of: '⭐ FIGURA:', voting_open: '🗳️ VOTACIÓN ABIERTA',
+    // Help
+    help_title: 'AYUDA', help_contact: '¿Problemas? Contactá al admin del grupo 🙌',
+    // General
+    confirm_recalc: '¿Recalcular el ranking completo desde cero? Esto borrará los puntos actuales y los recalculará en base a los partidos guardados.',
+    recalc_ok: '✅ Ranking recalculado correctamente.',
+    error: 'Error: ', loading: 'Cargando...', connecting: 'Conectando...',
+    no_data: 'Sin datos.', confirm_archive: '¿Archivar este torneo? No podrá reactivarse.',
+    // Home extras
+    history: 'HISTORIAL', result: 'RESULTADO', load_match: 'Cargar partido',
+    general_table: 'Tabla general', matches_played: 'Partidos jugados',
+    admin_section: 'ADMINISTRACIÓN', no_convoked: 'NO CONVOCADO',
+    // Torneo screen
+    tour_subtitle: 'Elegí el torneo para ver y participar',
+    // Ayuda
+    ayuda_formats: 'Formato: nombre + primera letra del apellido (ej: gabrielc)',
+  },
+  en: {
+    // Nav
+    home: 'HOME', players: 'PLAYERS', ranking: 'RANKING',
+    matches: 'MATCHES', help: 'HELP', tournaments: 'TOURNAMENTS',
+    // Login
+    login_title: 'SIGN IN', login_user: 'Username', login_pass: 'Password',
+    login_btn: 'SIGN IN', login_hint: 'Format: firstname + first letter of lastname (e.g. gabrielc)',
+    login_err_notfound: 'User not found. Use format: firstname + first letter of lastname (e.g. gabrielc)',
+    login_err_pass: 'Incorrect password.',
+    login_err_conn: 'Connection error: ',
+    // Tournaments
+    tour_select: 'SELECT TOURNAMENT', tour_active: 'ACTIVE', tour_finished: 'HISTORY',
+    tour_create: '+ NEW TOURNAMENT', tour_edit: 'EDIT', tour_archive: 'ARCHIVE',
+    tour_name: 'Tournament name', tour_sport: 'Sport', tour_day: 'Day of week',
+    tour_start: 'Start date', tour_end: 'End date', tour_max: 'Max players',
+    tour_color: 'Tournament color', tour_save: 'SAVE TOURNAMENT',
+    tour_no_active: 'No active tournaments.',
+    tour_finished_label: 'FINISHED', tour_active_label: 'ACTIVE',
+    tour_enter: 'ENTER', tour_view: 'VIEW HISTORY',
+    // Home
+    next_match: 'NEXT MATCH', no_match: 'No upcoming matches.',
+    sign_up: '✋ SIGN UP', signed: '✅ SIGNED UP', not_going: '❌ NOT GOING',
+    suspended: '🚫 SUSPENDED', convoked: '✓ SELECTED', not_convoked: 'Not selected',
+    // Match
+    load_result: 'LOAD RESULT', open_voting: '🗳️ ENABLE MVP VOTING',
+    close_voting: '🏆 CLOSE VOTING', recalc: '🔄 RECALCULATE RANKING',
+    team_a: 'TEAM A', team_b: 'TEAM B', won: 'WON', draw: 'DRAW',
+    // Ranking
+    ranking_title: 'RANKING', pts: 'PTS', played: 'MP', won_short: 'W', fig: 'MVP',
+    // Players
+    players_title: 'PLAYERS', add_player: '+ ADD PLAYER', edit_player: 'EDIT PLAYER',
+    save: 'SAVE CHANGES', cancel: 'CANCEL', back: '← BACK',
+    name: 'NAME', position: 'POSITION', status: 'STATUS', photo: 'PHOTO',
+    goalkeeper: 'Goalkeeper', player: 'Player', convoked_status: 'SELECTED', not_convoked_status: 'NOT SELECTED',
+    upload_photo: '🖼️ UPLOAD PHOTO',
+    // Profile
+    profile_title: 'MY PROFILE', language: 'LANGUAGE', lang_es: 'Español', lang_en: 'English',
+    // Figure voting
+    vote_figure: '⭐ VOTE MVP', vote_btn: 'VOTE', voted: '✅ ALREADY VOTED',
+    figure_of: '⭐ MVP:', voting_open: '🗳️ VOTING OPEN',
+    // Help
+    help_title: 'HELP', help_contact: '¿Problems? Contact the group admin 🙌',
+    // General
+    confirm_recalc: 'Recalculate the full ranking from scratch? This will erase current points and rebuild from saved matches.',
+    recalc_ok: '✅ Ranking recalculated successfully.',
+    error: 'Error: ', loading: 'Loading...', connecting: 'Connecting...',
+    no_data: 'No data.', confirm_archive: 'Archive this tournament? It cannot be reactivated.',
+    // Home extras
+    history: 'HISTORY', result: 'RESULT', load_match: 'Load match',
+    general_table: 'General table', matches_played: 'Matches played',
+    admin_section: 'ADMIN', no_convoked: 'NOT SELECTED',
+    // Torneo screen
+    tour_subtitle: 'Choose a tournament to view and participate',
+    // Ayuda
+    ayuda_formats: 'Format: firstname + first letter of lastname (e.g. gabrielc)',
+  }
+};
+
+// Detect language: localStorage > browser > default ES
+function detectLang() {
+  const saved = localStorage.getItem('emb_lang');
+  if(saved && I18N[saved]) return saved;
+  return 'es'; // Default to Spanish — user can switch manually
+}
+let LANG = detectLang();
+function tr(key) { return (I18N[LANG] && I18N[LANG][key]) || (I18N['es'][key]) || key; }
+function setLang(lang) {
+  if(!I18N[lang]) return;
+  LANG = lang;
+  localStorage.setItem('emb_lang', lang);
+}
+
+const APP_VERSION_CODE = 6; // increment with each release
 const APP_VERSION = 'v1.0.' + APP_VERSION_CODE;
 
 (function(){
@@ -159,9 +300,38 @@ async function _req(method, path, body) {
   if (!txt) return null;
   try { return JSON.parse(txt); } catch(e) { return null; }
 }
+// ── In-memory cache to reduce Supabase IO ────────────────────────────────────
+const _cache = {};
+const _CACHE_TTL = 60000; // 60 seconds
+
 async function getAll(table) {
+  const now = Date.now();
+  // Convocatorias change frequently — use shorter TTL
+  const ttl = table === 'convocatorias' ? 10000 : _CACHE_TTL;
+  if(_cache[table] && (now - _cache[table].ts) < ttl) {
+    return _cache[table].data;
+  }
   var r = await _req('GET', '/' + table + '?select=*');
-  return _plain(r) || [];
+  var data = _plain(r) || [];
+  _cache[table] = { data, ts: now };
+  return data;
+}
+
+function invalidateCache(table) {
+  if(table) delete _cache[table];
+  else Object.keys(_cache).forEach(k => delete _cache[k]);
+}
+async function getJugadores(withFoto) {
+  const ckey = 'jugadores_' + (withFoto?'full':'slim');
+  const now = Date.now();
+  if(_cache[ckey] && (now - _cache[ckey].ts) < _CACHE_TTL) {
+    return _cache[ckey].data;
+  }
+  var fields = withFoto ? '*' : 'id,nombre,pos,rating,stats,convocado,clave,created_at';
+  var r = await _req('GET', '/jugadores?select=' + fields);
+  var data = _plain(r) || [];
+  _cache[ckey] = { data, ts: now };
+  return data;
 }
 async function getOne(table, id) {
   var r = await _req('GET', '/' + table + '?select=*&id=eq.' + encodeURIComponent(id));
@@ -170,6 +340,9 @@ async function getOne(table, id) {
 }
 async function upsertRow(table, row) {
   await _req('POST', '/' + table, _plain(row));
+  // Invalidate AFTER write so next read gets fresh data
+  invalidateCache(table);
+  if(table === 'jugadores') { invalidateCache('jugadores_full'); invalidateCache('jugadores_slim'); }
 }
 async function delRow(table, id) {
   await _req('DELETE', '/' + table + '?id=eq.' + encodeURIComponent(id), null);
@@ -187,7 +360,7 @@ async function loginAsync(u, p) {
   // Admin check
   if (u === 'emabol' && p === 'emabol') {
     const m = {n:'emabol', admin:true, jid:null};
-    ME = m; sessionStorage.setItem('emb_me', JSON.stringify(m)); return {ok:true};
+    ME = m; sessionStorage.setItem('emb_me', JSON.stringify(m)); await restoreTorneo().catch(()=>{}); return {ok:true};
   }
   // Player login: username = nombre + primera letra apellido, password = clave field
   function normalize(s) {
@@ -219,7 +392,7 @@ async function loginAsync(u, p) {
     if(full) Object.assign(found, full);
   } catch(e) {}
   const m = {n:found.nombre, admin:false, jid:found.id};
-  ME = m; sessionStorage.setItem('emb_me', JSON.stringify(m)); return {ok:true};
+  ME = m; sessionStorage.setItem('emb_me', JSON.stringify(m)); await restoreTorneo().catch(()=>{}); return {ok:true};
 }
 function logout() { ME=null; sessionStorage.removeItem('emb_me'); }
 
@@ -243,10 +416,29 @@ async function seedData() {
     const existingTs = await _req('GET', '/torneos?select=id').catch(()=>[]);
     const tids = (existingTs||[]).map(t=>t.id);
     if(!tids.includes('t1'))
-      await upsertRow('torneos', {id:'t1',nombre:'EMABOL GLORIAS DEL MIERCOLES',dia:'MIÉRCOLES',ini:'18/03/2026',fin:'03/06/2026',emoji:'🌙'});
-    if(!tids.includes('t2'))
-      await upsertRow('torneos', {id:'t2',nombre:'EMABOL LEYENDAS DEL SÁBADO',dia:'SÁBADOS',ini:'21/03/2026',fin:'06/06/2026',emoji:'☀️'});
+      await upsertRow('torneos', {id:'t1',nombre:'EMABOL GLORIAS Y LEYENDAS',dia:'Miércoles',ini:'18/03/2026',fin:'03/06/2026',emoji:'⚽'});
+    // t2 removed — merged into t1
+
   } catch(e) { console.warn('torneo seed error', e.message); }
+
+  // ── Sport configs seed ──────────────────────────────────────────────────────
+  try {
+    const scids = await getAll('sport_configs').then(r=>r.map(x=>x.id)).catch(()=>[]);
+    const sportConfigs = [
+      {id:'sc1', nombre:'Fútbol 5', deporte:'Fútbol', jugadores_por_equipo:5, posiciones:['Arquero','Jugador'], ranking_tipo:'individual', icono:'⚽', activo:true},
+      {id:'sc2', nombre:'Fútbol 8', deporte:'Fútbol', jugadores_por_equipo:8, posiciones:['Arquero','Jugador'], ranking_tipo:'individual', icono:'⚽', activo:true},
+      {id:'sc3', nombre:'Fútbol 11', deporte:'Fútbol', jugadores_por_equipo:11, posiciones:['Arquero','Defensor','Mediocampista','Delantero'], ranking_tipo:'individual', icono:'⚽', activo:true},
+      {id:'sc4', nombre:'Pádel dobles', deporte:'Pádel', jugadores_por_equipo:2, posiciones:['Jugador'], ranking_tipo:'equipo', icono:'🎾', activo:true},
+      {id:'sc5', nombre:'Tenis dobles', deporte:'Tenis', jugadores_por_equipo:2, posiciones:['Jugador'], ranking_tipo:'equipo', icono:'🎾', activo:true},
+      {id:'sc6', nombre:'Tenis singles', deporte:'Tenis', jugadores_por_equipo:1, posiciones:['Jugador'], ranking_tipo:'individual', icono:'🎾', activo:true},
+      {id:'sc7', nombre:'Basketball 3x3', deporte:'Basketball', jugadores_por_equipo:3, posiciones:['Base','Alero','Pivote'], ranking_tipo:'individual', icono:'🏀', activo:true},
+      {id:'sc8', nombre:'Basketball 5x5', deporte:'Basketball', jugadores_por_equipo:5, posiciones:['Base','Alero','Pivote'], ranking_tipo:'individual', icono:'🏀', activo:true},
+      {id:'sc9', nombre:'Vóley 6x6', deporte:'Vóley', jugadores_por_equipo:6, posiciones:['Jugador','Líbero'], ranking_tipo:'individual', icono:'🏐', activo:true},
+    ];
+    for(const sc of sportConfigs) {
+      if(!scids.includes(sc.id)) await upsertRow('sport_configs', sc);
+    }
+  } catch(e) { console.warn('sport_configs seed error', e.message); }
 
   // ── One-time fix: clear auto-seeded convocados (no ts) ─────────────────
   try {
@@ -355,7 +547,7 @@ function gStats(pos){
 }
 function gRating(){const x=Math.random();if(x>.95)return ri(91,95);if(x>.75)return ri(81,90);if(x>.40)return ri(71,80);return ri(60,70);}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-function loading(msg='Cargando...'){
+function loading(msg){
   return`<div class="screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:100dvh"><div class="sp"></div><p style="color:var(--dim);font-size:13px">${msg}</p></div>`;
 }
 
@@ -387,13 +579,20 @@ function setContent(html){document.getElementById('app').innerHTML=html+renderNa
 function renderNav(){
   if(!ME||R==='/login'||R==='/setup')return'';
   const items=[
-    {i:'🏠',l:'INICIO',p:'/home'},
-    ...(ME&&ME.admin?[{i:'👥',l:'JUGADORES',p:'/players'}]:[]),
-    {i:'🏆',l:'RANKING',p:'/ranking'},
-    {i:'⚽',l:'PARTIDOS',p:'/match'},
-    {i:'❓',l:'AYUDA',p:'/ayuda'},
+    {i:'🏠',l:tr('home'),p:'/home'},
+    ...(ME&&ME.admin?[{i:'👥',l:tr('players'),p:'/players'}]:[]),
+    {i:'🏆',l:tr('ranking'),p:'/ranking'},
+    {i:'🏟️',l:tr('tournaments'),p:'/torneos'},
+    {i:'⚽',l:tr('matches'),p:'/match'},
+    {i:'❓',l:tr('help'),p:'/ayuda'},
   ];
-  return`<nav class="nav">${items.map(x=>`<button class="ni${R===x.p||R.startsWith(x.p+'/')?' on':''}" onclick="go('${x.p}')"><span class="ni-ico">${x.i}</span>${x.l}</button>`).join('')}</nav>`;
+  // Show active torneo indicator if one is selected
+  const torneoBar = CURRENT_TORNEO ? `<div style="position:fixed;top:0;left:0;right:0;z-index:200;background:#0d0d1aee;border-bottom:2px solid ${CURRENT_TORNEO.color||'#f5c518'}60;padding:5px 16px;display:flex;align-items:center;gap:8px;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:800;color:${CURRENT_TORNEO.color||'#f5c518'};letter-spacing:1px;backdrop-filter:blur(8px)">
+    <span style="font-size:16px">${CURRENT_TORNEO.emoji||'⚽'}</span>
+    <span style="flex:1">${CURRENT_TORNEO.nombre}</span>
+    <button onclick="go('/torneos')" style="background:transparent;border:1px solid ${CURRENT_TORNEO.color||'#f5c518'}60;border-radius:5px;color:${CURRENT_TORNEO.color||'#f5c518'};font-size:9px;cursor:pointer;padding:2px 6px;font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1px">▼ CAMBIAR</button>
+  </div>` : '';
+  return torneoBar+`<nav class="nav">${items.map(x=>`<button class="ni${R===x.p||R.startsWith(x.p+'/')?' on':''}" onclick="go('${x.p}')"><span class="ni-ico">${x.i}</span>${x.l}</button>`).join('')}</nav>`;
 }
 window.go=function(p,params={}){
   if(!ME&&p!=='/login'&&p!=='/setup')p='/login';
@@ -441,7 +640,28 @@ async function render(){
     if(!ME&&R!=='/login'&&R!=='/setup'){R='/login';RP={};}
     if(R==='/setup'){sSetup();return;}
     if(R==='/login'){sLogin();return;}
+    // Check maintenance for non-admin players
+    if(ME && !ME.admin) {
+      try {
+        const torneos = await getAll('torneos').catch(()=>[]);
+        const activeTorneos = torneos.filter(t=>t.estado!=='archivado');
+        const enMantenimiento = activeTorneos.filter(t=>t.app_estado==='mantenimiento');
+        if(enMantenimiento.length > 0 && enMantenimiento.length === activeTorneos.length) {
+          sMantenimiento(enMantenimiento[0].nombre);
+          return;
+        }
+      } catch(e) {}
+    }
     if(R==='/home'){await sHome();return;}
+    if(R==='/ranking'||R==='/players'||R==='/match'){
+      if(!CURRENT_TORNEO){go('/torneos');return;}
+    }
+    if(R==='/torneos'){await sTorneos();return;}
+    if(R==='/torneo-new'){await sTorneoForm('');return;}
+    if(R==='/torneo-edit'){await sTorneoForm(RP.tid);return;}
+    if(R==='/equipos'){await sEquipos(RP.tid);return;}
+    if(R==='/habilitar-fechas'){await sHabilitarFechas(RP.tid);return;}
+    if(R==='/equipo-form'){await sEquipoForm(RP.tid, RP.equipoId);return;}
     if(R==='/players'){await sPlayers();return;}
     if(R==='/player'){await sPlayer(RP);return;}
     if(R==='/player-form'){await sPForm(RP);return;}
@@ -525,6 +745,11 @@ window.doSetup=async function(){
 };
 
 // ═══════ LOGIN ═══════
+window.switchLang = function(lang) {
+  setLang(lang);
+  sLogin();
+};
+
 function sLogin(){
   setContent(`<div style="min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;background:linear-gradient(180deg,#05050f,#0d0d1a,#05050f);position:relative;overflow:hidden">
   <div style="position:absolute;width:280px;height:280px;border-radius:50%;background:#f5c518;opacity:.05;top:-70px;right:-50px"></div>
@@ -536,18 +761,28 @@ function sLogin(){
     <p style="font-size:11px;color:var(--dim);letter-spacing:3px;margin-top:4px">LA LIGA · CUNA DE TITANES</p>
   </div>
   <div style="width:100%;max-width:340px">
-    <label class="lbl">USUARIO</label>
+    <label class="lbl">${tr("login_user").toUpperCase()}</label>
     <div style="position:relative;margin-bottom:11px">
       <input class="inp" id="lu" placeholder="ej: gabrielc" style="margin-bottom:0"
         oninput="onPlayerInput(this.value)"
         onkeydown="if(event.key==='Enter'){document.getElementById('suggest-box').innerHTML='';document.getElementById('lp').focus();}"/>
       <div id="suggest-box" style="display:none;position:absolute;top:100%;left:0;right:0;background:#12121f;border:1px solid #f5c51840;border-radius:9px;overflow:hidden;z-index:99;margin-top:3px;box-shadow:0 8px 24px #00000080"></div>
     </div>
-    <label class="lbl">CONTRASEÑA</label>
+    <label class="lbl">${tr("login_pass").toUpperCase()}</label>
     <input class="inp" id="lp" type="password" placeholder="••••••••" style="margin-bottom:16px" onkeydown="if(event.key==='Enter')doLogin()"/>
     <p id="le" style="color:#ff4444;font-size:12px;text-align:center;margin-bottom:10px;display:none"></p>
-    <button class="btn btn-gold" onclick="doLogin()" style="font-size:15px;letter-spacing:2px">INGRESAR</button>
-    <p style="font-size:10px;color:var(--dim);text-align:center;margin-top:12px">Nombre + primera letra del apellido · Ej: <strong style="color:var(--muted)">gabrielc</strong></p>
+    <button class="btn btn-gold" onclick="doLogin()" style="font-size:15px;letter-spacing:2px">${tr("login_btn")}</button>
+    <p style="font-size:10px;color:var(--dim);text-align:center;margin-top:12px">${tr("login_hint")}</p>
+    <div style="display:flex;justify-content:center;gap:10px;margin-top:20px">
+      <button onclick="switchLang('es')" style="padding:10px 20px;border-radius:10px;border:2px solid ${LANG==="es"?"#f5c518":"#3a3a5e"};background:${LANG==="es"?"#f5c51820":"transparent"};color:${LANG==="es"?"#f5c518":"#5a5a7a"};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer;display:inline-flex;flex-direction:column;align-items:center;gap:4px">
+        <img src="https://flagcdn.com/w40/es.png" width="28" height="20" style="border-radius:3px;display:block" alt="ES"/>
+        ES
+      </button>
+      <button onclick="switchLang('en')" style="padding:10px 20px;border-radius:10px;border:2px solid ${LANG==="en"?"#f5c518":"#3a3a5e"};background:${LANG==="en"?"#f5c51820":"transparent"};color:${LANG==="en"?"#f5c518":"#5a5a7a"};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer;display:inline-flex;flex-direction:column;align-items:center;gap:4px">
+        <img src="https://flagcdn.com/w40/us.png" width="28" height="20" style="border-radius:3px;display:block" alt="EN"/>
+        EN
+      </button>
+    </div>
   </div>
   </div>`);
   setTimeout(()=>{const el=document.getElementById('lu');if(el)el.focus();},100);
@@ -560,7 +795,7 @@ window.doLogin=async function(){
   const btn=document.querySelector('.btn-gold');
   if(btn){btn.textContent='...';btn.disabled=true;}
   const res=await loginAsync(u,p);
-  if(res.ok){go('/home');}
+  if(res.ok){ go(ME && ME.admin ? '/torneos' : '/home'); }
   else{
     e.textContent=res.msg||'Error al ingresar';e.style.display='block';
     if(btn){btn.textContent='INGRESAR';btn.disabled=false;}
@@ -571,9 +806,13 @@ window.doLogin=async function(){
 // Autocomplete for player name
 window._allPlayers=[];
 async function loadPlayerNames(){
-  if(window._allPlayers.length) return;
-  try{ window._allPlayers=(await getAll('jugadores')).map(j=>j.nombre); }catch(e){}
+  if(window._allPlayers && window._allPlayers.length) return;
+  try{ 
+    const js = await getJugadores(false);
+    window._allPlayers = js.map(j=>j.nombre);
+  }catch(e){ window._allPlayers = []; }
 }
+if(!window._allPlayers) window._allPlayers=[];
 window.onPlayerInput=function(val){
   loadPlayerNames();
   const box=document.getElementById('suggest-box');
@@ -592,32 +831,144 @@ window.pickPlayer=function(name){
 };
 
 // ═══════ HOME ═══════
+// ── Date helper — days until a DD/MM/YYYY date (negative if past) ────────────
+function diasHasta(fechaStr) {
+  if(!fechaStr) return 0;  // treat missing date as today
+  const parts = fechaStr.split('/');
+  if(parts.length < 3) return 0;
+  const d = new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0]));
+  if(isNaN(d.getTime())) return 0;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return Math.round((d - today) / 86400000);
+}
+
+// Parse DD/MM/YYYY → Date
+function parseFecha(str) {
+  if(!str) return null;
+  const p = str.split('/');
+  if(p.length < 3) return null;
+  return new Date(parseInt(p[2]), parseInt(p[1])-1, parseInt(p[0]));
+}
+
+// Format Date → "Sáb 21 Mar"
+function fmtFecha(d) {
+  if(!d) return '';
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return dias[d.getDay()]+' '+d.getDate()+' '+meses[d.getMonth()];
+}
+
+// Format DD/MM/YYYY → "Sáb 21 Mar" (short, from string)
+function fmtFechaCorta(str) {
+  if(!str) return '';
+  const d = parseFecha(str);
+  if(!d) return str;
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return dias[d.getDay()]+' '+d.getDate()+' '+meses[d.getMonth()];
+}
+
+// Get next scheduled match date for a torneo based on its dia and ini
+function proximoPartido(tidOrTorneo) {
+  const t = (typeof tidOrTorneo === 'object') 
+    ? tidOrTorneo 
+    : (window._cachedTorneos||[]).find(x=>x.id===tidOrTorneo);
+  if(!t) return '';
+  // If no dia configured, return ini date
+  if(!t.dia) return t.ini || '';
+  const diasSemana = {'lunes':1,'martes':2,'miércoles':3,'jueves':4,'viernes':5,'sábado':6,'domingo':0};
+  const diaKey = (t.dia||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace('miercoles','miércoles').replace('sabado','sábado');
+  // Try normalized, then original lowercased
+  const normMap = {'lunes':1,'martes':2,'miercoles':3,'jueves':4,'viernes':5,'sabado':6,'domingo':0,
+                   'miércoles':3,'sábado':6};
+  // Support multiple days: "Miércoles y Sábados"
+  const diaStr = (t.dia||'').toLowerCase();
+  const targetDays = [];
+  for(const [k,v] of Object.entries(normMap)) {
+    if(diaStr.includes(k) && !targetDays.includes(v)) targetDays.push(v);
+  }
+  if(!targetDays.length) return t.ini || '';
+  const today = new Date(); today.setHours(0,0,0,0);
+  // Find the nearest upcoming match day
+  let nearest = null, nearestDays = 999;
+  for(const td of targetDays) {
+    const d = new Date(today);
+    let tries = 0;
+    while(d.getDay() !== td && tries < 14) { d.setDate(d.getDate()+1); tries++; }
+    const diff = Math.round((d - today) / 86400000);
+    if(diff < nearestDays) { nearestDays = diff; nearest = d; }
+  }
+  if(!nearest) return t.ini || '';
+  return nearest.getDate().toString().padStart(2,'0')+'/'+(nearest.getMonth()+1).toString().padStart(2,'0')+'/'+nearest.getFullYear();
+}
+
 async function sHome(){
   setContent(loading());
   const [js, ts, convs, cfgRows, partidos, allRk] = await Promise.all([
-    getAll('jugadores').catch(()=>[]),
+    getJugadores(true).catch(()=>[]),
     getAll('torneos').catch(()=>[]),
     getAll('convocatorias').catch(()=>[]),
     getAll('config').catch(()=>[]),
     getAll('partidos').catch(()=>[]),
     getAll('ranking').catch(()=>[])
   ]);
+  window._cachedTorneos = ts; // cache for proximoPartido
+
+  // If no torneo selected and there are active torneos, nudge user
+  if(!CURRENT_TORNEO) {
+    const activos = ts.filter(t=>t.estado!=='archivado');
+    if(activos.length > 0) {
+      // Auto-select first active torneo silently
+      CURRENT_TORNEO = activos[0];
+      const stored = JSON.parse(localStorage.getItem('emb_torneos')||'{}');
+      stored[ME?.jid||'admin'] = activos[0].id;
+      localStorage.setItem('emb_torneos', JSON.stringify(stored));
+    }
+  }
   const novedadesRaw = (cfgRows.find(r=>r.id==='novedades')||{}).valor||'';
   const novedadesHtml = novedadesRaw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
   const shareLink = getShareLink({url:_CFG.url, key:_CFG.key});
 
   function getNextConv(tid){
+    const today = new Date(); today.setHours(0,0,0,0);
     return convs
-      .filter(cv=>cv.tid===tid && diasHasta(cv.fecha)>=0 && cv.estado!=='finalizado')
+      .filter(cv=>{
+        if(cv.tid!==tid) return false;
+        if(cv.estado==='finalizado') return false;
+        const d = parseFecha(cv.fecha);
+        if(!d) return false;
+        return d >= today;
+      })
       .sort((a,b)=>diasHasta(a.fecha)-diasHasta(b.fecha))[0]||null;
   }
+  function getActiveConvs(tid){
+    const today = new Date(); today.setHours(0,0,0,0);
+    return convs
+      .filter(cv=>{
+        if(cv.tid!==tid) return false;
+        if(cv.estado==='finalizado') return false;
+        const d = parseFecha(cv.fecha);
+        if(!d) return false;
+        return d >= today;
+      })
+      .sort((a,b)=>diasHasta(a.fecha)-diasHasta(b.fecha));
+  }
 
-  const matchCards = ts.map(t=>{
+  // Only show active torneos, filtered by CURRENT_TORNEO if set
+  // sHome always shows ALL active torneos so players see upcoming matches
+  // CURRENT_TORNEO is used for ranking/match context but home shows everything
+  const activeTorneos = ts.filter(t => t.estado !== 'archivado');
+  const matchCards = activeTorneos.map(t=>{
     const color = t.id==='t1'?'#00d4ff':'#c084fc';
     const bg    = t.id==='t1'?'linear-gradient(135deg,#001525 0%,#003050 100%)':'linear-gradient(135deg,#1a0030 0%,#2d004d 100%)';
     const conv  = getNextConv(t.id);
-    const fecha = conv?conv.fecha:proximoPartido(t.id);
+    const activeConvs = getActiveConvs(t.id);
+    const fecha = conv?conv.fecha:proximoPartido(t);
     const dias  = diasHasta(fecha);
+    // If dias is negative and no active conv, recalculate next match day
+    const fechaFinal = (dias < 0 && !conv) ? proximoPartido(t) : fecha;
+    const diasFinal  = (dias < 0 && !conv) ? diasHasta(fechaFinal) : dias;
     // Badge estado partido
     const myEstH = ME&&!ME.admin&&conv
       ? ((conv.convocados_estado||[]).find(x=>x.jid===ME.jid)?.estado||'no_convocado')
@@ -628,9 +979,9 @@ async function sHome(){
     else if(dias===0)
       badge=`<span style="background:${color}25;border:1px solid ${color};color:${color};padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">🔴 HOY</span>`;
     else if(dias<=3)
-      badge=`<span style="background:${color}20;border:1px solid ${color};color:${color};padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">🟢 EN ${dias} DÍA${dias!==1?'S':''}</span>`;
+      badge=`<span style="background:${color}20;border:1px solid ${color};color:${color};padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">🟢 EN ${diasFinal} DÍA${dias!==1?'S':''}</span>`;
     else
-      badge=`<span style="background:#1a1a2e;border:1px solid #3a3a5e;color:var(--dim);padding:4px 12px;border-radius:999px;font-size:10px;font-weight:800;font-family:'Barlow Condensed',sans-serif">📅 EN ${dias} DÍAS</span>`;
+      badge=`<span style="background:#1a1a2e;border:1px solid #3a3a5e;color:var(--dim);padding:4px 12px;border-radius:999px;font-size:10px;font-weight:800;font-family:'Barlow Condensed',sans-serif">📅 EN ${diasFinal} DÍAS</span>`;
 
     // Mi estado en este partido
     let myStatus='';
@@ -641,39 +992,58 @@ async function sHome(){
     if(myEstH==='convocado')
       myStatus=`<div style="display:flex;align-items:center;gap:8px;background:${convColor}12;border:1px solid ${convColor}35;border-radius:8px;padding:8px 12px;margin-top:10px"><span>${isConfHome&&!inTeamHome?'🦺':'✋'}</span><span style="font-size:12px;font-weight:800;color:${convColor};font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px">${convLabel}</span></div>`;
     else if(myEstH==='suspendido')
-      myStatus=`<div style="display:flex;align-items:center;gap:8px;background:#ff444415;border:1px solid #ff444435;border-radius:8px;padding:8px 12px;margin-top:10px"><span>🚫</span><span style="font-size:12px;font-weight:800;color:#ff4444;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px">SUSPENDIDO</span></div>`;
+      myStatus=`<div style="display:flex;align-items:center;gap:8px;background:#ff444415;border:1px solid #ff444435;border-radius:8px;padding:8px 12px;margin-top:10px"><span>🚫</span><span style="font-size:12px;font-weight:800;color:#ff4444;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px">${tr('suspended')}</span></div>`;
     else if(myEstH==='no_convocado'&&conv&&conv.estado!=='confirmado')
-      myStatus=`<div style="display:flex;align-items:center;gap:8px;background:#2a2a3e;border:1px solid #3a3a5e;border-radius:8px;padding:8px 12px;margin-top:10px"><span>🪑</span><span style="font-size:12px;font-weight:800;color:var(--dim);font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px">NO CONVOCADO</span></div>`;
+      myStatus=`<div style="display:flex;align-items:center;gap:8px;background:#2a2a3e;border:1px solid #3a3a5e;border-radius:8px;padding:8px 12px;margin-top:10px"><span>🪑</span><span style="font-size:12px;font-weight:800;color:var(--dim);font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px">${tr('no_convoked')}</span></div>`;
 
     // CTA
     const myEstCTA = ME&&!ME.admin&&conv
       ? ((conv.convocados_estado||[]).find(x=>x.jid===ME.jid)?.estado||'no_convocado')
       : null;
     let cta='';
-    if(ME&&ME.admin)
-      cta=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${fecha}'})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">${conv&&conv.estado==='confirmado'?'👁 VER EQUIPOS':'⚽ GESTIONAR CONVOCATORIA'}</button>`;
+    if(ME&&ME.admin) {
+      if(!conv) {
+        // No active convocatoria — show HABILITAR button
+        cta=`<button onclick="go('/habilitar-fechas',{tid:'${t.id}'})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">📅 HABILITAR FECHAS</button>`;
+      } else {
+        cta=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${conv.fecha}'})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">${conv.estado==='confirmado'?'👁 VER EQUIPOS':'⚽ GESTIONAR CONVOCATORIA'}</button>
+        <button onclick="window.toggleMantenimiento('${t.id}')" style="width:100%;margin-top:6px;padding:9px;border-radius:10px;cursor:pointer;border:1.5px solid ${t.app_estado==='mantenimiento'?'#00ff88':'#ff8c00'};background:transparent;color:${t.app_estado==='mantenimiento'?'#00ff88':'#ff8c00'};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:1px">${t.app_estado==='mantenimiento'?'✅ ACTIVAR APP':'🔧 PONER EN MANTENIMIENTO'}</button>`;
+      }
+    }
     else if(conv&&conv.estado==='confirmado')
       cta=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${fecha}',ro:true})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">👁 VER EQUIPOS</button>`;
     else if(conv&&myEstCTA==='suspendido')
       cta=`<div style="background:#ff444410;border:1px solid #ff444430;border-radius:9px;padding:10px;text-align:center;margin-top:10px"><p style="color:#ff4444;font-weight:800;font-size:12px;font-family:'Barlow Condensed',sans-serif">🚫 SUSPENDIDO PARA ESTE PARTIDO</p></div>`;
-    else if(conv&&myEstCTA==='convocado')
+    else if(conv&&myEstCTA==='convocado'&&conv.estado!=='confirmado')
       cta=`<button onclick="toggleConvocado('${conv.id}','desconvocar')" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid #ff4444;background:#ff444412;color:#ff4444;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">✗ NO VOY A PODER IR</button>`;
-    else if(conv&&myEstCTA==='no_convocado')
-      cta=`<button onclick="toggleConvocado('${conv.id}','convocar')" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:1px">✋ ME APUNTO</button>`;
+    else if(conv&&myEstCTA==='no_convocado'&&conv.estado!=='confirmado')
+      cta=`<button onclick="toggleConvocado('${conv.id}','convocar')" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:1px">${tr('sign_up')}</button>`;
     else if(!conv&&!ME?.admin)
-      cta=`<button onclick="go('/match')" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:1px">✋ ME APUNTO</button>`;
+      cta=`<button onclick="go('/match')" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:1px">${tr('sign_up')}</button>`;
 
     return `<div style="background:${bg};border:1px solid ${color}50;border-radius:18px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden">
       <div style="position:absolute;top:-20px;right:-20px;font-size:90px;opacity:.06;pointer-events:none">${t.emoji}</div>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
         <div style="flex:1;min-width:0;padding-right:8px">
           <p style="font-size:11px;color:${color};font-weight:800;letter-spacing:2px;font-family:'Barlow Condensed',sans-serif;margin-bottom:4px">${t.emoji} ${t.nombre}</p>
-          <p style="font-size:26px;font-weight:900;color:#fff;font-family:'Barlow Condensed',sans-serif;line-height:1;margin-bottom:6px">${fmtFecha(parseFecha(fecha))}</p>
+          <p style="font-size:26px;font-weight:900;color:#fff;font-family:'Barlow Condensed',sans-serif;line-height:1;margin-bottom:6px">${fmtFecha(parseFecha(fechaFinal))}</p>
           <p style="font-size:11px;color:var(--muted)">🕐 ${conv&&conv.hora?conv.hora:'20:00'} hs &nbsp;·&nbsp; ${conv?(conv.convocados_estado||[]).filter(x=>x.estado==='convocado').length:0} convocados</p>
         </div>
         <div style="flex-shrink:0">${badge}</div>
       </div>
       ${myStatus}${cta}
+      ${activeConvs.length > 1 ? `
+        <div style="margin-top:10px;padding:10px 12px;background:#0d0d1a;border:1px solid ${color}40;border-radius:10px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:10px;color:#5a5a7a;letter-spacing:1px">PRÓXIMA FECHA</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;color:${color}">${fmtFechaCorta(activeConvs[1].fecha)}</div>
+          </div>
+          ${ME&&ME.admin
+            ? `<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${activeConvs[1].fecha}'})" style="padding:7px 12px;border-radius:8px;border:1px solid ${color}60;background:transparent;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;cursor:pointer">GESTIONAR</button>`
+            : `<span style="font-size:11px;color:#5a5a7a">${activeConvs[1].estado==='confirmado'?'✓ CONFIRMADO':'Convocatoria abierta'}</span>`
+          }
+        </div>
+      ` : ''}
       ${(()=>{
         if(!conv||conv.estado!=='confirmado'||ME?.admin) return '';
         const ea=conv.equipo_a||[], eb=conv.equipo_b||[];
@@ -710,16 +1080,16 @@ async function sHome(){
   // Panel quick-access
   const adminTiles = ME&&ME.admin?`
     <div style="margin:16px 0 6px">
-      <p style="font-size:10px;color:var(--dim);font-weight:800;letter-spacing:2.5px;margin-bottom:8px">ADMINISTRACIÓN</p>
+      <p style="font-size:10px;color:var(--dim);font-weight:800;letter-spacing:2.5px;margin-bottom:8px">${tr('admin_section')}</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
         <div onclick="go('/players')" style="background:var(--card);border:1px solid #f5c51830;border-radius:12px;padding:12px 10px;cursor:pointer;display:flex;align-items:center;gap:10px">
           <span style="font-size:20px">👥</span><div><p style="font-size:12px;font-weight:900;color:#f5c518;font-family:'Barlow Condensed',sans-serif">JUGADORES</p><p style="font-size:10px;color:var(--dim)">${js.length} en plantilla</p></div>
         </div>
         <div onclick="go('/ranking')" style="background:var(--card);border:1px solid #00ff8830;border-radius:12px;padding:12px 10px;cursor:pointer;display:flex;align-items:center;gap:10px">
-          <span style="font-size:20px">🏆</span><div><p style="font-size:12px;font-weight:900;color:#00ff88;font-family:'Barlow Condensed',sans-serif">RANKING</p><p style="font-size:10px;color:var(--dim)">Tabla general</p></div>
+          <span style="font-size:20px">🏆</span><div><p style="font-size:12px;font-weight:900;color:#00ff88;font-family:'Barlow Condensed',sans-serif">${tr('ranking')}</p><p style="font-size:10px;color:var(--dim)">${tr('general_table')}</p></div>
         </div>
         <div onclick="go('/historial')" style="background:var(--card);border:1px solid #c084fc30;border-radius:12px;padding:12px 10px;cursor:pointer;display:flex;align-items:center;gap:10px">
-          <span style="font-size:20px">📋</span><div><p style="font-size:12px;font-weight:900;color:#c084fc;font-family:'Barlow Condensed',sans-serif">HISTORIAL</p><p style="font-size:10px;color:var(--dim)">Partidos jugados</p></div>
+          <span style="font-size:20px">📋</span><div><p style="font-size:12px;font-weight:900;color:#c084fc;font-family:'Barlow Condensed',sans-serif">${tr('history')}</p><p style="font-size:10px;color:var(--dim)">${tr('matches_played')}</p></div>
         </div>
         <div onclick="go('/cargar-resultado')" style="background:var(--card);border:1px solid #00d4ff30;border-radius:12px;padding:12px 10px;cursor:pointer;display:flex;align-items:center;gap:10px">
           <span style="font-size:20px">📊</span><div><p style="font-size:12px;font-weight:900;color:#00d4ff;font-family:'Barlow Condensed',sans-serif">RESULTADO</p><p style="font-size:10px;color:var(--dim)">Cargar partido</p></div>
@@ -730,10 +1100,10 @@ async function sHome(){
   const playerTiles = ME&&!ME.admin?`
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0 6px">
       <div onclick="go('/ranking')" style="background:var(--card);border:1px solid #00ff8830;border-radius:12px;padding:12px 10px;cursor:pointer;display:flex;align-items:center;gap:10px">
-        <span style="font-size:20px">🏆</span><div><p style="font-size:12px;font-weight:900;color:#00ff88;font-family:'Barlow Condensed',sans-serif">RANKING</p><p style="font-size:10px;color:var(--dim)">Tabla general</p></div>
+        <span style="font-size:20px">🏆</span><div><p style="font-size:12px;font-weight:900;color:#00ff88;font-family:'Barlow Condensed',sans-serif">${tr('ranking')}</p><p style="font-size:10px;color:var(--dim)">${tr('general_table')}</p></div>
       </div>
       <div onclick="go('/historial')" style="background:var(--card);border:1px solid #c084fc30;border-radius:12px;padding:12px 10px;cursor:pointer;display:flex;align-items:center;gap:10px">
-        <span style="font-size:20px">📋</span><div><p style="font-size:12px;font-weight:900;color:#c084fc;font-family:'Barlow Condensed',sans-serif">HISTORIAL</p><p style="font-size:10px;color:var(--dim)">Partidos jugados</p></div>
+        <span style="font-size:20px">📋</span><div><p style="font-size:12px;font-weight:900;color:#c084fc;font-family:'Barlow Condensed',sans-serif">${tr('history')}</p><p style="font-size:10px;color:var(--dim)">${tr('matches_played')}</p></div>
       </div>
     </div>`:'';
 
@@ -922,7 +1292,7 @@ async function sHome(){
 // ═══════ PLAYERS ═══════
 async function sPlayers(){if(!ME||!ME.admin){go('/home');return;}
   setContent(loading('Cargando jugadores...'));
-  const js=(await getAll('jugadores')).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+  const js=(await getJugadores(false)).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
   window._PLS=js;window._PF='ALL';
   // Build rank map from general ranking
   const allRk = await getAll('ranking').catch(()=>[]);
@@ -951,7 +1321,7 @@ async function sPlayers(){if(!ME||!ME.admin){go('/home');return;}
       </div>
     </div>`;
   }
-  setContent(`<div class="screen up" style="padding:44px 15px 18px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px">
     <div><p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">👥 PLANTILLA</p>
       <h2 style="font-size:19px;font-family:'Barlow Condensed',sans-serif">${js.length} JUGADORES</h2></div>
@@ -1097,7 +1467,7 @@ async function sPForm(p){
 function renderPF(){
   const pb=['ARQ','JUG'].map(p=>{const pc=PC[p]||'#00d4ff',s=FS.pos===p;return`<button onclick="setFP('${p}')" id="pb${p}" style="padding:11px 8px;border-radius:9px;cursor:pointer;border:2px solid ${s?pc:'#2a2a3e'};background:${s?pc+'18':'#0d0d1a'};color:${s?pc:'var(--dim)'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;width:100%">${p==='ARQ'?'Arquero':'Jugador'}</button>`;}).join('');
   const pv={id:'0',nombre:FS.nombre||'NUEVO',pos:FS.pos,convocado:FS.conv,foto:FS.foto,rating:75,stats:{}};
-  setContent(`<div class="screen up" style="padding:44px 15px 18px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
   <button class="bk" onclick="go(-1)" style="margin-bottom:13px">← VOLVER</button>
   <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">${FS.mode==='create'?'➕ NUEVO JUGADOR':'✏️ EDITAR JUGADOR'}</h2>
   <label class="lbl">NOMBRE *</label>
@@ -1105,17 +1475,18 @@ function renderPF(){
   <label class="lbl">POSICIÓN</label>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">${pb}</div>
   <label class="lbl">ESTADO</label>
-  <button id="cvb" onclick="togCV()" style="width:100%;padding:12px;border-radius:9px;cursor:pointer;margin-bottom:14px;border:1.5px solid ${FS.conv?'#00ff88':'#ff4444'};background:${FS.conv?'#00ff8813':'#ff444413'};color:${FS.conv?'#00ff88':'#ff4444'};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px">${FS.conv?'✓ CONVOCADO':'✗ NO CONVOCADO'}</button>
+  <button id="cvb" onclick="togCV()" style="width:100%;padding:12px;border-radius:9px;cursor:pointer;margin-bottom:14px;border:1.5px solid ${FS.conv?'#00ff88':'#ff4444'};background:${FS.conv?'#00ff8813':'#ff444413'};color:${FS.conv?'#00ff88':'#ff4444'};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px">${FS.conv?tr('convoked'):'✗ NO CONVOCADO'}</button>
   <label class="lbl">FOTO</label>
   <div id="fpv" style="margin-bottom:7px">${FS.foto?`<img src="${FS.foto}" style="width:100%;height:160px;object-fit:cover;border-radius:9px;margin-bottom:7px"/>`:''}</div>
   <input type="file" id="finp" accept="image/*" style="display:none" onchange="hdFoto(this)"/>
   <button class="btn btn-dim" onclick="document.getElementById('finp').click()" style="margin-bottom:14px">📷 ${FS.foto?'CAMBIAR':'SUBIR FOTO'}</button>
   ${FS.mode==='create'?`<label class="lbl">VISTA PREVIA</label><div id="cpv" style="display:flex;justify-content:center;margin-bottom:14px">${card(pv,'md')}</div>`:''}
   <button class="btn btn-gold" onclick="savePl()">${FS.mode==='create'?'✨ CREAR JUGADOR':'💾 GUARDAR CAMBIOS'}</button>
+  ${ME?.jid===FS.id || !FS.id ? window.sLangSelector() : ''}
   </div>`);
 }
 window.setFP=function(p){FS.pos=p;['ARQ','JUG'].forEach(pp=>{const b=document.getElementById('pb'+pp);if(!b)return;const pc=PC[pp]||'#00d4ff',s=pp===p;b.style.borderColor=s?pc:'#2a2a3e';b.style.background=s?pc+'18':'#0d0d1a';b.style.color=s?pc:'var(--dim)';});updPv();};
-window.togCV=function(){FS.conv=!FS.conv;const b=document.getElementById('cvb');if(!b)return;b.style.borderColor=FS.conv?'#00ff88':'#ff4444';b.style.background=FS.conv?'#00ff8813':'#ff444413';b.style.color=FS.conv?'#00ff88':'#ff4444';b.textContent=FS.conv?'✓ CONVOCADO':'✗ NO CONVOCADO';};
+window.togCV=function(){FS.conv=!FS.conv;const b=document.getElementById('cvb');if(!b)return;b.style.borderColor=FS.conv?'#00ff88':'#ff4444';b.style.background=FS.conv?'#00ff8813':'#ff444413';b.style.color=FS.conv?'#00ff88':'#ff4444';b.textContent=FS.conv?tr('convoked'):'✗ NO CONVOCADO';};
 window.hdFoto=function(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{FS.foto=ev.target.result;const p=document.getElementById('fpv');if(p)p.innerHTML=`<img src="${FS.foto}" style="width:100%;height:160px;object-fit:cover;border-radius:9px;margin-bottom:7px"/>`;updPv();};r.readAsDataURL(f);};
 window.updPv=function(){const el=document.getElementById('cpv');if(!el)return;el.innerHTML=card({id:'0',nombre:FS.nombre||'NUEVO',pos:FS.pos,convocado:FS.conv,foto:FS.foto,rating:75,stats:{}},'md');};
 window.savePl=async function(){
@@ -1135,169 +1506,157 @@ window.savePl=async function(){
 
 // ═══════ RANKING ═══════
 async function sRanking(p){
-  setContent(loading('Cargando ranking...'));
-  const[ts,allR,js]=await Promise.all([getAll('torneos'),getAll('ranking'),getAll('jugadores')]);
+  setContent(loading(tr('loading')));
+  const[ts,allR,js]=await Promise.all([getAll('torneos'),getAll('ranking'),getJugadores(true)]);
   const jMap={};js.forEach(j=>jMap[j.id]=j);
-
-  // view: 'general' | torneo id
   const view = p.view || 'general';
 
-  // Build unified totals per player
-  const totals={};
-  allR.forEach(e=>{
-    if(!totals[e.jid]) totals[e.jid]={jid:e.jid,pts:0,g:0,c:0,f:0,t1:0,t2:0};
-    totals[e.jid].pts += e.pts||0;
-    totals[e.jid].g   += e.g||0;
-    totals[e.jid].c   += e.c||0;
-    totals[e.jid].f   += e.f||0;
-    // per-torneo pts for breakdown
-    totals[e.jid][e.tid] = (totals[e.jid][e.tid]||0) + (e.pts||0);
-  });
+  // Build ranking tabs per torneo
+  const activeTorneos = CURRENT_TORNEO ? [CURRENT_TORNEO] : ts.filter(t=>t.estado!=='archivado');
 
-  // Filter by torneo if not general
-  let ranked;
-  if(view==='general'){
-    ranked = Object.values(totals).sort((a,b)=>b.pts-a.pts||b.g-a.g||b.f-a.f);
+  const tabs = activeTorneos.map(t=>`
+    <button onclick="go('/ranking',{view:'${t.id}'})"
+      style="padding:8px 14px;border-radius:8px;border:none;background:${view===t.id?t.color||'#f5c518':'#1a1a2e'};color:${view===t.id?'#000':'#a0a0b8'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;cursor:pointer;white-space:nowrap">
+      ${t.emoji||'⚽'} ${t.nombre.split(' ').slice(0,2).join(' ')}
+    </button>`).join('');
+
+  // Render ranking for selected view
+  let rankHTML = '';
+
+  if(view==='general') {
+    // Cross-torneo general ranking (individual only)
+    const indivTorneos = ts.filter(t=>t.ranking_tipo!=='equipo');
+    const totals = {};
+    allR.filter(r=>r.jid&&indivTorneos.some(t=>t.id===r.tid)).forEach(r=>{
+      if(!totals[r.jid]) totals[r.jid]={jid:r.jid,pts:0,g:0,c:0,f:0};
+      totals[r.jid].pts+=r.pts; totals[r.jid].g+=r.g;
+      totals[r.jid].c+=r.c; totals[r.jid].f+=r.f;
+    });
+    const sorted = Object.values(totals).sort((a,b)=>b.pts-a.pts||b.g-a.g);
+    rankHTML = renderRankingTable(sorted, jMap, null);
   } else {
-    ranked = allR.filter(e=>e.tid===view).sort((a,b)=>b.pts-a.pts||(b.g||0)-(a.g||0));
+    const torneo = ts.find(t=>t.id===view);
+    const tRk = allR.filter(r=>r.tid===view);
+    if(torneo?.ranking_tipo==='equipo') {
+      // Equipo ranking
+      const eqTotals = {};
+      tRk.filter(r=>r.equipo_id).forEach(r=>{
+        if(!eqTotals[r.equipo_id]) eqTotals[r.equipo_id]={equipo_id:r.equipo_id,equipo_nombre:r.equipo_nombre,pts:0,g:0,c:0,f:0};
+        eqTotals[r.equipo_id].pts+=r.pts; eqTotals[r.equipo_id].g+=r.g;
+        eqTotals[r.equipo_id].c+=r.c;
+      });
+      const sorted = Object.values(eqTotals).sort((a,b)=>b.pts-a.pts||b.g-a.g);
+      rankHTML = renderEquipoRankingTable(sorted, torneo);
+    } else {
+      // Individual ranking for this torneo
+      const sorted = tRk.filter(r=>r.jid).sort((a,b)=>b.pts-a.pts||b.g-a.g);
+      rankHTML = renderRankingTable(sorted, jMap, torneo);
+    }
   }
 
-  // Tab buttons
-  const tabs = [
-    {id:'general', label:'🌐 GENERAL', color:'#f5c518'},
-    ...ts.map(t=>({id:t.id, label:t.emoji+' '+t.dia, color:t.id==='t1'?'#00d4ff':'#ff69b4'}))
-  ];
-  const tabBtns = tabs.map(t=>{
-    const active = view===t.id;
-    return `<button onclick="go('/ranking',{view:'${t.id}'})" style="padding:8px 12px;border-radius:20px;cursor:pointer;border:1px solid ${active?t.color:'#2a2a3e'};background:${active?t.color+'20':'#0d0d1a'};color:${active?t.color:'var(--dim)'};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10px;white-space:nowrap;flex-shrink:0">${t.label}</button>`;
-  }).join('');
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
+    <div style="margin-bottom:16px">
+      <p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">🏆 ${tr('ranking')}</p>
+    </div>
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px">
+      <button onclick="go('/ranking',{view:'general'})"
+        style="padding:8px 14px;border-radius:8px;border:none;background:${view==='general'?'#f5c518':'#1a1a2e'};color:${view==='general'?'#000':'#a0a0b8'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;cursor:pointer;white-space:nowrap">
+        🌐 ${tr('general_table')}
+      </button>
+      ${tabs}
+    </div>
+    ${rankHTML}
+  </div>${renderNav()}`);
+}
 
-  const M=['🥇','🥈','🥉'],MC=['#FFD700','#C0C0C0','#CD7F32'];
+function renderRankingTable(rows, jMap, torneo) {
+  if(!rows.length) return `<p style="color:#5a5a7a;text-align:center;padding:20px">${tr('no_data')}</p>`;
+  const color = torneo?.color || '#f5c518';
+  return `<table style="width:100%;border-collapse:collapse">
+    <thead><tr style="font-size:10px;color:#5a5a7a;letter-spacing:1px">
+      <td style="padding:6px 4px">#</td>
+      <td style="padding:6px 4px">JUGADOR</td>
+      <td style="padding:6px 4px;text-align:center">${tr('pts')}</td>
+      <td style="padding:6px 4px;text-align:center">${tr('played')}</td>
+      <td style="padding:6px 4px;text-align:center">${tr('won_short')}</td>
+      <td style="padding:6px 4px;text-align:center">${tr('fig')}</td>
+    </tr></thead>
+    <tbody>${rows.map((r,i)=>{
+      const j = jMap[r.jid];
+      const isMe = ME?.jid===r.jid;
+      return `<tr style="border-top:1px solid #1a1a2e${isMe?';background:#f5c51808':''}">
+        <td style="padding:10px 4px;font-size:14px;color:${i<3?color:'#5a5a7a'};font-weight:900">${i+1}</td>
+        <td style="padding:10px 4px">
+          ${j?.foto?`<img src="${j.foto}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px" onerror="this.style.display='none'"/>`:''}
+          <span style="font-size:13px;color:${isMe?color:'#e0e0e0'};font-weight:${isMe?'900':'400'}">${j?.nombre||r.jid}</span>
+        </td>
+        <td style="padding:10px 4px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:${color}">${r.pts}</td>
+        <td style="padding:10px 4px;text-align:center;font-size:13px;color:#5a5a7a">${r.c}</td>
+        <td style="padding:10px 4px;text-align:center;font-size:13px;color:#5a5a7a">${r.g}</td>
+        <td style="padding:10px 4px;text-align:center;font-size:13px;color:#5a5a7a">${r.f||0}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
 
-  // Extra col for general view: show t1/t2 breakdown
-  const isGeneral = view==='general';
+function renderEquipoRankingTable(rows, torneo) {
+  if(!rows.length) return `<p style="color:#5a5a7a;text-align:center;padding:20px">${tr('no_data')}</p>`;
+  const color = torneo?.color || '#f5c518';
+  return `<table style="width:100%;border-collapse:collapse">
+    <thead><tr style="font-size:10px;color:#5a5a7a;letter-spacing:1px">
+      <td style="padding:6px 4px">#</td>
+      <td style="padding:6px 4px">EQUIPO</td>
+      <td style="padding:6px 4px;text-align:center">${tr('pts')}</td>
+      <td style="padding:6px 4px;text-align:center">${tr('played')}</td>
+      <td style="padding:6px 4px;text-align:center">${tr('won_short')}</td>
+    </tr></thead>
+    <tbody>${rows.map((r,i)=>`<tr style="border-top:1px solid #1a1a2e">
+      <td style="padding:10px 4px;font-size:14px;color:${i<3?color:'#5a5a7a'};font-weight:900">${i+1}</td>
+      <td style="padding:10px 4px;font-size:13px;color:#e0e0e0;font-weight:${i===0?'900':'400'}">${r.equipo_nombre||'Equipo'}</td>
+      <td style="padding:10px 4px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:${color}">${r.pts}</td>
+      <td style="padding:10px 4px;text-align:center;font-size:13px;color:#5a5a7a">${r.c}</td>
+      <td style="padding:10px 4px;text-align:center;font-size:13px;color:#5a5a7a">${r.g}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
 
-  function makeRow(e,i){
-    const j=jMap[e.jid];if(!j)return'';
-    const pc=PC[j.pos]||'#f5c518';
-    const av=j.foto
-      ?`<img src="${j.foto}" style="width:100%;height:100%;object-fit:cover" alt=""/>`
-      :`<span style="font-family:'Barlow Condensed',sans-serif;font-weight:900;color:#fff;font-size:13px">${(j.nombre||'?')[0]}</span>`;
-    const pts = e.pts||0, g=e.g||0, c=e.c||0, f=e.f||0;
-    const t1pts = e.t1||0, t2pts = e.t2||0;
 
-    // highlight top 3 rows
-    const rowBg = i===0?'linear-gradient(90deg,#2a1e0088,transparent)':i===1?'linear-gradient(90deg,#1e1e1e88,transparent)':i===2?'linear-gradient(90deg,#1a100088,transparent)':'transparent';
 
-    return `<div style="display:grid;grid-template-columns:32px 1fr 40px 28px 28px 28px;padding:10px 13px;border-bottom:1px solid #2a2a3e38;align-items:center;background:${rowBg}">
-      <div style="text-align:center">
-        ${i<3
-          ? `<span style="font-size:18px">${M[i]}</span>`
-          : `<span style="font-size:12px;font-weight:900;color:var(--dim);font-family:'Barlow Condensed',sans-serif">${i+1}</span>`
-        }
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;overflow:hidden">
-        <div style="width:32px;height:32px;border-radius:16px;border:2px solid ${i<3?MC[i]:pc+'55'};overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,${pc}28,${pc}0e);display:flex;align-items:center;justify-content:center">${av}</div>
-        <div style="overflow:hidden;min-width:0">
-          <p style="font-size:12px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${j.nombre}</p>
-          <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
-            <span style="font-size:9px;color:${pc};font-weight:700;letter-spacing:1px">${j.pos==='ARQ'?'Arquero':'Jugador'}</span>
-            ${isGeneral && (t1pts||t2pts) ? `<span style="font-size:9px;color:#5a5a7a">🌙${t1pts} ☀️${t2pts}</span>` : ''}
-          </div>
-        </div>
-      </div>
-      <div style="text-align:center">
-        <span style="font-size:16px;font-weight:900;color:#f5c518;font-family:'Barlow Condensed',sans-serif;text-shadow:0 0 8px #f5c51840">${pts}</span>
-      </div>
-      <span style="text-align:center;font-size:11px;font-weight:800;color:#a0a0b8;font-family:'Barlow Condensed',sans-serif">${g}</span>
-      <span style="text-align:center;font-size:11px;font-weight:800;color:#a0a0b8;font-family:'Barlow Condensed',sans-serif">${c}</span>
-      <span style="text-align:center;font-size:11px;font-weight:800;color:#00ff88;font-family:'Barlow Condensed',sans-serif">${f}</span>
-    </div>`;
+// Generate all match dates for a torneo between ini and fin
+// t.dia can be 'Miércoles', 'Sábado', or 'Miércoles y Sábados' etc.
+function fixtureFor(t, maxDates=30) {
+  if(!t || !t.ini || !t.fin) return [];
+  const diasSemana = {'lunes':1,'martes':2,'miércoles':3,'jueves':4,'viernes':5,'sábado':6,'domingo':0,
+                      'miercoles':3,'sabado':6};
+  // Parse target weekdays (support multiple: "Miércoles y Sábados")
+  const diaStr = (t.dia||'').toLowerCase();
+  const targetDays = [];
+  for(const [k,v] of Object.entries(diasSemana)) {
+    if(diaStr.includes(k)) { if(!targetDays.includes(v)) targetDays.push(v); }
   }
-
-  const rows = ranked.map(makeRow).join('');
-  const subtitle = view==='general' ? `${ranked.length} jugadores · todos los torneos` : ts.find(t=>t.id===view)?.nombre||'';
-
-  setContent(`<div class="screen up" style="padding:44px 0 18px">
-  <div style="padding:0 15px 12px;display:flex;align-items:center;justify-content:space-between">
-    <div>
-      <p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">🏆 TABLA</p>
-      <h2 style="font-size:20px;font-family:'Barlow Condensed',sans-serif">RANKING</h2>
-      <p style="font-size:10px;color:var(--dim);margin-top:1px">${subtitle}</p>
-    </div>
-    <button class="btn btn-dim" onclick="go('/ranking',{view:'${view}'})" style="width:auto;padding:7px 11px;font-size:11px">🔄</button>
-  </div>
-
-  <!-- tabs -->
-  <div style="display:flex;gap:6px;padding:0 15px;overflow-x:auto;margin-bottom:12px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
-    ${tabBtns}
-  </div>
-
-  <!-- header -->
-  <div style="display:grid;grid-template-columns:32px 1fr 40px 28px 28px 28px;padding:7px 13px;background:var(--surf);border-top:1px solid #f5c51838;border-bottom:1px solid #f5c51838;margin-bottom:2px">
-    ${['#','JUGADOR','PTS','G','C','⭐'].map((h,i)=>`<span style="font-size:9px;color:#f5c518;font-weight:800;letter-spacing:1px;font-family:'Barlow Condensed',sans-serif;text-align:${i===1?'left':'center'}">${h}</span>`).join('')}
-  </div>
-
-  ${rows || `<div style="text-align:center;padding:40px 0;color:var(--dim)"><p style="font-size:36px;margin-bottom:8px">🏆</p><p style="font-size:14px">Sin partidos cargados aún.</p></div>`}
-
-  <div style="margin:14px 15px;padding:11px 14px;background:var(--card);border-radius:11px;border:1px solid #f5c51828">
-    <p style="font-size:9px;color:#f5c518;font-weight:800;letter-spacing:2px;text-align:center;margin-bottom:6px">SISTEMA DE PUNTOS</p>
-    <div style="display:flex;justify-content:space-around">
-      <span style="font-size:10px;color:var(--dim)">✓ Convocado +1</span>
-      <span style="font-size:10px;color:var(--dim)">🏆 Ganó +3</span>
-      <span style="font-size:10px;color:var(--dim)">⭐ Figura +2</span>
-    </div>
-  </div>
-  </div>`);
+  if(!targetDays.length) return [];
+  const ini = parseFecha(t.ini);
+  const fin = parseFecha(t.fin);
+  if(!ini || !fin) return [];
+  const dates = [];
+  const d = new Date(ini);
+  while(d <= fin && dates.length < maxDates) {
+    if(targetDays.includes(d.getDay())) {
+      const dd = d.getDate().toString().padStart(2,'0');
+      const mm = (d.getMonth()+1).toString().padStart(2,'0');
+      const yy = d.getFullYear();
+      dates.push(dd+'/'+mm+'/'+yy);
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return dates;
 }
-
-// ═══════ PRÓXIMO PARTIDO / CONVOCATORIA ═══════
-
-// Helper: parse fecha string 'DD/MM/YYYY' → Date
-function parseFecha(f) {
-  if(!f) return null;
-  const p = f.split('/');
-  return new Date(+p[2], +p[1]-1, +p[0]);
-}
-function fmtFechaCorta(f) {
-  if(!f) return '';
-  const [dd,mm,aa] = f.split('/').map(Number);
-  const d = new Date(aa,mm-1,dd);
-  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  return `${dias[d.getDay()]} ${dd} de ${meses[mm-1]}`;
-}
-function fmtFecha(d) {
-  if(!d) return '';
-  return d.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
-}
-function diasHasta(fecha) {
-  const hoy = new Date(); hoy.setHours(0,0,0,0);
-  const d = parseFecha(fecha); if(!d) return 999;
-  d.setHours(0,0,0,0);
-  return Math.round((d-hoy)/(1000*60*60*24));
-}
-
-// Get next partido for each torneo
-function proximoPartido(tid) {
-  // t1=miércoles(3), t2=sábados(6)
-  const diaSemana = tid==='t1' ? 3 : 6;
-  const hoy = new Date(); hoy.setHours(0,0,0,0);
-  const d = new Date(hoy);
-  let diff = diaSemana - d.getDay();
-  if(diff <= 0) diff += 7;
-  d.setDate(d.getDate() + diff);
-  return d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'/');
-}
-
-// Main screen: shows both torneos next match
-function fixtureFor(t){const ds=t.id==='t1'?3:6;const[dI,mI,aI]=t.ini.split('/').map(Number);const[dF,mF,aF]=t.fin.split('/').map(Number);const end=new Date(aF,mF-1,dF);const d=new Date(aI,mI-1,dI);let df=ds-d.getDay();if(df<0)df+=7;d.setDate(d.getDate()+df);const r=[];while(d<=end){r.push(d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'/'));d.setDate(d.getDate()+7);}return r;}
 
 async function sProximos() {
   setContent(loading('Cargando partidos...'));
   let [ts, js, convs, partidos] = await Promise.all([
     getAll('torneos').catch(()=>[]),
-    getAll('jugadores').catch(()=>[]),
+    getJugadores(false).catch(()=>[]),
     getAll('convocatorias').catch(()=>[]),
     getAll('partidos').catch(()=>[])
   ]);
@@ -1356,7 +1715,7 @@ async function sProximos() {
             <button onclick="toggleConvocado('${conv.id}','desconvocar')" style="padding:10px 14px;border-radius:9px;cursor:pointer;background:#ff444418;border:1px solid #ff4444;color:#ff4444;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;white-space:nowrap">✗ No voy</button>
           </div>`;
         } else {
-          btn=`<button onclick="toggleConvocado('${conv.id}','convocar')" style="width:100%;padding:12px;border-radius:9px;cursor:pointer;background:${color}18;border:1px solid ${color};color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:1px">✋ ME APUNTO</button>`;
+          btn=`<button onclick="toggleConvocado('${conv.id}','convocar')" style="width:100%;padding:12px;border-radius:9px;cursor:pointer;background:${color}18;border:1px solid ${color};color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:1px">${tr('sign_up')}</button>`;
         }
       }
 
@@ -1379,7 +1738,7 @@ async function sProximos() {
       const dot=played?`<span style="width:8px;height:8px;border-radius:50%;background:#00ff88;display:inline-block"></span>`:isN&&next2[0].fecha===fecha?`<span style="width:8px;height:8px;border-radius:50%;background:${color};display:inline-block;box-shadow:0 0 6px ${color}"></span>`:isN?`<span style="width:8px;height:8px;border-radius:50%;background:${color}80;display:inline-block"></span>`:`<span style="width:8px;height:8px;border-radius:50%;background:var(--dim);display:inline-block"></span>`;
       const rc=d<0?'var(--dim)':isN?'var(--txt)':'#6a6a8a';
       const rw=isN?'700':'400';
-      const tag=played?`<span style="font-size:9px;color:#00ff88;font-family:'Barlow Condensed',sans-serif;font-weight:700">${played.gan==='EMPATE'?'EMP':played.gan==='a'?'A':'B'}</span>`:conv?.estado==='confirmado'?`<span style="font-size:9px;color:#00ff88;font-family:'Barlow Condensed',sans-serif;font-weight:700">CONF</span>`:conv?`<span style="font-size:9px;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:700">EN PROC.</span>`:'';
+      const tag=played?`<span style="font-size:9px;color:#00ff88;font-family:'Barlow Condensed',sans-serif;font-weight:700">${played.gan===tr('draw')?'EMP':played.gan==='a'?'A':'B'}</span>`:conv?.estado==='confirmado'?`<span style="font-size:9px;color:#00ff88;font-family:'Barlow Condensed',sans-serif;font-weight:700">CONF</span>`:conv?`<span style="font-size:9px;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:700">EN PROC.</span>`:'';
       return `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #1a1a2a">${dot}<span style="font-size:11px;color:var(--dim);min-width:22px;font-family:'Barlow Condensed',sans-serif">J${j}</span><span style="font-size:13px;color:${rc};font-weight:${rw};flex:1">${fmt(fecha)}</span>${tag}</div>`;
     }).join('');
 
@@ -1418,7 +1777,7 @@ async function sProximos() {
     </div>`;
   }).join('');
 
-  setContent(`<div class="screen up" style="padding:44px 15px 18px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;letter-spacing:1px;margin-bottom:16px">⚽ PARTIDOS</h2>
     ${votingBanners}
     ${html}
@@ -1493,7 +1852,7 @@ async function sConvocatoria(p) {
   setContent(loading('Cargando...'));
   const [ts, allJs, convs, partidos] = await Promise.all([
     getAll('torneos').catch(()=>[]),
-    getAll('jugadores').catch(()=>[]),
+    getJugadores(false).catch(()=>[]),
     getAll('convocatorias').catch(()=>[]),
     getAll('partidos').catch(()=>[])
   ]);
@@ -1616,8 +1975,8 @@ function setEstado(jid, estado) {
 function estadoBadge(estado) {
   const cfg = {
     convocado:    {bg:'#00d4ff15',border:'#00d4ff50',color:'#00d4ff', label:'CONVOCADO'},
-    no_convocado: {bg:'#2a2a3e',  border:'#3a3a5e',  color:'#6a6a8a', label:'NO CONVOCADO'},
-    suspendido:   {bg:'#ff444415',border:'#ff444450',color:'#ff4444', label:'SUSPENDIDO'},
+    no_convocado: {bg:'#2a2a3e',  border:'#3a3a5e',  color:'#6a6a8a', label:tr('no_convoked')},
+    suspendido:   {bg:'#ff444415',border:'#ff444450',color:'#ff4444', label:tr('suspended')},
   };
   const s = cfg[estado]||cfg['no_convocado'];
   return `<span style="background:${s.bg};border:1px solid ${s.border};color:${s.color};padding:2px 8px;border-radius:999px;font-size:9px;font-weight:800;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">${s.label}</span>`;
@@ -1730,8 +2089,8 @@ function renderConv() {
     } else {
       myBlock=`<div style="background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:14px;text-align:center;margin-bottom:14px">
         <p style="font-size:26px;margin-bottom:6px">🪑</p>
-        <p style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;color:var(--dim)">NO CONVOCADO</p>
-        <button onclick="playerSetEstado('convocado')" style="margin-top:10px;background:#00d4ff18;border:1px solid #00d4ff;color:#00d4ff;border-radius:8px;padding:10px 24px;cursor:pointer;font-size:13px;font-weight:900;font-family:'Barlow Condensed',sans-serif;width:100%">✋ ME APUNTO</button>
+        <p style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;color:var(--dim)">${tr('no_convoked')}</p>
+        <button onclick="playerSetEstado('convocado')" style="margin-top:10px;background:#00d4ff18;border:1px solid #00d4ff;color:#00d4ff;border-radius:8px;padding:10px 24px;cursor:pointer;font-size:13px;font-weight:900;font-family:'Barlow Condensed',sans-serif;width:100%">${tr('sign_up')}</button>
       </div>`;
     }
 
@@ -2147,7 +2506,7 @@ window.toggleAsistencia = async function(cvid, accion) {
 // ═══════ HISTORIAL ═══════
 async function sHistorial(){
   setContent(loading('Cargando historial...'));
-  const [partidos, js, ts] = await Promise.all([getAll('partidos'), getAll('jugadores'), getAll('torneos')]);
+  const [partidos, js, ts] = await Promise.all([getAll('partidos'), getJugadores(false), getAll('torneos')]);
   const jMap={}; js.forEach(j=>jMap[j.id]=j);
   const tMap={}; ts.forEach(t=>tMap[t.id]=t);
 
@@ -2164,8 +2523,8 @@ async function sHistorial(){
         const color = p.tid==='t1'?'#00d4ff':'#c084fc';
         const conv = Array.isArray(p.conv)?p.conv:[];
         const fig  = p.fig ? jMap[p.fig] : null;
-        const ganLabel = p.gan==='EMPATE'
-          ? `<span style="color:#00ff88;font-weight:900;font-family:'Barlow Condensed',sans-serif;font-size:14px">EMPATE</span>`
+        const ganLabel = p.gan===tr('draw')
+          ? `<span style="color:#00ff88;font-weight:900;font-family:'Barlow Condensed',sans-serif;font-size:14px">${tr('draw')}</span>`
           : `<span style="color:#f5c518;font-weight:900;font-family:'Barlow Condensed',sans-serif;font-size:14px">GANÓ EQUIPO ${p.gan}</span>`;
         const figHtml = fig
           ? `<p style="font-size:10px;color:#f5c518;margin-top:2px;font-family:'Barlow Condensed',sans-serif">⭐ FIGURA: ${fig.nombre}</p>`
@@ -2208,7 +2567,7 @@ async function sMatch() {
 
   const [ts, allJs, convs, partidos] = await Promise.all([
     getAll('torneos').catch(()=>[]),
-    getAll('jugadores').catch(()=>[]),
+    getJugadores(false).catch(()=>[]),
     getAll('convocatorias').catch(()=>[]),
     getAll('partidos').catch(()=>[])
   ]);
@@ -2389,7 +2748,7 @@ async function sMatch() {
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:18px;margin:16px 0 12px">⭐ FIGURA DEL PARTIDO</h2>
     ${votingCards}` : '';
 
-  setContent(`<div class="screen up" style="padding:44px 15px 18px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
     <button class="bk" onclick="go('/home')" style="margin-bottom:14px">← VOLVER</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">📊 CARGAR RESULTADO</h2>
     ${cardsOrphaned}
@@ -2401,12 +2760,17 @@ async function sMatch() {
 
 // Shared recalc logic used by cerrarVotacion and manual button
 async function _recalcularSilencioso() {
-  const [partidos, convs] = await Promise.all([
-    getAll('partidos'), getAll('convocatorias')
+  const [partidos, convs, torneos, equipos] = await Promise.all([
+    getAll('partidos'), getAll('convocatorias'),
+    getAll('torneos').catch(()=>[]),
+    getAll('equipos').catch(()=>[])
   ]);
-  await _req('DELETE', '/ranking?id=neq.NONE');
+  invalidateCache('ranking'); await _req('DELETE', '/ranking?id=neq.NONE');
   const newRk = {};
+
   for(const p of partidos) {
+    const torneo = torneos.find(t=>t.id===p.tid);
+    const isEquipoRanking = torneo?.ranking_tipo === 'equipo';
     const pEa = Array.isArray(p.equipo_a) ? p.equipo_a : [];
     const pEb = Array.isArray(p.equipo_b) ? p.equipo_b : [];
     const cv = convs.find(cv=>cv.tid===p.tid&&cv.fecha===p.fecha);
@@ -2417,27 +2781,44 @@ async function _recalcularSilencioso() {
     const gan = p.gan;
     const ganadores = gan==='a'?ea:gan==='b'?eb:[];
     const isEmpate = gan==='EMPATE';
-    for(const jid of jugaron) {
-      const key = jid+'|'+p.tid;
-      if(!newRk[key]) newRk[key]={jid,tid:p.tid,pts:0,g:0,c:0,f:0};
-      newRk[key].pts += 1;
-      newRk[key].c  += 1;
-      if(ganadores.includes(jid)){ newRk[key].pts+=3; newRk[key].g+=1; }
-      if(isEmpate) newRk[key].pts += 1;
-    }
-    if(p.fig) {
-      const key = p.fig+'|'+p.tid;
-      if(!newRk[key]) newRk[key]={jid:p.fig,tid:p.tid,pts:0,g:0,c:0,f:0};
-      newRk[key].pts += 2;
-      newRk[key].f  += 1;
+
+    if(isEquipoRanking) {
+      const torEquipos = equipos.filter(e=>e.tid===p.tid);
+      const eqA = torEquipos.find(e=>(e.jugadores||[]).some(jid=>ea.includes(jid)));
+      const eqB = torEquipos.find(e=>(e.jugadores||[]).some(jid=>eb.includes(jid)));
+      const eqGanador = gan==='a'?eqA:gan==='b'?eqB:null;
+      for(const eq of [eqA,eqB].filter(Boolean)) {
+        const key = 'eq_'+eq.id+'|'+p.tid;
+        if(!newRk[key]) newRk[key]={equipo_id:eq.id,equipo_nombre:eq.nombre,tid:p.tid,pts:0,g:0,c:0,f:0};
+        newRk[key].pts += 1; newRk[key].c += 1;
+        if(eqGanador?.id===eq.id){ newRk[key].pts+=3; newRk[key].g+=1; }
+        if(isEmpate) newRk[key].pts += 1;
+      }
+    } else {
+      for(const jid of jugaron) {
+        const key = jid+'|'+p.tid;
+        if(!newRk[key]) newRk[key]={jid,tid:p.tid,pts:0,g:0,c:0,f:0};
+        newRk[key].pts += 1; newRk[key].c += 1;
+        if(ganadores.includes(jid)){ newRk[key].pts+=3; newRk[key].g+=1; }
+        if(isEmpate) newRk[key].pts += 1;
+      }
+      if(p.fig) {
+        const key = p.fig+'|'+p.tid;
+        if(!newRk[key]) newRk[key]={jid:p.fig,tid:p.tid,pts:0,g:0,c:0,f:0};
+        newRk[key].pts += 2; newRk[key].f += 1;
+      }
     }
   }
-  await Promise.all(Object.values(newRk).map(row=>upsertRow('ranking',{id:uid(),...row})));
+  await Promise.all(Object.values(newRk).map(row=>upsertRow('ranking',{
+    id:uid(), jid:row.equipo_id?null:row.jid, tid:row.tid,
+    pts:row.pts, g:row.g, c:row.c, f:row.f,
+    equipo_id:row.equipo_id||null, equipo_nombre:row.equipo_nombre||null
+  })));
 }
 
 window.recalcularRanking = async function() {
   if(!confirm('¿Recalcular el ranking completo desde cero? Esto borrará los puntos actuales y los recalculará en base a los partidos guardados.')) return;
-  setContent(loading('Recalculando...'));
+  setContent(loading(tr('loading')));
   try {
     await _recalcularSilencioso();
     alert('✅ Ranking recalculado correctamente.');
@@ -2558,7 +2939,7 @@ window.guardarResultado = async function(cvid) {
       conv: jugaron,
       equipo_a: ea,
       equipo_b: eb,
-      gan: res.gan==='empate' ? 'EMPATE' : res.gan,
+      gan: res.gan==='empate' ? tr('draw') : res.gan,
       fig: null,
       votos_figura: [],
       votacion_abierta: false
@@ -2600,7 +2981,7 @@ async function sAyuda() {
           </div>
           <div style="background:#2a2a3e;border:1px solid #3a3a5e;border-radius:9px;padding:10px 12px">
             <p style="font-size:11px;font-weight:900;color:#6a6a8a;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;margin-bottom:3px">🪑 NO CONVOCADO</p>
-            <p style="font-size:11px;color:var(--muted);line-height:1.5">No vas a jugar. Podés anotarte tocando <strong style="color:#fff">✋ ME APUNTO</strong>.</p>
+            <p style="font-size:11px;color:var(--muted);line-height:1.5">No vas a jugar. Podés anotarte tocando <strong style="color:#fff">${tr('sign_up')}</strong>.</p>
           </div>
           <div style="background:#ff44440e;border:1px solid #ff444430;border-radius:9px;padding:10px 12px">
             <p style="font-size:11px;font-weight:900;color:#ff4444;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;margin-bottom:3px">🚫 SUSPENDIDO</p>
@@ -2627,9 +3008,9 @@ async function sAyuda() {
         <p style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:#fff;margin-bottom:6px">📱 Dónde encontrar todo</p>
         <ul style="font-size:12px;color:var(--muted);line-height:1.9;padding-left:16px">
           <li><strong style="color:#fff">INICIO</strong> — próximos partidos y tu estado actual</li>
-          <li><strong style="color:#fff">PARTIDOS</strong> — fixture completo y botón para anotarte</li>
-          <li><strong style="color:#fff">RANKING</strong> — tabla general y por torneo</li>
-          <li><strong style="color:#fff">AYUDA</strong> — esta pantalla</li>
+          <li><strong style="color:#fff">${tr('matches')}</strong> — fixture completo y botón para anotarte</li>
+          <li><strong style="color:#fff">${tr('ranking')}</strong> — tabla general y por torneo</li>
+          <li><strong style="color:#fff">${tr('help_title')}</strong> — esta pantalla</li>
         </ul>
       </div>
 
@@ -2646,7 +3027,7 @@ async function sAyuda() {
       <div style="margin-bottom:14px">
         <p style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:#fff;margin-bottom:6px">📋 Gestionar convocatoria</p>
         <ol style="font-size:12px;color:var(--muted);line-height:1.9;padding-left:16px">
-          <li>Ir a <strong style="color:#fff">PARTIDOS</strong> → <strong style="color:#fff">⚽ GESTIONAR CONVOCATORIA</strong></li>
+          <li>Ir a <strong style="color:#fff">${tr('matches')}</strong> → <strong style="color:#fff">⚽ GESTIONAR CONVOCATORIA</strong></li>
           <li>Cambiá el estado de cada jugador: <span style="color:#00d4ff">Convocar</span>, <span style="color:#6a6a8a">No va</span> o <span style="color:#ff4444">Suspender</span></li>
           <li>Asigná convocados al <strong style="color:#fff">Equipo A</strong> o <strong style="color:#fff">Equipo B</strong></li>
           <li>Elegí las camisetas del partido</li>
@@ -2662,7 +3043,7 @@ async function sAyuda() {
       <div style="margin-bottom:14px">
         <p style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:#fff;margin-bottom:6px">🏆 Cargar resultado</p>
         <ol style="font-size:12px;color:var(--muted);line-height:1.9;padding-left:16px">
-          <li>Ir a <strong style="color:#fff">INICIO</strong> → <strong style="color:#fff">CARGAR RESULTADO</strong></li>
+          <li>Ir a <strong style="color:#fff">INICIO</strong> → <strong style="color:#fff">${tr('load_result')}</strong></li>
           <li>Seleccioná torneo y jugadores que participaron</li>
           <li>Indicá quién ganó (o empate)</li>
           <li>Elegí la figura del partido ⭐</li>
@@ -2683,7 +3064,7 @@ async function sAyuda() {
       </div>
     </div>`;
 
-  setContent(`<div class="screen up" style="padding:44px 15px 18px">
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
     <div style="margin-bottom:16px">
       <p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">❓ GUÍA</p>
       <h2 style="font-size:22px;font-family:'Barlow Condensed',sans-serif">AYUDA</h2>
@@ -2716,6 +3097,10 @@ window.sSetupSQL = function() {
     "  ini text not null,",
     "  fin text not null,",
     "  emoji text not null default '⚽'",
+    "  deporte text not null default 'Fútbol',",
+    "  max_jugadores int not null default 16,",
+    "  color text not null default '#f5c518',",
+    "  estado text not null default 'activo',",
     ");",
     "create table if not exists ranking (",
     "  id text primary key,",
@@ -2770,7 +3155,25 @@ window.sSetupSQL = function() {
     "alter table partidos add column if not exists votacion_abierta boolean not null default false;",
     "alter table jugadores add column if not exists clave text;",
     "alter table partidos add column if not exists equipo_a jsonb not null default '[]';",
-    "alter table partidos add column if not exists equipo_b jsonb not null default '[]';"
+    "alter table partidos add column if not exists equipo_b jsonb not null default '[]';",
+    "alter table torneos add column if not exists deporte text not null default 'Fútbol';",
+    "alter table torneos add column if not exists max_jugadores int not null default 16;",
+    "alter table torneos add column if not exists color text not null default '#f5c518';",
+    "alter table torneos add column if not exists estado text not null default 'activo';",
+    "create table if not exists sport_configs (id text primary key, nombre text not null, deporte text not null, jugadores_por_equipo int not null default 5, posiciones jsonb not null default '[\"Jugador\"]', ranking_tipo text not null default 'individual', icono text not null default '⚽', activo boolean not null default true);",
+    "alter table sport_configs enable row level security;",
+    "do $$ begin if not exists (select 1 from pg_policies where policyname='pub_sport_configs') then create policy pub_sport_configs on sport_configs for all using (true) with check (true); end if; end $$;",
+    "alter table torneos add column if not exists sport_config_id text;",
+    "alter table torneos add column if not exists formato text not null default 'liga';",
+    "alter table torneos add column if not exists jugadores_por_equipo int not null default 5;",
+    "alter table torneos add column if not exists ranking_tipo text not null default 'individual';",
+    "alter table torneos add column if not exists app_estado text not null default 'productivo';",
+    "create table if not exists equipos (id text primary key, tid text not null, nombre text not null, jugadores jsonb not null default '[]', color text not null default '#f5c518', created_at bigint not null default 0);",
+    "alter table equipos enable row level security;",
+    "do $$ begin if not exists (select 1 from pg_policies where policyname='pub_equipos') then create policy pub_equipos on equipos for all using (true) with check (true); end if; end $$;",
+    "alter table ranking add column if not exists equipo_id text;",
+    "alter table ranking add column if not exists equipo_nombre text;"
+
   ].join("\n");
   window._sql = sql;
 
@@ -2854,13 +3257,546 @@ window.afterSQL = async function() {
   });
 })();
 
+
+// ═══════ TORNEO SELECTION ═══════
+// Currently active tournament for this session
+let CURRENT_TORNEO = null;
+
+// Get color for torneo display
+function torneoColor(t) { return t.color || '#f5c518'; }
+
+// ── Screen: Tournament selector ───────────────────────────────────────────────
+async function sTorneos() {
+  const torneos = await getAll('torneos').catch(()=>[]);
+  const activos = torneos.filter(t => t.estado !== 'archivado');
+  const historial = torneos.filter(t => t.estado === 'archivado');
+
+  const makeCard = (t, archived) => {
+    const color = torneoColor(t);
+    const isActive = CURRENT_TORNEO?.id === t.id;
+    return `<div style="background:linear-gradient(135deg,#0d0d1a,#12122a);border:2px solid ${isActive ? color : '#2a2a3e'};border-radius:16px;padding:16px;margin-bottom:12px;cursor:pointer" onclick="${archived ? `window.verHistorialTorneo('${t.id}')` : `window.entrarTorneo('${t.id}')`}">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+        <span style="font-size:28px">${t.emoji||'⚽'}</span>
+        <div style="flex:1">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:${color};letter-spacing:1px">${t.nombre}</div>
+          <div style="font-size:11px;color:#5a5a7a;margin-top:2px">${t.deporte||'Fútbol'} ${t.jugadores_por_equipo?t.jugadores_por_equipo+'v'+t.jugadores_por_equipo:''} · ${t.dia||''} · ${t.ini||''} → ${t.fin||''}</div>
+          <div style="font-size:10px;color:#3a3a5e;margin-top:2px">${t.formato==='liga'?'🏆 Liga':t.formato==='copa'?'🥊 Copa':t.formato==='grupos'?'🌍 Grupos':'🔄 Round robin'} · ${t.ranking_tipo==='equipo'?'👥 Por equipo':'👤 Individual'}</div>
+        </div>
+        <span style="font-size:10px;font-weight:900;color:${archived?'#5a5a7a':color};background:${archived?'#1a1a2e':''+color+'22'};padding:4px 8px;border-radius:6px;letter-spacing:1px">${archived ? tr('tour_finished_label') : tr('tour_active_label')}</span>
+      </div>
+      ${isActive ? `<div style="font-size:11px;color:${color};text-align:right">▶ TORNEO ACTUAL</div>` : ''}
+      ${!archived ? `<div style="display:flex;gap:8px;margin-top:8px">
+        <button onclick="event.stopPropagation();window.entrarTorneo('${t.id}')" style="flex:1;padding:10px;border-radius:9px;border:none;background:${color};color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer">${tr('tour_enter')}</button>
+        ${ME?.admin && t.ranking_tipo==='equipo' ? `<button onclick="event.stopPropagation();go('/equipos',{tid:'${t.id}'})" style="padding:10px 14px;border-radius:9px;border:2px solid ${color};background:transparent;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">👥</button>` : ''}
+        ${ME?.admin ? `<button onclick="event.stopPropagation();go('/torneo-edit',{tid:'${t.id}'})" style="padding:10px 14px;border-radius:9px;border:2px solid #3a3a5e;background:transparent;color:#a0a0b8;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">✏️</button>` : ''}
+      </div>` : ''}
+      ${archived ? `<button onclick="event.stopPropagation();window.verHistorialTorneo('${t.id}')" style="width:100%;padding:10px;border-radius:9px;border:1px solid #3a3a5e;background:transparent;color:#a0a0b8;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer;margin-top:8px">${tr('tour_view')}</button>` : ''}
+    </div>`;
+  };
+
+  const adminBtn = ME?.admin ? `<button onclick="go('/torneo-new')" style="width:100%;padding:12px;border-radius:10px;border:2px dashed #f5c518;background:transparent;color:#f5c518;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer;margin-bottom:16px">${tr('tour_create')}</button>` : '';
+
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
+    <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:26px;margin-bottom:4px">${tr('tour_select')}</h2>
+    <p style="font-size:12px;color:#5a5a7a;margin-bottom:16px">Elegí el torneo para ver y participar</p>
+    ${adminBtn}
+    <div style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:3px;margin-bottom:10px">${tr('tour_active')}</div>
+    ${activos.length ? activos.map(t2=>makeCard(t2,false)).join('') : `<p style="color:#5a5a7a;text-align:center;padding:20px 0">${tr('tour_no_active')}</p>`}
+    ${historial.length ? `
+      <div style="font-size:10px;font-weight:900;color:#5a5a7a;letter-spacing:3px;margin:16px 0 10px">${tr('tour_finished')}</div>
+      ${historial.map(t2=>makeCard(t2,true)).join('')}
+    ` : ''}
+  </div>${renderNav()}`);
+}
+
+window.entrarTorneo = function(tid) {
+  const stored = JSON.parse(localStorage.getItem('emb_torneos')||'{}');
+  stored[ME?.jid||'admin'] = tid;
+  localStorage.setItem('emb_torneos', JSON.stringify(stored));
+  // Update CURRENT_TORNEO
+  getAll('torneos').then(ts => {
+    CURRENT_TORNEO = ts.find(t=>t.id===tid) || null;
+    go('/home');
+  });
+};
+
+window.verHistorialTorneo = function(tid) {
+  go('/ranking', {tid, historial:true});
+};
+
+// Restore last selected torneo on login
+async function restoreTorneo() {
+  const torneos = await getAll('torneos').catch(()=>[]);
+  const stored = JSON.parse(localStorage.getItem('emb_torneos')||'{}');
+  const lastId = stored[ME?.jid||'admin'];
+  if(lastId) {
+    CURRENT_TORNEO = torneos.find(t=>t.id===lastId) || null;
+  }
+  if(!CURRENT_TORNEO) {
+    // Default to first active torneo
+    CURRENT_TORNEO = torneos.find(t=>t.estado!=='archivado') || torneos[0] || null;
+  }
+}
+
+// ── Admin: Create/Edit Tournament ─────────────────────────────────────────────
+async function sTorneoForm(tid) {
+  const [torneos, sportConfigs] = await Promise.all([
+    getAll('torneos').catch(()=>[]),
+    getAll('sport_configs').catch(()=>[])
+  ]);
+  const existing = tid ? torneos.find(t=>t.id===tid) : null;
+  const val = (field, def='') => existing ? (existing[field]||def) : def;
+  const dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  const formatos = [
+    {id:'liga', label:'🏆 Liga (todos contra todos)'},
+    {id:'copa', label:'🥊 Copa (eliminación directa)'},
+    {id:'grupos', label:'🌍 Grupos + eliminatorias'},
+    {id:'round_robin', label:'🔄 Round robin + final'},
+  ];
+  const colors = ['#f5c518','#00ff88','#00d4ff','#ff4444','#ff8c00','#a855f7','#ec4899'];
+
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
+    <button class="bk" onclick="go('/torneos')" style="margin-bottom:14px">${tr('back')}</button>
+    <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">${existing ? tr('tour_edit') : tr('tour_create')}</h2>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_name')} *</label>
+    <input id="tf-nombre" value="${val('nombre')}" placeholder="Ej: Liga Verano 2026" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px;box-sizing:border-box"/>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">PLANTILLA DE DEPORTE</label>
+    <div id="sc-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 14px">
+      ${sportConfigs.filter(sc=>sc.activo).map(sc=>`
+        <button type="button" onclick="window.selectSportConfig('${sc.id}')" id="sc-btn-${sc.id}"
+          style="padding:10px 8px;border-radius:10px;border:2px solid ${val('sport_config_id')===sc.id?'#f5c518':'#3a3a5e'};background:${val('sport_config_id')===sc.id?'#f5c51815':'#0d0d1a'};color:${val('sport_config_id')===sc.id?'#f5c518':'#a0a0b8'};cursor:pointer;text-align:center">
+          <div style="font-size:22px">${sc.icono}</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;margin-top:4px">${sc.nombre}</div>
+          <div style="font-size:10px;color:#5a5a7a;margin-top:2px">${sc.jugadores_por_equipo}v${sc.jugadores_por_equipo}</div>
+        </button>
+      `).join('')}
+    </div>
+    <input id="tf-sport-config-id" value="${val('sport_config_id','sc1')}" style="display:none"/>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">FORMATO</label>
+    <select id="tf-formato" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px">
+      ${formatos.map(f=>`<option value="${f.id}" ${val('formato','liga')===f.id?'selected':''}>${f.label}</option>`).join('')}
+    </select>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">TIPO DE RANKING</label>
+    <div style="display:flex;gap:8px;margin:8px 0 14px">
+      <button type="button" id="btn-rk-individual" onclick="window.setRankingTipo('individual')"
+        style="flex:1;padding:10px;border-radius:9px;border:2px solid ${val('ranking_tipo','individual')==='individual'?'#f5c518':'#3a3a5e'};background:${val('ranking_tipo','individual')==='individual'?'#f5c51815':'transparent'};color:${val('ranking_tipo','individual')==='individual'?'#f5c518':'#a0a0b8'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">
+        👤 Individual
+      </button>
+      <button type="button" id="btn-rk-equipo" onclick="window.setRankingTipo('equipo')"
+        style="flex:1;padding:10px;border-radius:9px;border:2px solid ${val('ranking_tipo','individual')==='equipo'?'#f5c518':'#3a3a5e'};background:${val('ranking_tipo','individual')==='equipo'?'#f5c51815':'transparent'};color:${val('ranking_tipo','individual')==='equipo'?'#f5c518':'#a0a0b8'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">
+        👥 Por equipo
+      </button>
+    </div>
+    <input id="tf-ranking-tipo" value="${val('ranking_tipo','individual')}" style="display:none"/>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_day')}</label>
+    <select id="tf-dia" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px">
+      ${dias.map(d=>`<option value="${d}" ${val('dia')===d?'selected':''}>${d}</option>`).join('')}
+    </select>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div>
+        <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_start')}</label>
+        <input id="tf-ini" value="${val('ini')}" placeholder="DD/MM/AAAA" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin-top:6px;box-sizing:border-box"/>
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_end')}</label>
+        <input id="tf-fin" value="${val('fin')}" placeholder="DD/MM/AAAA" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin-top:6px;box-sizing:border-box"/>
+      </div>
+    </div>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_max')}</label>
+    <input id="tf-max" type="number" value="${val('max_jugadores','16')}" min="2" max="100" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px;box-sizing:border-box"/>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">${tr('tour_color')}</label>
+    <div style="display:flex;gap:10px;margin:8px 0 14px;flex-wrap:wrap">
+      ${colors.map(col=>`<button onclick="document.querySelectorAll('.color-btn').forEach(b=>b.style.border='2px solid transparent');this.style.border='2px solid #fff';document.getElementById('tf-color').value='${col}'" class="color-btn" style="width:36px;height:36px;border-radius:50%;background:${col};border:${val('color','#f5c518')===col?'2px solid #fff':'2px solid transparent'};cursor:pointer"></button>`).join('')}
+      <input id="tf-color" value="${val('color','#f5c518')}" style="display:none"/>
+    </div>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">EMOJI</label>
+    <input id="tf-emoji" value="${val('emoji','⚽')}" maxlength="4" style="width:80px;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:20px;text-align:center;margin:6px 0 20px"/>
+
+    <button onclick="window.guardarTorneo('${tid||''}')" style="width:100%;padding:14px;border-radius:10px;border:none;background:linear-gradient(135deg,#f5c518,#c9a000);color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;cursor:pointer;margin-bottom:8px">${tr('tour_save')}</button>
+    ${existing ? `
+      <button onclick="window.toggleMantenimiento('${tid}')" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid ${existing?.app_estado==='mantenimiento'?'#00ff88':'#ff8c00'};background:transparent;color:${existing?.app_estado==='mantenimiento'?'#00ff88':'#ff8c00'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer;margin-bottom:8px">${existing?.app_estado==='mantenimiento'?'✅ ACTIVAR APP':'🔧 PONER EN MANTENIMIENTO'}</button>
+      <button onclick="window.archivarTorneo('${tid}')" style="width:100%;padding:12px;border-radius:10px;border:1px solid #ff4444;background:transparent;color:#ff4444;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">${tr('tour_archive')}</button>
+    ` : ''}
+  </div>${renderNav()}`);
+}
+
+window.selectSportConfig = function(scId) {
+  document.getElementById('tf-sport-config-id').value = scId;
+  // Update button styles
+  document.querySelectorAll('[id^="sc-btn-"]').forEach(btn => {
+    const isSelected = btn.id === 'sc-btn-' + scId;
+    btn.style.border = '2px solid ' + (isSelected ? '#f5c518' : '#3a3a5e');
+    btn.style.background = isSelected ? '#f5c51815' : '#0d0d1a';
+    btn.style.color = isSelected ? '#f5c518' : '#a0a0b8';
+  });
+  // Auto-set ranking tipo based on sport config
+  getAll('sport_configs').then(scs => {
+    const sc = scs.find(s=>s.id===scId);
+    if(sc) window.setRankingTipo(sc.ranking_tipo || 'individual');
+  }).catch(()=>{});
+};
+
+window.setRankingTipo = function(tipo) {
+  document.getElementById('tf-ranking-tipo').value = tipo;
+  ['individual','equipo'].forEach(t => {
+    const btn = document.getElementById('btn-rk-' + t);
+    if(!btn) return;
+    const isSelected = t === tipo;
+    btn.style.border = '2px solid ' + (isSelected ? '#f5c518' : '#3a3a5e');
+    btn.style.background = isSelected ? '#f5c51815' : 'transparent';
+    btn.style.color = isSelected ? '#f5c518' : '#a0a0b8';
+  });
+};
+
+window.guardarTorneo = async function(tid) {
+  const nombre = document.getElementById('tf-nombre')?.value?.trim();
+  if(!nombre){ alert('El nombre es obligatorio.'); return; }
+  const scId = document.getElementById('tf-sport-config-id')?.value || 'sc1';
+  // Get sport config data
+  const scs = await getAll('sport_configs').catch(()=>[]);
+  const sc = scs.find(s=>s.id===scId) || {deporte:'Fútbol', jugadores_por_equipo:5, icono:'⚽'};
+  const row = {
+    id: tid || uid(),
+    nombre,
+    deporte: sc.deporte,
+    sport_config_id: scId,
+    jugadores_por_equipo: sc.jugadores_por_equipo,
+    formato: document.getElementById('tf-formato')?.value || 'liga',
+    ranking_tipo: document.getElementById('tf-ranking-tipo')?.value || 'individual',
+    dia: document.getElementById('tf-dia')?.value || 'Sábado',
+    ini: document.getElementById('tf-ini')?.value || '',
+    fin: document.getElementById('tf-fin')?.value || '',
+    max_jugadores: parseInt(document.getElementById('tf-max')?.value||'16'),
+    color: document.getElementById('tf-color')?.value || '#f5c518',
+    emoji: document.getElementById('tf-emoji')?.value || sc.icono || '⚽',
+    estado: 'activo'
+  };
+  try {
+    await upsertRow('torneos', row);
+    go('/torneos');
+  } catch(e) { alert(tr('error') + _errMsg(e)); }
+};
+
+window.archivarTorneo = async function(tid) {
+  if(!confirm(tr('confirm_archive'))) return;
+  try {
+    const torneos = await getAll('torneos');
+    const torneo = torneos.find(t=>t.id===tid);
+    if(torneo) await upsertRow('torneos', {...torneo, estado:'archivado'});
+    if(CURRENT_TORNEO?.id === tid) CURRENT_TORNEO = null;
+    go('/torneos');
+  } catch(e) { alert(tr('error') + _errMsg(e)); }
+};
+
+
+// ═══════ EQUIPOS (team management for fixed-team tournaments) ═══════
+
+async function sEquipos(tid) {
+  const [torneo, equipos, jugadores] = await Promise.all([
+    getAll('torneos').then(ts=>ts.find(t=>t.id===tid)),
+    getAll('equipos').then(es=>es.filter(e=>e.tid===tid)),
+    getJugadores(false).catch(()=>[])
+  ]);
+  if(!torneo) { go('/torneos'); return; }
+
+  const jMap = {};
+  jugadores.forEach(j=>{ jMap[j.id]=j; });
+  const colors = ['#f5c518','#00ff88','#00d4ff','#ff4444','#ff8c00','#a855f7','#ec4899','#ffffff'];
+
+  const equipoCards = equipos.map(eq => {
+    const members = (eq.jugadores||[]).map(jid => jMap[jid]?.nombre || jid).join(', ');
+    return `<div style="background:#0d0d1a;border:2px solid ${eq.color||'#3a3a5e'};border-radius:14px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:${eq.color||'#f5c518'}">${eq.nombre}</div>
+        <div style="display:flex;gap:6px">
+          <button onclick="window.editEquipo('${eq.id}','${tid}')" style="padding:5px 10px;border-radius:7px;border:1px solid #3a3a5e;background:transparent;color:#a0a0b8;font-size:11px;cursor:pointer">✏️</button>
+          <button onclick="window.deleteEquipo('${eq.id}','${tid}')" style="padding:5px 10px;border-radius:7px;border:1px solid #ff444430;background:transparent;color:#ff4444;font-size:11px;cursor:pointer">🗑️</button>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#5a5a7a">${members || 'Sin jugadores asignados'}</div>
+    </div>`;
+  }).join('');
+
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
+    <button class="bk" onclick="go('/torneos')" style="margin-bottom:14px">${tr('back')}</button>
+    <div style="margin-bottom:16px">
+      <p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">👥 EQUIPOS</p>
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px">${torneo.nombre}</h2>
+    </div>
+    ${equipoCards || `<p style="color:#5a5a7a;text-align:center;padding:20px 0">No hay equipos creados aún.</p>`}
+    <button onclick="window.newEquipo('${tid}')" style="width:100%;padding:13px;border-radius:10px;border:2px dashed #f5c518;background:transparent;color:#f5c518;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer;margin-top:8px">+ NUEVO EQUIPO</button>
+  </div>${renderNav()}`);
+}
+
+window.newEquipo = function(tid) { go('/equipo-form', {tid, equipoId:''}); };
+window.editEquipo = function(eid, tid) { go('/equipo-form', {tid, equipoId:eid}); };
+window.deleteEquipo = async function(eid, tid) {
+  if(!confirm('¿Eliminar este equipo?')) return;
+  await _req('DELETE', '/equipos?id=eq.'+eid);
+  sEquipos(tid);
+};
+
+async function sEquipoForm(tid, equipoId) {
+  const [equipos, jugadores, torneos] = await Promise.all([
+    getAll('equipos').catch(()=>[]),
+    getJugadores(false).catch(()=>[]),
+    getAll('torneos').catch(()=>[])
+  ]);
+  const torneo = torneos.find(t=>t.id===tid);
+  const existing = equipoId ? equipos.find(e=>e.id===equipoId) : null;
+  const takenJids = equipos.filter(e=>e.id!==equipoId).flatMap(e=>e.jugadores||[]);
+  const available = jugadores.filter(j=>!takenJids.includes(j.id));
+  const maxPP = torneo?.jugadores_por_equipo || 2;
+  const selJids = existing?.jugadores || [];
+  const colors = ['#f5c518','#00ff88','#00d4ff','#ff4444','#ff8c00','#a855f7','#ec4899'];
+
+  const jugadoresGrid = available.map(j => {
+    const sel = selJids.includes(j.id);
+    return `<button type="button" id="jbtn-${j.id}" onclick="window.toggleJugadorEquipo('${j.id}',${maxPP})"
+      style="padding:8px 10px;border-radius:9px;border:2px solid ${sel?'#f5c518':'#3a3a5e'};background:${sel?'#f5c51815':'#0d0d1a'};color:${sel?'#f5c518':'#a0a0b8'};font-size:12px;cursor:pointer;text-align:left">
+      ${j.nombre}
+    </button>`;
+  }).join('');
+
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
+    <button class="bk" onclick="go('/equipos',{tid:'${tid}'})" style="margin-bottom:14px">${tr('back')}</button>
+    <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px;margin-bottom:16px">${existing?'EDITAR EQUIPO':'NUEVO EQUIPO'}</h2>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">NOMBRE DEL EQUIPO *</label>
+    <input id="eq-nombre" value="${existing?.nombre||''}" placeholder="Ej: Los Pumas" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 14px;box-sizing:border-box"/>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">COLOR</label>
+    <div style="display:flex;gap:8px;margin:8px 0 14px;flex-wrap:wrap">
+      ${colors.map(col=>`<button type="button" onclick="document.querySelectorAll('.eq-color-btn').forEach(b=>b.style.border='2px solid transparent');this.style.border='2px solid #fff';document.getElementById('eq-color').value='${col}'" class="eq-color-btn" style="width:32px;height:32px;border-radius:50%;background:${col};border:${(existing?.color||'#f5c518')===col?'2px solid #fff':'2px solid transparent'};cursor:pointer"></button>`).join('')}
+      <input id="eq-color" value="${existing?.color||'#f5c518'}" style="display:none"/>
+    </div>
+
+    <label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">JUGADORES (máx. ${maxPP})</label>
+    <input id="eq-jids" value='${JSON.stringify(selJids)}' style="display:none"/>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 20px">
+      ${jugadoresGrid}
+    </div>
+
+    <button onclick="window.guardarEquipo('${equipoId}','${tid}')" style="width:100%;padding:14px;border-radius:10px;border:none;background:linear-gradient(135deg,#f5c518,#c9a000);color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;cursor:pointer">GUARDAR EQUIPO</button>
+  </div>${renderNav()}`);
+}
+
+window.toggleJugadorEquipo = function(jid, maxPP) {
+  const input = document.getElementById('eq-jids');
+  let jids = JSON.parse(input.value || '[]');
+  const btn = document.getElementById('jbtn-'+jid);
+  if(jids.includes(jid)) {
+    jids = jids.filter(j=>j!==jid);
+    btn.style.border = '2px solid #3a3a5e';
+    btn.style.background = '#0d0d1a';
+    btn.style.color = '#a0a0b8';
+  } else {
+    if(jids.length >= maxPP) { alert('Máximo '+maxPP+' jugadores por equipo.'); return; }
+    jids.push(jid);
+    btn.style.border = '2px solid #f5c518';
+    btn.style.background = '#f5c51815';
+    btn.style.color = '#f5c518';
+  }
+  input.value = JSON.stringify(jids);
+};
+
+window.guardarEquipo = async function(equipoId, tid) {
+  const nombre = document.getElementById('eq-nombre')?.value?.trim();
+  if(!nombre) { alert('El nombre es obligatorio.'); return; }
+  const jids = JSON.parse(document.getElementById('eq-jids')?.value||'[]');
+  const row = {
+    id: equipoId || uid(),
+    tid,
+    nombre,
+    jugadores: jids,
+    color: document.getElementById('eq-color')?.value || '#f5c518',
+    created_at: Date.now()
+  };
+  try {
+    await upsertRow('equipos', row);
+    go('/equipos', {tid});
+  } catch(e) { alert(tr('error') + _errMsg(e)); }
+};
+
+
+// ═══════ HABILITAR CONVOCATORIAS ═══════
+async function sHabilitarFechas(tid) {
+  const [torneo, convs] = await Promise.all([
+    getAll('torneos').then(ts=>ts.find(t=>t.id===tid)),
+    getAll('convocatorias').catch(()=>[])
+  ]);
+  if(!torneo) { go('/home'); return; }
+
+  // Get fixture dates for this torneo
+  const allFechas = fixtureFor(torneo, 60);
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Only show future dates that don't already have an active convocatoria
+  const activeFechas = new Set(
+    convs.filter(cv=>cv.tid===tid && cv.estado!=='finalizado').map(cv=>cv.fecha)
+  );
+  const futureFechas = allFechas.filter(f => {
+    const d = parseFecha(f);
+    return d && d >= today && !activeFechas.has(f);
+  }).slice(0, 6); // show next 6 available
+
+  if(!futureFechas.length) {
+    setContent(`<div class="screen up" style="padding:76px 15px 90px">
+      <button class="bk" onclick="go('/home')" style="margin-bottom:14px">${tr('back')}</button>
+      <p style="color:#5a5a7a;text-align:center;padding:40px 0">No hay fechas disponibles para habilitar.</p>
+    </div>${renderNav()}`);
+    return;
+  }
+
+  const color = torneo.color || '#f5c518';
+
+  setContent(`<div class="screen up" style="padding:76px 15px 90px">
+    <button class="bk" onclick="go('/home')" style="margin-bottom:14px">${tr('back')}</button>
+    <div style="margin-bottom:20px">
+      <p style="font-size:10px;color:${color};font-weight:800;letter-spacing:3px">📅 HABILITAR FECHAS</p>
+      <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:22px">${torneo.nombre}</h2>
+      <p style="font-size:12px;color:#5a5a7a;margin-top:4px">Elegí cuántas fechas habilitar para convocatoria</p>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:20px">
+      <button id="btn-1fecha" onclick="window.setFechasCount(1)" style="flex:1;padding:14px;border-radius:12px;border:2px solid ${color};background:${color}20;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;cursor:pointer">
+        1 FECHA
+      </button>
+      <button id="btn-2fechas" onclick="window.setFechasCount(2)" style="flex:1;padding:14px;border-radius:12px;border:2px solid #3a3a5e;background:transparent;color:#5a5a7a;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;cursor:pointer">
+        2 FECHAS
+      </button>
+    </div>
+
+    <div id="fechas-preview" style="margin-bottom:20px">
+      ${futureFechas.slice(0,1).map((f,i) => `
+        <div style="background:#0d0d1a;border:2px solid ${color}40;border-radius:12px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+          <div style="width:36px;height:36px;border-radius:50%;background:${color}20;border:2px solid ${color};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;color:${color};font-size:14px">${i+1}</div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;color:#fff">${fmtFechaCorta(f)}</div>
+            <div style="font-size:11px;color:#5a5a7a">${f}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <button onclick="window.confirmarHabilitar('${tid}')" style="width:100%;padding:14px;border-radius:10px;border:none;background:linear-gradient(135deg,${color},${color}aa);color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;cursor:pointer">
+      ✅ HABILITAR CONVOCATORIA
+    </button>
+  </div>${renderNav()}`);
+
+  // Store state
+  window._habilitar = { tid, torneo, futureFechas, count: 1, color };
+}
+
+window.setFechasCount = function(n) {
+  if(!window._habilitar) return;
+  window._habilitar.count = n;
+  const { futureFechas, color } = window._habilitar;
+
+  // Update button styles
+  document.getElementById('btn-1fecha').style.border = `2px solid ${n===1?color:'#3a3a5e'}`;
+  document.getElementById('btn-1fecha').style.background = n===1 ? color+'20' : 'transparent';
+  document.getElementById('btn-1fecha').style.color = n===1 ? color : '#5a5a7a';
+  document.getElementById('btn-2fechas').style.border = `2px solid ${n===2?color:'#3a3a5e'}`;
+  document.getElementById('btn-2fechas').style.background = n===2 ? color+'20' : 'transparent';
+  document.getElementById('btn-2fechas').style.color = n===2 ? color : '#5a5a7a';
+
+  // Update preview
+  const preview = document.getElementById('fechas-preview');
+  if(preview) {
+    preview.innerHTML = futureFechas.slice(0,n).map((f,i) => `
+      <div style="background:#0d0d1a;border:2px solid ${color}40;border-radius:12px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+        <div style="width:36px;height:36px;border-radius:50%;background:${color}20;border:2px solid ${color};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;color:${color};font-size:14px">${i+1}</div>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;color:#fff">${fmtFechaCorta(f)}</div>
+          <div style="font-size:11px;color:#5a5a7a">${f}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+};
+
+window.confirmarHabilitar = async function(tid) {
+  const { torneo, futureFechas, count } = window._habilitar || {};
+  if(!torneo || !futureFechas) return;
+
+  const fechasToCreate = futureFechas.slice(0, count);
+  try {
+    for(const fecha of fechasToCreate) {
+      // Check if convocatoria already exists for this date
+      const existing = await getAll('convocatorias')
+        .then(cs => cs.find(c=>c.tid===tid && c.fecha===fecha))
+        .catch(()=>null);
+      if(!existing) {
+        await upsertRow('convocatorias', {
+          id: uid(), tid, fecha,
+          hora: '20:00',
+          estado: 'en_proceso',
+          equipo_a: [], equipo_b: [],
+          equipo_a_nombre: 'AJAX', equipo_b_nombre: 'ROMA',
+          quieren_jugar: [], convocados_estado: [],
+          camisetero_ciclo_idx: null,
+          created_at: Date.now()
+        });
+      }
+    }
+    alert(`✅ ${fechasToCreate.length === 1 ? '1 fecha habilitada' : '2 fechas habilitadas'} correctamente.`);
+    go('/home');
+  } catch(e) {
+    alert('Error: ' + _errMsg(e));
+  }
+};
+
+
+// ── Maintenance screen ────────────────────────────────────────────────────────
+function sMantenimiento(torneoNombre) {
+  const nombre = torneoNombre || 'la liga';
+  document.getElementById('app').innerHTML = `
+    <div style="min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;background:linear-gradient(180deg,#05050f,#0d0d1a,#05050f);text-align:center">
+      <div style="font-size:64px;margin-bottom:24px">🔧</div>
+      <h1 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;color:#f5c518;letter-spacing:3px;margin-bottom:12px">EN MANTENIMIENTO</h1>
+      <p style="font-size:15px;color:#a0a0b8;line-height:1.8;max-width:300px;margin-bottom:8px">
+        <strong style="color:#fff">${nombre}</strong> está siendo actualizada.
+      </p>
+      <p style="font-size:14px;color:#5a5a7a;line-height:1.8;max-width:300px;margin-bottom:32px">
+        En breve volverá a estar operativa. ¡Gracias por tu paciencia! ⚽
+      </p>
+      <button onclick="window.location.reload()" style="padding:13px 28px;border-radius:10px;border:2px solid #f5c518;background:transparent;color:#f5c518;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:2px;cursor:pointer">
+        🔄 REINTENTAR
+      </button>
+    </div>`;
+}
+
+window.toggleMantenimiento = async function(tid) {
+  try {
+    const torneos = await getAll('torneos');
+    const t = torneos.find(x=>x.id===tid);
+    if(!t) return;
+    const nuevoEstado = t.app_estado === 'mantenimiento' ? 'productivo' : 'mantenimiento';
+    await upsertRow('torneos', {...t, app_estado: nuevoEstado});
+    invalidateCache('torneos');
+    const label = nuevoEstado === 'mantenimiento' ? '🔧 EN MANTENIMIENTO' : '✅ PRODUCTIVO';
+    alert(label + ' — ' + t.nombre);
+    await render();
+  } catch(e) { alert('Error: ' + _errMsg(e)); }
+};
+
 // ── Boot ─────────────────────────────────────────────────────────────────────
 (async()=>{
   _CFG = {
     url: 'https://vecekftrreilocwrdqni.supabase.co',
     key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlY2VrZnRycmVpbG9jd3JkcW5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxODg0MjksImV4cCI6MjA4ODc2NDQyOX0.2HhAwKhESlkXBe5dNnk0vNuwlY31wWnPC2eJ0g5cQPw'
   };
-  setContent(loading('Conectando...'));
+  setContent(loading(tr('connecting')));
   try {
     await _req('GET', '/torneos?select=id&limit=1');
   } catch(e) {
