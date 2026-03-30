@@ -104,6 +104,12 @@ const I18N = {
     login_err_pass: 'Ingresá tu contraseña.',
     login_err_conn: 'Error de conexión: ',
     login_no_account: '¿No tenés cuenta?', login_register_link: 'Registrate',
+    login_forgot: 'Olvidé mi contraseña',
+    forgot_title: 'RECUPERAR CONTRASEÑA', forgot_desc: 'Ingresá tu email y te mandamos un link para restablecer la contraseña.',
+    forgot_btn: 'ENVIAR EMAIL', forgot_ok: '¡Listo! Revisá tu email para continuar.', forgot_back: 'Volver al inicio de sesión',
+    reset_title: 'NUEVA CONTRASEÑA', reset_new: 'Nueva contraseña (mín. 6 caracteres)',
+    reset_confirm: 'Confirmá la contraseña', reset_btn: 'GUARDAR CONTRASEÑA',
+    reset_ok: '¡Contraseña actualizada! Ya podés iniciar sesión.', reset_err_match: 'Las contraseñas no coinciden.',
     reg_title: 'CREAR CUENTA', reg_nombre: 'Nombre', reg_email: 'Email',
     reg_pass: 'Contraseña (mín. 6 caracteres)', reg_btn: 'CREAR CUENTA',
     reg_err_nombre: 'Ingresá tu nombre.', reg_err_email: 'Ingresá tu email.',
@@ -172,6 +178,12 @@ const I18N = {
     login_err_pass: 'Enter your password.',
     login_err_conn: 'Connection error: ',
     login_no_account: 'No account yet?', login_register_link: 'Sign up',
+    login_forgot: 'Forgot my password',
+    forgot_title: 'RESET PASSWORD', forgot_desc: 'Enter your email and we\'ll send you a link to reset your password.',
+    forgot_btn: 'SEND EMAIL', forgot_ok: 'Done! Check your email to continue.', forgot_back: 'Back to sign in',
+    reset_title: 'NEW PASSWORD', reset_new: 'New password (min. 6 characters)',
+    reset_confirm: 'Confirm password', reset_btn: 'SAVE PASSWORD',
+    reset_ok: 'Password updated! You can now sign in.', reset_err_match: 'Passwords don\'t match.',
     reg_title: 'CREATE ACCOUNT', reg_nombre: 'Name', reg_email: 'Email',
     reg_pass: 'Password (min. 6 characters)', reg_btn: 'CREATE ACCOUNT',
     reg_err_nombre: 'Enter your name.', reg_err_email: 'Enter your email.',
@@ -610,6 +622,14 @@ function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2
 function loading(msg){
   return`<div class="screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:100dvh"><div class="sp"></div><p style="color:var(--dim);font-size:13px">${msg}</p></div>`;
 }
+function showToast(msg,dur=2800){
+  var el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a2e;border:1px solid #00d4ff40;color:#fff;padding:10px 20px;border-radius:10px;font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:700;z-index:9999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='1';el.style.transform='translateX(-50%) translateY(0)';},10);
+  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateX(-50%) translateY(20px)';setTimeout(()=>el.remove(),300);},dur);
+}
 
 // ═══════ FIFA CARD ═══════
 function card(j,sz='md'){
@@ -655,7 +675,7 @@ function renderNav(){
   return torneoBar+`<nav class="nav">${items.map(x=>`<button class="ni${R===x.p||R.startsWith(x.p+'/')?' on':''}" onclick="go('${x.p}')"><span class="ni-ico">${x.i}</span>${x.l}</button>`).join('')}</nav>`;
 }
 window.go=function(p,params={}){
-  if(!ME&&p!=='/login'&&p!=='/setup'&&p!=='/register')p='/login';
+  if(!ME&&p!=='/login'&&p!=='/setup'&&p!=='/register'&&p!=='/forgot-password'&&p!=='/reset-password')p='/login';
   R=p;RP=params||{};
   render().catch(e=>{
     console.error('render error:',e);
@@ -697,10 +717,12 @@ window.guardarNovedades=async function(){
 
 async function render(){
   try{
-    if(!ME&&R!=='/login'&&R!=='/setup'&&R!=='/register'){R='/login';RP={};}
+    if(!ME&&R!=='/login'&&R!=='/setup'&&R!=='/register'&&R!=='/forgot-password'&&R!=='/reset-password'){R='/login';RP={};}
     if(R==='/setup'){sSetup();return;}
     if(R==='/login'){sLogin();return;}
     if(R==='/register'){sRegister();return;}
+    if(R==='/forgot-password'){sForgotPassword();return;}
+    if(R==='/reset-password'){sResetPassword();return;}
     // Check maintenance for non-admin players
     if(ME && !ME.admin) {
       try {
@@ -831,6 +853,9 @@ function sLogin(){
     <p style="font-size:12px;color:var(--dim);text-align:center;margin-top:16px">
       ${tr("login_no_account")} <a onclick="go('/register')" style="color:#f5c518;cursor:pointer;text-decoration:underline">${tr("login_register_link")}</a>
     </p>
+    <p style="font-size:12px;text-align:center;margin-top:8px">
+      <a onclick="go('/forgot-password')" style="color:#5a5a7a;cursor:pointer;text-decoration:underline">${tr("login_forgot")}</a>
+    </p>
     <div style="display:flex;justify-content:center;gap:10px;margin-top:20px">
       <button onclick="switchLang('es')" style="padding:10px 20px;border-radius:10px;border:2px solid ${LANG==="es"?"#f5c518":"#3a3a5e"};background:${LANG==="es"?"#f5c51820":"transparent"};color:${LANG==="es"?"#f5c518":"#5a5a7a"};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer;display:inline-flex;flex-direction:column;align-items:center;gap:4px">
         <img src="https://flagcdn.com/w40/es.png" width="28" height="20" style="border-radius:3px;display:block" alt="ES"/>
@@ -897,6 +922,83 @@ window.doRegister=async function(){
   else{
     errEl.textContent=res.msg||'Error al registrarse';errEl.style.display='block';
     if(btn){btn.textContent=tr('reg_btn');btn.disabled=false;}
+  }
+};
+
+// ── Pantalla Olvidé Contraseña ───────────────────────────────────────────────
+function sForgotPassword(){
+  setContent(`<div style="min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;background:linear-gradient(180deg,#05050f,#0d0d1a,#05050f)">
+  <div style="text-align:center;margin-bottom:28px">
+    <div style="font-size:44px;margin-bottom:8px">🔑</div>
+    <h1 style="font-size:24px;color:#f5c518;letter-spacing:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900">${tr('forgot_title')}</h1>
+    <p style="font-size:12px;color:var(--dim);margin-top:8px;max-width:280px">${tr('forgot_desc')}</p>
+  </div>
+  <div style="width:100%;max-width:340px">
+    <label class="lbl">EMAIL</label>
+    <input class="inp" id="fp-email" type="email" placeholder="tu@email.com" style="margin-bottom:16px" onkeydown="if(event.key==='Enter')doForgotPassword()"/>
+    <p id="fp-msg" style="font-size:12px;text-align:center;margin-bottom:10px;display:none"></p>
+    <button class="btn btn-gold" onclick="doForgotPassword()" style="font-size:15px;letter-spacing:2px">${tr('forgot_btn')}</button>
+    <p style="font-size:12px;color:var(--dim);text-align:center;margin-top:16px">
+      <a onclick="go('/login')" style="color:#5a5a7a;cursor:pointer;text-decoration:underline">${tr('forgot_back')}</a>
+    </p>
+  </div>
+  </div>`);
+  setTimeout(()=>{const el=document.getElementById('fp-email');if(el)el.focus();},100);
+}
+window.doForgotPassword=async function(){
+  const email=(document.getElementById('fp-email')?.value||'').trim();
+  const msgEl=document.getElementById('fp-msg');
+  const btn=document.querySelector('.btn-gold');
+  if(!email){msgEl.textContent='Ingresá tu email.';msgEl.style.color='#ff4444';msgEl.style.display='block';return;}
+  if(btn){btn.textContent='...';btn.disabled=true;}
+  try{
+    const redirectTo=window.location.origin+window.location.pathname;
+    await _authReq('POST','/recover',{email,redirect_to:redirectTo});
+    msgEl.textContent=tr('forgot_ok');msgEl.style.color='#00ff88';msgEl.style.display='block';
+    if(btn){btn.textContent=tr('forgot_btn');btn.disabled=false;}
+  }catch(e){
+    msgEl.textContent=_errMsg(e);msgEl.style.color='#ff4444';msgEl.style.display='block';
+    if(btn){btn.textContent=tr('forgot_btn');btn.disabled=false;}
+  }
+};
+
+// ── Pantalla Restablecer Contraseña ──────────────────────────────────────────
+function sResetPassword(){
+  setContent(`<div style="min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;background:linear-gradient(180deg,#05050f,#0d0d1a,#05050f)">
+  <div style="text-align:center;margin-bottom:28px">
+    <div style="font-size:44px;margin-bottom:8px">🔐</div>
+    <h1 style="font-size:24px;color:#f5c518;letter-spacing:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900">${tr('reset_title')}</h1>
+  </div>
+  <div style="width:100%;max-width:340px">
+    <label class="lbl">${tr('reset_new').toUpperCase()}</label>
+    <input class="inp" id="rp-new" type="password" placeholder="••••••••" style="margin-bottom:11px" onkeydown="if(event.key==='Enter')document.getElementById('rp-confirm').focus()"/>
+    <label class="lbl">${tr('reset_confirm').toUpperCase()}</label>
+    <input class="inp" id="rp-confirm" type="password" placeholder="••••••••" style="margin-bottom:16px" onkeydown="if(event.key==='Enter')doResetPassword()"/>
+    <p id="rp-msg" style="font-size:12px;text-align:center;margin-bottom:10px;display:none"></p>
+    <button class="btn btn-gold" onclick="doResetPassword()" style="font-size:15px;letter-spacing:2px">${tr('reset_btn')}</button>
+  </div>
+  </div>`);
+  setTimeout(()=>{const el=document.getElementById('rp-new');if(el)el.focus();},100);
+}
+window.doResetPassword=async function(){
+  const np=(document.getElementById('rp-new')?.value||'');
+  const cp=(document.getElementById('rp-confirm')?.value||'');
+  const msgEl=document.getElementById('rp-msg');
+  const btn=document.querySelector('.btn-gold');
+  if(np.length<6){msgEl.textContent=tr('reg_err_pass');msgEl.style.color='#ff4444';msgEl.style.display='block';return;}
+  if(np!==cp){msgEl.textContent=tr('reset_err_match');msgEl.style.color='#ff4444';msgEl.style.display='block';return;}
+  if(btn){btn.textContent='...';btn.disabled=true;}
+  try{
+    const token=window._recoveryToken||'';
+    const res=await fetch(_authBase()+'/user',{method:'PUT',headers:{'Content-Type':'application/json','apikey':_CFG.key,'Authorization':'Bearer '+token},body:JSON.stringify({password:np})});
+    const data=await res.json();
+    if(data.error||data.msg){throw new Error(data.msg||data.error||'Error');}
+    window._recoveryToken=null;
+    msgEl.textContent=tr('reset_ok');msgEl.style.color='#00ff88';msgEl.style.display='block';
+    setTimeout(()=>go('/login'),2000);
+  }catch(e){
+    msgEl.textContent=_errMsg(e);msgEl.style.color='#ff4444';msgEl.style.display='block';
+    if(btn){btn.textContent=tr('reset_btn');btn.disabled=false;}
   }
 };
 
@@ -3950,6 +4052,19 @@ window.toggleMantenimiento = async function(tid) {
     url: 'https://vecekftrreilocwrdqni.supabase.co',
     key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlY2VrZnRycmVpbG9jd3JkcW5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxODg0MjksImV4cCI6MjA4ODc2NDQyOX0.2HhAwKhESlkXBe5dNnk0vNuwlY31wWnPC2eJ0g5cQPw'
   };
+  // ── Detect Supabase auth redirect (recovery, magic link) ─────────────────
+  (function detectAuthRedirect(){
+    const hash=window.location.hash.substring(1);
+    if(!hash) return;
+    const params={};
+    hash.split('&').forEach(p=>{const [k,v]=p.split('=');if(k)params[k]=decodeURIComponent(v||'');});
+    if(params.type==='recovery'&&params.access_token){
+      window._recoveryToken=params.access_token;
+      R='/reset-password'; RP={};
+      // Clean URL without reloading
+      history.replaceState(null,'',window.location.pathname+window.location.search);
+    }
+  })();
   setContent(loading(tr('connecting')));
   try {
     await _req('GET', '/torneos?select=id&limit=1');
