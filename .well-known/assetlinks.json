@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.emabolchamp.twa",
+    "sha256_cert_fingerprints": ["8E:D0:FD:37:C4:AE:90:A3:AE:84:6C:11:75:5E:6D:48:2D:94:CE:D0:C4:23:51:F1:53:42:63:DE:54:F9:9A:F6"]
+  }
+}]
