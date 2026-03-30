@@ -414,7 +414,7 @@ function _buildMe(authRes) {
     uid: authRes.user ? authRes.user.id : null,
     token: authRes.access_token,
     refresh_token: authRes.refresh_token,
-    admin: true,   // Todo usuario autenticado puede crear y administrar sus torneos
+    admin: false,  // Se actualiza al entrar a cada torneo según rol en miembros_torneo
     jid: null      // Se llena si el usuario vincula un perfil de jugador
   };
 }
@@ -463,9 +463,7 @@ async function logout() {
 
 // ── Helper: ¿es admin del torneo actual? ─────────────────────────────────────
 function isTorneoAdmin() {
-  if (!ME || !CURRENT_TORNEO) return false;
-  if (!CURRENT_TORNEO.creado_por) return ME.admin; // torneo legado sin dueño → usa rol global
-  return CURRENT_TORNEO.creado_por === ME.uid;
+  return !!(ME && ME.admin);
 }
 
 // ═══════ DB HELPERS ═══════
@@ -1846,11 +1844,21 @@ function fixtureFor(t, maxDates=30) {
   if(!t || !t.ini || !t.fin) return [];
   const diasSemana = {'lunes':1,'martes':2,'miércoles':3,'jueves':4,'viernes':5,'sábado':6,'domingo':0,
                       'miercoles':3,'sabado':6};
-  // Parse target weekdays (support multiple: "Miércoles y Sábados")
-  const diaStr = (t.dia||'').toLowerCase();
   const targetDays = [];
-  for(const [k,v] of Object.entries(diasSemana)) {
-    if(diaStr.includes(k)) { if(!targetDays.includes(v)) targetDays.push(v); }
+  // Use dias_horarios (new format) if available
+  if(t.dias_horarios && t.dias_horarios.length) {
+    const normMap = {'lunes':1,'martes':2,'miercoles':3,'jueves':4,'viernes':5,'sabado':6,'domingo':0,'miércoles':3,'sábado':6};
+    t.dias_horarios.forEach(x => {
+      const k = (x.dia||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      const v = normMap[k] !== undefined ? normMap[k] : normMap[(x.dia||'').toLowerCase()];
+      if(v !== undefined && !targetDays.includes(v)) targetDays.push(v);
+    });
+  } else {
+    // Legacy: parse t.dia string ("Miércoles y Sábados")
+    const diaStr = (t.dia||'').toLowerCase();
+    for(const [k,v] of Object.entries(diasSemana)) {
+      if(diaStr.includes(k)) { if(!targetDays.includes(v)) targetDays.push(v); }
+    }
   }
   if(!targetDays.length) return [];
   const ini = parseFecha(t.ini);
@@ -1956,7 +1964,42 @@ async function sProximos() {
       const dot=played?`<span style="width:8px;height:8px;border-radius:50%;background:#00ff88;display:inline-block"></span>`:isN&&next2[0].fecha===fecha?`<span style="width:8px;height:8px;border-radius:50%;background:${color};display:inline-block;box-shadow:0 0 6px ${color}"></span>`:isN?`<span style="width:8px;height:8px;border-radius:50%;background:${color}80;display:inline-block"></span>`:`<span style="width:8px;height:8px;border-radius:50%;background:var(--dim);display:inline-block"></span>`;
       const rc=d<0?'var(--dim)':isN?'var(--txt)':'#6a6a8a';
       const rw=isN?'700':'400';
-      const tag=played?`<span style="font-size:9px;color:#00ff88;font-family:'Barlow Condensed',sans-serif;font-weight:700">${played.gan===tr('draw')?'EMP':played.gan==='a'?'A':'B'}</span>`:conv?.estado==='confirmado'?`<span style="font-size:9px;color:#00ff88;font-family:'Barlow Condensed',sans-serif;font-weight:700">CONF</span>`:conv?`<span style="font-size:9px;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:700">EN PROC.</span>`:'';
+      // Default tag: shows who won or status
+      let tag = played
+        ? `<span style="font-size:9px;color:#00ff88;font-family:'Barlow Condensed',sans-serif;font-weight:700">${played.gan===tr('draw')?'EMP':played.gan==='a'?'A':'B'}</span>`
+        : conv?.estado==='confirmado'
+          ? `<span style="font-size:9px;color:#00ff88;font-family:'Barlow Condensed',sans-serif;font-weight:700">CONF</span>`
+          : conv
+            ? `<span style="font-size:9px;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:700">EN PROC.</span>`
+            : '';
+      // Player personal performance badge (past matches, non-admin, has jid)
+      if(played && !ME?.admin && ME?.jid && d < 0) {
+        const ea = conv?.equipo_a || [];
+        const eb = conv?.equipo_b || [];
+        const inA = ea.includes(ME.jid);
+        const inB = eb.includes(ME.jid);
+        if(played.fig === ME.jid) {
+          tag = `<span style="font-size:9px;color:#f5c518;font-family:'Barlow Condensed',sans-serif;font-weight:800;background:#f5c51820;padding:2px 6px;border-radius:5px;border:1px solid #f5c51860">⭐FIGURA</span>`;
+        } else if(inA || inB) {
+          const myTeam = inA ? 'a' : 'b';
+          const gan = played.gan;
+          if(gan === tr('draw') || gan === 'Empate') {
+            tag = `<span style="font-size:9px;color:#ff8c00;font-family:'Barlow Condensed',sans-serif;font-weight:800;background:#ff8c0015;padding:2px 6px;border-radius:5px;border:1px solid #ff8c0040">EMPATE</span>`;
+          } else if(gan === myTeam) {
+            tag = `<span style="font-size:9px;color:#00ff88;font-family:'Barlow Condensed',sans-serif;font-weight:800;background:#00ff8815;padding:2px 6px;border-radius:5px;border:1px solid #00ff8840">VICTORIA</span>`;
+          } else {
+            tag = `<span style="font-size:9px;color:#ff4444;font-family:'Barlow Condensed',sans-serif;font-weight:800;background:#ff444415;padding:2px 6px;border-radius:5px;border:1px solid #ff444440">DERROTA</span>`;
+          }
+        } else {
+          // Was convocado but left on bench, or not in convocatoria
+          const convEst = conv ? (conv.convocados_estado||[]).find(x=>x.jid===ME.jid)?.estado : null;
+          if(convEst === 'convocado') {
+            tag = `<span style="font-size:9px;color:#5a5a7a;font-family:'Barlow Condensed',sans-serif;font-weight:800;background:#1a1a2e;padding:2px 6px;border-radius:5px;border:1px solid #3a3a5e">SUPLENTE</span>`;
+          } else {
+            tag = `<span style="font-size:9px;color:#3a3a5e;font-family:'Barlow Condensed',sans-serif;font-weight:700">—</span>`;
+          }
+        }
+      }
       return `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #1a1a2a">${dot}<span style="font-size:11px;color:var(--dim);min-width:22px;font-family:'Barlow Condensed',sans-serif">J${j}</span><span style="font-size:13px;color:${rc};font-weight:${rw};flex:1">${fmt(fecha)}</span>${tag}</div>`;
     }).join('');
 
@@ -3536,11 +3579,28 @@ async function sTorneos() {
 
 window.entrarTorneo = function(tid) {
   const stored = JSON.parse(localStorage.getItem('emb_torneos')||'{}');
-  stored[ME?.jid||'admin'] = tid;
+  stored[ME?.uid||ME?.jid||'u'] = tid;
   localStorage.setItem('emb_torneos', JSON.stringify(stored));
-  // Update CURRENT_TORNEO
-  getAll('torneos').then(ts => {
+  // Update CURRENT_TORNEO + resolve admin role for this torneo
+  getAll('torneos').then(async ts => {
     CURRENT_TORNEO = ts.find(t=>t.id===tid) || null;
+    if(ME && CURRENT_TORNEO) {
+      // Owner is always admin
+      const isOwner = !!(CURRENT_TORNEO.creado_por && CURRENT_TORNEO.creado_por === ME.uid);
+      if(isOwner) {
+        ME.admin = true;
+      } else {
+        // Check miembros_torneo for granted admin role
+        try {
+          const rows = await _req('GET', '/miembros_torneo?torneo_id=eq.'+tid+'&user_id=eq.'+ME.uid+'&select=rol');
+          const rol = rows?.[0]?.rol || 'jugador';
+          ME.admin = (rol === 'admin');
+        } catch(e) {
+          ME.admin = false;
+        }
+      }
+      sessionStorage.setItem('emb_me', JSON.stringify(ME));
+    }
     go('/home');
   });
 };
@@ -3595,13 +3655,26 @@ window.doJoinTorneo = async function() {
 async function restoreTorneo() {
   const torneos = await getAll('torneos').catch(()=>[]);
   const stored = JSON.parse(localStorage.getItem('emb_torneos')||'{}');
-  const lastId = stored[ME?.jid||'admin'];
+  const lastId = stored[ME?.uid||ME?.jid||'u'];
   if(lastId) {
     CURRENT_TORNEO = torneos.find(t=>t.id===lastId) || null;
   }
   if(!CURRENT_TORNEO) {
-    // Default to first active torneo
     CURRENT_TORNEO = torneos.find(t=>t.estado!=='archivado') || torneos[0] || null;
+  }
+  // Resolve admin role for restored torneo
+  if(ME && CURRENT_TORNEO) {
+    const tid = CURRENT_TORNEO.id;
+    const isOwner = !!(CURRENT_TORNEO.creado_por && CURRENT_TORNEO.creado_por === ME.uid);
+    if(isOwner) {
+      ME.admin = true;
+    } else {
+      try {
+        const rows = await _req('GET', '/miembros_torneo?torneo_id=eq.'+tid+'&user_id=eq.'+ME.uid+'&select=rol');
+        ME.admin = rows?.[0]?.rol === 'admin';
+      } catch(e) { ME.admin = false; }
+    }
+    sessionStorage.setItem('emb_me', JSON.stringify(ME));
   }
 }
 
