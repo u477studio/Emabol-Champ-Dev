@@ -635,13 +635,16 @@ let R='/login',RP={};
 function setContent(html){document.getElementById('app').innerHTML=html+renderNav();}
 function renderNav(){
   if(!ME||R==='/login'||R==='/setup')return'';
-  const items=[
+  const hasTorneo = !!CURRENT_TORNEO;
+  const items= hasTorneo ? [
     {i:'🏠',l:tr('home'),p:'/home'},
     ...(ME&&isTorneoAdmin()?[{i:'👥',l:tr('players'),p:'/players'}]:[]),
     ...(ME&&ME.jid?[{i:'👤',l:'YO',p:'/mi-perfil'}]:[]),
     {i:'🏆',l:tr('ranking'),p:'/ranking'},
     {i:'🏟️',l:tr('tournaments'),p:'/torneos'},
     {i:'⚽',l:tr('matches'),p:'/match'},
+  ] : [
+    {i:'🏟️',l:tr('tournaments'),p:'/torneos'},
   ];
   // Show active torneo indicator if one is selected
   const torneoBar = CURRENT_TORNEO ? `<div style="position:fixed;top:0;left:0;right:0;z-index:200;background:#0d0d1aee;border-bottom:2px solid ${CURRENT_TORNEO.color||'#f5c518'}60;padding:5px 16px;display:flex;align-items:center;gap:8px;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:800;color:${CURRENT_TORNEO.color||'#f5c518'};letter-spacing:1px;backdrop-filter:blur(8px)">
