@@ -1630,13 +1630,6 @@ async function sMiPerfil(){
   // racha: last 5 results (non-suplente)
   const rachaJugados=jugados.filter(function(x){return x.res!=='SUPLENTE';}).slice(0,5);
 
-  // ── Atributos técnicos from ranking entries ───────────────────────────────
-  const myRk=allRk.filter(function(e){return e.jid===j.id;});
-  const sumAttr=function(k){return myRk.reduce(function(acc,e){return acc+(e[k]||0);},0);};
-  const goles=sumAttr('goles');
-  const asistencias=sumAttr('asistencias');
-  const amarillas=sumAttr('amarillas');
-  const rojas=sumAttr('rojas');
 
   // ── HTML ──────────────────────────────────────────────────────────────────
   const av=j.foto?`<img src="${j.foto}" style="width:100%;height:100%;object-fit:cover" alt=""/>`:`<span style="font-size:40px">⚽</span>`;
@@ -1666,21 +1659,6 @@ async function sMiPerfil(){
     </div>`;
   }).join('');
 
-  // Attr bar helper
-  const attrBar=function(label,val,max,color){
-    const pct=Math.min(100,Math.round((val/max)*100));
-    return `<div style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-        <span style="font-size:11px;color:var(--dim)">${label}</span>
-        <span style="font-size:11px;font-weight:700;color:#fff">${val}</span>
-      </div>
-      <div style="height:5px;background:#1a1a2e;border-radius:3px;overflow:hidden">
-        <div style="height:100%;width:${pct}%;background:${color};border-radius:3px;transition:width .4s"></div>
-      </div>
-    </div>`;
-  };
-  const maxGoles=Math.max(goles,10);
-  const maxAsist=Math.max(asistencias,10);
 
   setContent(`<div class="screen up" style="padding:0 0 24px">
   <div style="padding:44px 15px 0;display:flex;align-items:center;gap:10px">
@@ -1698,7 +1676,6 @@ async function sMiPerfil(){
     <div style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap">
       <span style="padding:3px 11px;border-radius:999px;background:${pc}22;border:1px solid ${pc};font-size:11px;color:${pc};font-weight:800;font-family:'Barlow Condensed',sans-serif">${posLabel}</span>
       ${rank?`<span style="padding:3px 11px;border-radius:999px;background:#f5c51818;border:1px solid #f5c518;font-size:11px;color:#f5c518;font-weight:800;font-family:'Barlow Condensed',sans-serif">#${rank} · ${pts} pts</span>`:''}
-      ${figuras>0?`<span style="padding:3px 11px;border-radius:999px;background:#f5c51812;border:1px solid #f5c51860;font-size:11px;color:#f5c518;font-weight:800;font-family:'Barlow Condensed',sans-serif">⭐ ${figuras} ${figuras===1?'Figura':'Figuras'}</span>`:''}
     </div>
   </div>
 
@@ -1716,12 +1693,8 @@ async function sMiPerfil(){
   <!-- SECONDARY ROW -->
   <div style="padding:0 15px;margin-bottom:14px;display:flex;gap:7px">
     <div style="flex:1;background:var(--card);border:1px solid #f5c51830;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px">
-      <span style="font-size:20px">⚽</span>
-      <div><p style="font-size:18px;font-weight:900;color:#f5c518;font-family:'Barlow Condensed',sans-serif;line-height:1">${goles}</p><p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1px">GOLES</p></div>
-    </div>
-    <div style="flex:1;background:var(--card);border:1px solid #00d4ff30;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px">
-      <span style="font-size:20px">🎯</span>
-      <div><p style="font-size:18px;font-weight:900;color:#00d4ff;font-family:'Barlow Condensed',sans-serif;line-height:1">${asistencias}</p><p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1px">ASIST.</p></div>
+      <span style="font-size:20px">⭐</span>
+      <div><p style="font-size:18px;font-weight:900;color:#f5c518;font-family:'Barlow Condensed',sans-serif;line-height:1">${figuras}</p><p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1px">FIGURAS</p></div>
     </div>
     <div style="flex:1;background:var(--card);border:1px solid #ffffff18;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px">
       <span style="font-size:20px">📈</span>
@@ -1743,20 +1716,6 @@ async function sMiPerfil(){
     </div>
   </div>`:`<div style="padding:0 15px;margin-bottom:14px"><p style="color:var(--dim);font-size:13px;text-align:center;padding:20px 0">Sin partidos registrados aún</p></div>`}
 
-  <!-- TARJETAS -->
-  ${(amarillas>0||rojas>0)?`<div style="padding:0 15px;margin-bottom:14px">
-    <p class="lbl" style="margin-bottom:8px">🟨 DISCIPLINA</p>
-    <div style="display:flex;gap:7px">
-      <div style="flex:1;background:var(--card);border:1px solid #ffcc0030;border-radius:10px;padding:12px;text-align:center">
-        <p style="font-size:22px;font-weight:900;color:#ffcc00;font-family:'Barlow Condensed',sans-serif">🟨 ${amarillas}</p>
-        <p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1px">AMARILLAS</p>
-      </div>
-      <div style="flex:1;background:var(--card);border:1px solid #ff000030;border-radius:10px;padding:12px;text-align:center">
-        <p style="font-size:22px;font-weight:900;color:#ff4444;font-family:'Barlow Condensed',sans-serif">🟥 ${rojas}</p>
-        <p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1px">ROJAS</p>
-      </div>
-    </div>
-  </div>`:''}
 
   </div>`);
 }
