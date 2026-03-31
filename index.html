@@ -638,7 +638,7 @@ function renderNav(){
   const items=[
     {i:'🏠',l:tr('home'),p:'/home'},
     ...(ME&&isTorneoAdmin()?[{i:'👥',l:tr('players'),p:'/players'}]:[]),
-    ...(ME&&!isTorneoAdmin()&&ME.jid?[{i:'👤',l:'YO',p:'/mi-perfil'}]:[]),
+    ...(ME&&ME.jid?[{i:'👤',l:'YO',p:'/mi-perfil'}]:[]),
     {i:'🏆',l:tr('ranking'),p:'/ranking'},
     {i:'🏟️',l:tr('tournaments'),p:'/torneos'},
     {i:'⚽',l:tr('matches'),p:'/match'},
