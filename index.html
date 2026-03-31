@@ -388,6 +388,15 @@ function _buildMe(authRes) {
 }
 
 // ── Registro con email + contraseña ──────────────────────────────────────────
+// Carga jugador_id desde profiles y lo setea en ME.jid
+async function fetchAndSetJid(me) {
+  try {
+    const rows = await _req('GET', '/profiles?id=eq.' + me.uid + '&select=jugador_id');
+    const jid = rows && rows[0] && rows[0].jugador_id ? rows[0].jugador_id : null;
+    if (jid) { me.jid = jid; sessionStorage.setItem('emb_me', JSON.stringify(me)); }
+  } catch(e) { console.warn('fetchProfile error:', e.message); }
+}
+
 async function registerAsync(email, password, nombre) {
   email = email.trim().toLowerCase();
   nombre = nombre.trim();
@@ -401,6 +410,7 @@ async function registerAsync(email, password, nombre) {
     if (!res.access_token) return {ok:false, msg: tr('reg_err_confirm') || 'Revisá tu email para confirmar la cuenta.'};
     const m = _buildMe(res);
     ME = m; sessionStorage.setItem('emb_me', JSON.stringify(m));
+    await fetchAndSetJid(ME).catch(()=>{});
     await restoreTorneo().catch(()=>{});
     return {ok:true};
   } catch(e) { return {ok:false, msg:'Error de conexión: ' + _errMsg(e)}; }
@@ -418,6 +428,7 @@ async function loginAsync(email, password) {
     if (!res.access_token) return {ok:false, msg:'Error al ingresar. Intentá de nuevo.'};
     const m = _buildMe(res);
     ME = m; sessionStorage.setItem('emb_me', JSON.stringify(m));
+    await fetchAndSetJid(ME).catch(()=>{});
     await restoreTorneo().catch(()=>{});
     return {ok:true};
   } catch(e) { return {ok:false, msg:'Error de conexión: ' + _errMsg(e)}; }
@@ -3621,6 +3632,8 @@ window.doJoinTorneo = async function() {
 
 // Restore last selected torneo on login
 async function restoreTorneo() {
+  // Si el jid no está cargado aún (sesión reanudada), lo fetcheamos
+  if (ME && !ME.jid) await fetchAndSetJid(ME).catch(()=>{});
   const torneos = await getAll('torneos').catch(()=>[]);
   const stored = JSON.parse(localStorage.getItem('emb_torneos')||'{}');
   const lastId = stored[ME?.uid||ME?.jid||'u'];
