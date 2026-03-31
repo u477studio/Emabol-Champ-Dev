@@ -638,10 +638,10 @@ function renderNav(){
   const items=[
     {i:'🏠',l:tr('home'),p:'/home'},
     ...(ME&&isTorneoAdmin()?[{i:'👥',l:tr('players'),p:'/players'}]:[]),
+    ...(ME&&!isTorneoAdmin()&&ME.jid?[{i:'👤',l:'YO',p:'/mi-perfil'}]:[]),
     {i:'🏆',l:tr('ranking'),p:'/ranking'},
     {i:'🏟️',l:tr('tournaments'),p:'/torneos'},
     {i:'⚽',l:tr('matches'),p:'/match'},
-    {i:'❓',l:tr('help'),p:'/ayuda'},
   ];
   // Show active torneo indicator if one is selected
   const torneoBar = CURRENT_TORNEO ? `<div style="position:fixed;top:0;left:0;right:0;z-index:200;background:#0d0d1aee;border-bottom:2px solid ${CURRENT_TORNEO.color||'#f5c518'}60;padding:5px 16px;display:flex;align-items:center;gap:8px;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:800;color:${CURRENT_TORNEO.color||'#f5c518'};letter-spacing:1px;backdrop-filter:blur(8px)">
@@ -722,6 +722,7 @@ async function render(){
     if(R==='/equipos'){await sEquipos(RP.tid);return;}
     if(R==='/habilitar-fechas'){await sHabilitarFechas(RP.tid);return;}
     if(R==='/equipo-form'){await sEquipoForm(RP.tid, RP.equipoId);return;}
+    if(R==='/mi-perfil'){await sMiPerfil();return;}
     if(R==='/players'){await sPlayers();return;}
     if(R==='/player'){await sPlayer(RP);return;}
     if(R==='/player-form'){await sPForm(RP);return;}
@@ -1297,9 +1298,11 @@ async function sHome(){
       <div onclick="go('/ranking')" style="background:var(--card);border:1px solid #00ff8830;border-radius:12px;padding:12px 10px;cursor:pointer;display:flex;align-items:center;gap:10px">
         <span style="font-size:20px">🏆</span><div><p style="font-size:12px;font-weight:900;color:#00ff88;font-family:'Barlow Condensed',sans-serif">${tr('ranking')}</p><p style="font-size:10px;color:var(--dim)">${tr('general_table')}</p></div>
       </div>
-      <div onclick="go('/historial')" style="background:var(--card);border:1px solid #c084fc30;border-radius:12px;padding:12px 10px;cursor:pointer;display:flex;align-items:center;gap:10px">
+      ${ME.jid?`<div onclick="go('/mi-perfil')" style="background:var(--card);border:1px solid #00d4ff30;border-radius:12px;padding:12px 10px;cursor:pointer;display:flex;align-items:center;gap:10px">
+        <span style="font-size:20px">👤</span><div><p style="font-size:12px;font-weight:900;color:#00d4ff;font-family:'Barlow Condensed',sans-serif">MI PERFIL</p><p style="font-size:10px;color:var(--dim)">Mis stats y partidos</p></div>
+      </div>`:`<div onclick="go('/historial')" style="background:var(--card);border:1px solid #c084fc30;border-radius:12px;padding:12px 10px;cursor:pointer;display:flex;align-items:center;gap:10px">
         <span style="font-size:20px">📋</span><div><p style="font-size:12px;font-weight:900;color:#c084fc;font-family:'Barlow Condensed',sans-serif">${tr('history')}</p><p style="font-size:10px;color:var(--dim)">${tr('matches_played')}</p></div>
-      </div>
+      </div>`}
     </div>`:'';
 
   const shareBlock = ME&&ME.admin?`
@@ -1564,6 +1567,199 @@ window.flPls=function(q){
     </div>`;
   }).join('');
 };
+
+// ═══════ MI PERFIL ═══════
+async function sMiPerfil(){
+  if(!ME||!ME.jid){go('/home');return;}
+  setContent(loading());
+  const tid = CURRENT_TORNEO?.id;
+  const [jugadores, allRk, partidos, convocatorias] = await Promise.all([
+    getAll('jugadores').catch(()=>[]),
+    getAll('ranking').catch(()=>[]),
+    tid ? _req('GET','/partidos?torneo_id=eq.'+tid+'&order=fecha.desc').catch(()=>[]) : Promise.resolve([]),
+    tid ? _req('GET','/convocatorias?torneo_id=eq.'+tid).catch(()=>[]) : Promise.resolve([])
+  ]);
+
+  const j = jugadores.find(x=>x.id===ME.jid);
+  if(!j){go('/home');return;}
+
+  const pc = PC[j.pos]||'#00d4ff';
+  const posLabel = j.pos==='ARQ'?'Arquero':'Jugador';
+
+  // ── Ranking position ──────────────────────────────────────────────────────
+  const totPts={};
+  allRk.forEach(e=>{totPts[e.jid]=(totPts[e.jid]||0)+(e.pts||0);});
+  const sortedRk=Object.entries(totPts).sort((a,b)=>b[1]-a[1]);
+  const rankPos=sortedRk.findIndex(([jid])=>jid===j.id);
+  const rank=rankPos>=0?rankPos+1:null;
+  const pts=totPts[j.id]||0;
+
+  // ── Stats from partidos ───────────────────────────────────────────────────
+  const jugados=[];
+  partidos.forEach(function(p){
+    const conv = convocatorias.find(function(c){return c.partido_id===p.id;});
+    const ea = conv?conv.equipo_a||[]:[];
+    const eb = conv?conv.equipo_b||[]:[];
+    const inA=ea.includes(j.id), inB=eb.includes(j.id);
+    const convo=conv?(conv.convocados_estado||[]).find(function(x){return x.jid===j.id;}):null;
+    if(!p.gan&&p.gan!==0) return; // not played yet
+    if(inA||inB){
+      const myTeam=inA?'a':'b';
+      let res;
+      if(p.fig===j.id){res='FIGURA';}
+      else if(p.gan==='Empate'||p.gan===tr('draw')){res='EMPATE';}
+      else if(p.gan===myTeam){res='VICTORIA';}
+      else{res='DERROTA';}
+      jugados.push({p:p,res:res,fecha:p.fecha});
+    } else if(convo&&convo.estado==='convocado'){
+      jugados.push({p:p,res:'SUPLENTE',fecha:p.fecha});
+    }
+  });
+
+  // sort jugados by fecha desc
+  jugados.sort(function(a,b){return (b.fecha||'').localeCompare(a.fecha||'');});
+
+  const pj=jugados.filter(function(x){return x.res!=='SUPLENTE';}).length;
+  const victorias=jugados.filter(function(x){return x.res==='VICTORIA'||x.res==='FIGURA';}).length;
+  const empates=jugados.filter(function(x){return x.res==='EMPATE';}).length;
+  const derrotas=jugados.filter(function(x){return x.res==='DERROTA';}).length;
+  const figuras=jugados.filter(function(x){return x.res==='FIGURA';}).length;
+  const suplentes=jugados.filter(function(x){return x.res==='SUPLENTE';}).length;
+  const winRate=pj>0?Math.round((victorias/pj)*100):0;
+
+  // racha: last 5 results (non-suplente)
+  const rachaJugados=jugados.filter(function(x){return x.res!=='SUPLENTE';}).slice(0,5);
+
+  // ── Atributos técnicos from ranking entries ───────────────────────────────
+  const myRk=allRk.filter(function(e){return e.jid===j.id;});
+  const sumAttr=function(k){return myRk.reduce(function(acc,e){return acc+(e[k]||0);},0);};
+  const goles=sumAttr('goles');
+  const asistencias=sumAttr('asistencias');
+  const amarillas=sumAttr('amarillas');
+  const rojas=sumAttr('rojas');
+
+  // ── HTML ──────────────────────────────────────────────────────────────────
+  const av=j.foto?`<img src="${j.foto}" style="width:100%;height:100%;object-fit:cover" alt=""/>`:`<span style="font-size:40px">⚽</span>`;
+
+  const statBox=function(label,val,color){
+    return `<div style="flex:1;min-width:0;background:var(--card);border:1px solid ${color}30;border-radius:10px;padding:12px 6px;text-align:center">
+      <p style="font-size:22px;font-weight:900;color:${color};font-family:'Barlow Condensed',sans-serif;line-height:1">${val}</p>
+      <p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1.2px;margin-top:3px">${label}</p>
+    </div>`;
+  };
+
+  const resColor={VICTORIA:'#00ff88',EMPATE:'#ff8c00',DERROTA:'#ff4444',FIGURA:'#f5c518',SUPLENTE:'#5a5a7a'};
+  const rachaChips=rachaJugados.map(function(x){
+    const c=resColor[x.res]||'#555';
+    const sym=x.res==='VICTORIA'?'V':x.res==='EMPATE'?'E':x.res==='DERROTA'?'D':x.res==='FIGURA'?'★':'S';
+    return `<div style="width:34px;height:34px;border-radius:8px;background:${c}20;border:1px solid ${c}60;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:${c};font-family:'Barlow Condensed',sans-serif">${sym}</div>`;
+  }).join('');
+
+  const ultimosRows=jugados.slice(0,6).map(function(x){
+    const c=resColor[x.res]||'#555';
+    const fecha=x.fecha?x.fecha.slice(0,10):'';
+    const rival='';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #ffffff08">
+      <div style="width:72px;font-size:9px;color:var(--dim)">${fecha}</div>
+      <div style="flex:1;font-size:12px;color:#ccc">${CURRENT_TORNEO?.nombre||'Partido'}</div>
+      <span style="padding:3px 9px;border-radius:6px;border:1px solid ${c}60;background:${c}18;font-size:10px;color:${c};font-weight:900;font-family:'Barlow Condensed',sans-serif">${x.res}</span>
+    </div>`;
+  }).join('');
+
+  // Attr bar helper
+  const attrBar=function(label,val,max,color){
+    const pct=Math.min(100,Math.round((val/max)*100));
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:11px;color:var(--dim)">${label}</span>
+        <span style="font-size:11px;font-weight:700;color:#fff">${val}</span>
+      </div>
+      <div style="height:5px;background:#1a1a2e;border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${color};border-radius:3px;transition:width .4s"></div>
+      </div>
+    </div>`;
+  };
+  const maxGoles=Math.max(goles,10);
+  const maxAsist=Math.max(asistencias,10);
+
+  setContent(`<div class="screen up" style="padding:0 0 24px">
+  <div style="padding:44px 15px 0;display:flex;align-items:center;gap:10px">
+    <button class="bk" onclick="go('/home')">← INICIO</button>
+    <span style="flex:1"></span>
+    <span style="font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1px">MI PERFIL</span>
+  </div>
+
+  <!-- HEADER -->
+  <div style="padding:18px 15px 20px;text-align:center;background:linear-gradient(180deg,${pc}14,transparent);border-bottom:1px solid ${pc}28;margin-bottom:16px">
+    <div style="width:88px;height:88px;border-radius:44px;overflow:hidden;margin:0 auto 12px;border:3px solid ${pc}66;background:linear-gradient(135deg,${pc}28,${pc}0e);display:flex;align-items:center;justify-content:center">
+      ${av}
+    </div>
+    <h2 style="font-size:22px;font-family:'Barlow Condensed',sans-serif;font-weight:900;margin-bottom:8px;letter-spacing:1px">${j.nombre}</h2>
+    <div style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap">
+      <span style="padding:3px 11px;border-radius:999px;background:${pc}22;border:1px solid ${pc};font-size:11px;color:${pc};font-weight:800;font-family:'Barlow Condensed',sans-serif">${posLabel}</span>
+      ${rank?`<span style="padding:3px 11px;border-radius:999px;background:#f5c51818;border:1px solid #f5c518;font-size:11px;color:#f5c518;font-weight:800;font-family:'Barlow Condensed',sans-serif">#${rank} · ${pts} pts</span>`:''}
+      ${figuras>0?`<span style="padding:3px 11px;border-radius:999px;background:#f5c51812;border:1px solid #f5c51860;font-size:11px;color:#f5c518;font-weight:800;font-family:'Barlow Condensed',sans-serif">⭐ ${figuras} ${figuras===1?'Figura':'Figuras'}</span>`:''}
+    </div>
+  </div>
+
+  <!-- STATS GRID -->
+  <div style="padding:0 15px;margin-bottom:14px">
+    <p class="lbl" style="margin-bottom:8px">📊 ESTADÍSTICAS</p>
+    <div style="display:flex;gap:7px">
+      ${statBox('PJ',pj,'#00d4ff')}
+      ${statBox('VIC',victorias,'#00ff88')}
+      ${statBox('EMP',empates,'#ff8c00')}
+      ${statBox('DER',derrotas,'#ff4444')}
+    </div>
+  </div>
+
+  <!-- SECONDARY ROW -->
+  <div style="padding:0 15px;margin-bottom:14px;display:flex;gap:7px">
+    <div style="flex:1;background:var(--card);border:1px solid #f5c51830;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:20px">⚽</span>
+      <div><p style="font-size:18px;font-weight:900;color:#f5c518;font-family:'Barlow Condensed',sans-serif;line-height:1">${goles}</p><p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1px">GOLES</p></div>
+    </div>
+    <div style="flex:1;background:var(--card);border:1px solid #00d4ff30;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:20px">🎯</span>
+      <div><p style="font-size:18px;font-weight:900;color:#00d4ff;font-family:'Barlow Condensed',sans-serif;line-height:1">${asistencias}</p><p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1px">ASIST.</p></div>
+    </div>
+    <div style="flex:1;background:var(--card);border:1px solid #ffffff18;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:20px">📈</span>
+      <div><p style="font-size:18px;font-weight:900;color:#fff;font-family:'Barlow Condensed',sans-serif;line-height:1">${winRate}%</p><p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1px">WIN RATE</p></div>
+    </div>
+  </div>
+
+  <!-- RACHA -->
+  ${rachaJugados.length?`<div style="padding:0 15px;margin-bottom:14px">
+    <p class="lbl" style="margin-bottom:8px">🔥 ÚLTIMOS ${rachaJugados.length} PARTIDOS</p>
+    <div style="display:flex;gap:7px">${rachaChips}</div>
+  </div>`:''}
+
+  <!-- ÚLTIMOS PARTIDOS -->
+  ${jugados.length?`<div style="padding:0 15px;margin-bottom:14px">
+    <p class="lbl" style="margin-bottom:8px">📅 HISTORIAL</p>
+    <div style="background:var(--card);border:1px solid #2a2a3e;border-radius:11px;padding:2px 14px">
+      ${ultimosRows}
+    </div>
+  </div>`:`<div style="padding:0 15px;margin-bottom:14px"><p style="color:var(--dim);font-size:13px;text-align:center;padding:20px 0">Sin partidos registrados aún</p></div>`}
+
+  <!-- TARJETAS -->
+  ${(amarillas>0||rojas>0)?`<div style="padding:0 15px;margin-bottom:14px">
+    <p class="lbl" style="margin-bottom:8px">🟨 DISCIPLINA</p>
+    <div style="display:flex;gap:7px">
+      <div style="flex:1;background:var(--card);border:1px solid #ffcc0030;border-radius:10px;padding:12px;text-align:center">
+        <p style="font-size:22px;font-weight:900;color:#ffcc00;font-family:'Barlow Condensed',sans-serif">🟨 ${amarillas}</p>
+        <p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1px">AMARILLAS</p>
+      </div>
+      <div style="flex:1;background:var(--card);border:1px solid #ff000030;border-radius:10px;padding:12px;text-align:center">
+        <p style="font-size:22px;font-weight:900;color:#ff4444;font-family:'Barlow Condensed',sans-serif">🟥 ${rojas}</p>
+        <p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1px">ROJAS</p>
+      </div>
+    </div>
+  </div>`:''}
+
+  </div>`);
+}
 
 // ═══════ PLAYER DETAIL ═══════
 async function sPlayer(p){
