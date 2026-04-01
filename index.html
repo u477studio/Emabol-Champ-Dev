@@ -1580,7 +1580,7 @@ async function sMiPerfil(){
     getAll('jugadores').catch(()=>[]),
     getAll('ranking').catch(()=>[]),
     tid ? _req('GET','/partidos?torneo_id=eq.'+tid+'&order=fecha.desc').catch(()=>[]) : Promise.resolve([]),
-    tid ? _req('GET','/convocatorias?torneo_id=eq.'+tid).catch(()=>[]) : Promise.resolve([])
+    getAll('convocatorias').catch(()=>[])
   ]);
 
   const j = jugadores.find(x=>x.id===ME.jid);
