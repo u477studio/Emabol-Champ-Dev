@@ -3770,15 +3770,16 @@ window.verHistorialTorneo = function(tid) {
 // ── Unirse a un torneo con código de invitación ───────────────────────────────
 window.sJoinTorneo = function() {
   const ov = document.createElement('div');
+  ov.id = 'join-modal';
   ov.style.cssText='position:fixed;inset:0;background:#000000cc;z-index:999;display:flex;align-items:flex-end;padding:16px;box-sizing:border-box';
   ov.innerHTML=`<div style="background:#0d0d1a;border:1px solid #00d4ff40;border-radius:16px;padding:24px;width:100%">
     <h3 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:#00d4ff;letter-spacing:2px;margin-bottom:16px">${tr('tour_join_title')}</h3>
     <label class="lbl">${tr('tour_join_code').toUpperCase()}</label>
-    <input id="join-code" class="inp" type="text" placeholder="ej: a1b2c3d4" style="text-transform:lowercase;letter-spacing:3px;font-size:18px;text-align:center;margin-bottom:12px" maxlength="8"/>
+    <input id="join-code" class="inp" type="text" placeholder="ej: a1b2c3" style="text-transform:lowercase;letter-spacing:3px;font-size:18px;text-align:center;margin-bottom:12px" maxlength="8"/>
     <p id="join-err" style="color:#ff4444;font-size:12px;text-align:center;display:none;margin-bottom:8px"></p>
     <div style="display:flex;gap:10px">
-      <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:transparent;color:#5a5a7a;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer">CANCELAR</button>
-      <button onclick="doJoinTorneo()" style="flex:2;padding:12px;border-radius:9px;border:none;background:#00d4ff;color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer">${tr('tour_join_btn')}</button>
+      <button onclick="document.getElementById('join-modal')?.remove()" style="flex:1;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:transparent;color:#5a5a7a;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer">CANCELAR</button>
+      <button id="join-btn" onclick="doJoinTorneo()" style="flex:2;padding:12px;border-radius:9px;border:none;background:#00d4ff;color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer">${tr('tour_join_btn')}</button>
     </div>
   </div>`;
   document.body.appendChild(ov);
@@ -3788,7 +3789,7 @@ window.sJoinTorneo = function() {
 window.doJoinTorneo = async function() {
   const code = (document.getElementById('join-code')?.value||'').trim().toLowerCase();
   const errEl = document.getElementById('join-err');
-  const btn = document.querySelector('[onclick="doJoinTorneo()"]');
+  const btn = document.getElementById('join-btn');
   if(!code){errEl.textContent='Ingresá el código.';errEl.style.display='block';return;}
   if(!ME?.uid){errEl.textContent='Tenés que estar logueado.';errEl.style.display='block';return;}
   if(btn){btn.textContent='...';btn.disabled=true;}
@@ -3800,7 +3801,7 @@ window.doJoinTorneo = async function() {
     if(res?.error){ errEl.textContent=res.error;errEl.style.display='block';if(btn){btn.textContent=tr('tour_join_btn');btn.disabled=false;}return;}
     if(!res?.ok){ errEl.textContent=tr('tour_join_err');errEl.style.display='block';if(btn){btn.textContent=tr('tour_join_btn');btn.disabled=false;}return;}
     invalidateCache('torneos');
-    document.querySelectorAll('[style*="z-index:999"]').forEach(el=>el.remove());
+    document.getElementById('join-modal')?.remove();
     showToast('¡Te uniste a ' + res.nombre + '!');
     setTimeout(()=>window.entrarTorneo(res.torneo_id), 800);
   } catch(e) {
