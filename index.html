@@ -411,7 +411,7 @@ async function registerAsync(email, password, nombre) {
     const m = _buildMe(res);
     ME = m; sessionStorage.setItem('emb_me', JSON.stringify(m));
     await fetchAndSetJid(ME).catch(()=>{});
-    await restoreTorneo().catch(()=>{});
+    CURRENT_TORNEO = null;
     return {ok:true};
   } catch(e) { return {ok:false, msg:'Error de conexión: ' + _errMsg(e)}; }
 }
@@ -429,7 +429,7 @@ async function loginAsync(email, password) {
     const m = _buildMe(res);
     ME = m; sessionStorage.setItem('emb_me', JSON.stringify(m));
     await fetchAndSetJid(ME).catch(()=>{});
-    await restoreTorneo().catch(()=>{});
+    CURRENT_TORNEO = null;
     return {ok:true};
   } catch(e) { return {ok:false, msg:'Error de conexión: ' + _errMsg(e)}; }
 }
@@ -697,6 +697,11 @@ window.guardarNovedades=async function(){
 
 async function render(){
   try{
+    // Page refresh con sesión activa: restaurar torneo y redirigir
+    if(ME && R==='/login') {
+      await restoreTorneo().catch(()=>{});
+      R='/torneos'; RP={};
+    }
     if(!ME&&R!=='/login'&&R!=='/setup'&&R!=='/register'&&R!=='/forgot-password'&&R!=='/reset-password'){R='/login';RP={};}
     if(R==='/setup'){sSetup();return;}
     if(R==='/login'){sLogin();return;}
@@ -1114,16 +1119,10 @@ async function sHome(){
   ]);
   window._cachedTorneos = ts; // cache for proximoPartido
 
-  // If no torneo selected and there are active torneos, nudge user
+  // Si no hay torneo seleccionado, redirigir a selección
   if(!CURRENT_TORNEO) {
-    const activos = ts.filter(t=>t.estado!=='archivado');
-    if(activos.length > 0) {
-      // Auto-select first active torneo silently
-      CURRENT_TORNEO = activos[0];
-      const stored = JSON.parse(localStorage.getItem('emb_torneos')||'{}');
-      stored[ME?.jid||'admin'] = activos[0].id;
-      localStorage.setItem('emb_torneos', JSON.stringify(stored));
-    }
+    go('/torneos');
+    return;
   }
   const novedadesRaw = (cfgRows.find(r=>r.id==='novedades')||{}).valor||'';
   const novedadesHtml = novedadesRaw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
