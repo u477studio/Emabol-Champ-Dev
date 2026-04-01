@@ -1579,8 +1579,8 @@ async function sMiPerfil(){
   const [jugadores, allRk, partidos, convocatorias] = await Promise.all([
     getAll('jugadores').catch(()=>[]),
     getAll('ranking').catch(()=>[]),
-    tid ? _req('GET','/partidos?torneo_id=eq.'+tid+'&order=fecha.desc').catch(()=>[]) : Promise.resolve([]),
-    getAll('convocatorias').catch(()=>[])
+    tid ? _req('GET','/partidos?tid=eq.'+tid+'&order=fecha.desc').catch(()=>[]) : Promise.resolve([]),
+    tid ? _req('GET','/convocatorias?tid=eq.'+tid).catch(()=>[]) : Promise.resolve([])
   ]);
 
   const j = jugadores.find(x=>x.id===ME.jid);
@@ -1600,12 +1600,13 @@ async function sMiPerfil(){
   // ── Stats from partidos ───────────────────────────────────────────────────
   const jugados=[];
   partidos.forEach(function(p){
-    const conv = convocatorias.find(function(c){return c.partido_id===p.id;});
-    const ea = conv?conv.equipo_a||[]:[];
-    const eb = conv?conv.equipo_b||[]:[];
+    const ea = p.equipo_a||[];
+    const eb = p.equipo_b||[];
     const inA=ea.includes(j.id), inB=eb.includes(j.id);
+    // link to convocatoria via p.conv = convocatoria id
+    const conv = convocatorias.find(function(c){return c.id===p.conv;});
     const convo=conv?(conv.convocados_estado||[]).find(function(x){return x.jid===j.id;}):null;
-    if(!p.gan&&p.gan!==0) return; // not played yet
+    if(!p.gan) return; // not played yet
     if(inA||inB){
       const myTeam=inA?'a':'b';
       let res;
@@ -2111,8 +2112,8 @@ async function sProximos() {
             : '';
       // Player personal performance badge (past matches, non-admin, has jid)
       if(played && !ME?.admin && ME?.jid && d < 0) {
-        const ea = conv?.equipo_a || [];
-        const eb = conv?.equipo_b || [];
+        const ea = played.equipo_a || conv?.equipo_a || [];
+        const eb = played.equipo_b || conv?.equipo_b || [];
         const inA = ea.includes(ME.jid);
         const inB = eb.includes(ME.jid);
         if(played.fig === ME.jid) {
