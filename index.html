@@ -3688,10 +3688,18 @@ async function sTorneos() {
         ${ME?.uid && ME.uid === t.creado_por && t.ranking_tipo==='equipo' ? `<button onclick="event.stopPropagation();go('/equipos',{tid:'${t.id}'})" style="padding:10px 14px;border-radius:9px;border:2px solid ${color};background:transparent;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">👥</button>` : ''}
         ${ME?.uid && ME.uid === t.creado_por ? `<button onclick="event.stopPropagation();go('/torneo-edit',{tid:'${t.id}'})" style="padding:10px 14px;border-radius:9px;border:2px solid #3a3a5e;background:transparent;color:#a0a0b8;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer">✏️</button>` : ''}
       </div>` : ''}
-      ${!archived && ME?.uid && ME.uid === t.creado_por && t.codigo_inv ? `<div onclick="event.stopPropagation()" style="margin-top:8px;padding:8px 12px;border-radius:8px;background:#00d4ff18;border:1px solid #00d4ff40;display:flex;align-items:center;justify-content:space-between">
-        <span style="font-size:10px;color:#00d4ff;font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:2px">${tr('tour_inv_code')}: <span style="font-size:15px;letter-spacing:3px">${t.codigo_inv}</span></span>
-        <button onclick="navigator.clipboard.writeText('${t.codigo_inv}').then(()=>showToast('¡Código copiado!'))" style="padding:4px 10px;border-radius:6px;border:1px solid #00d4ff60;background:transparent;color:#00d4ff;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:900;cursor:pointer">COPIAR</button>
-      </div>` : ''}
+      ${!archived && ME?.admin ? (t.codigo_inv
+        ? `<div onclick="event.stopPropagation()" style="margin-top:8px;padding:8px 12px;border-radius:8px;background:#00d4ff18;border:1px solid #00d4ff40;display:flex;align-items:center;justify-content:space-between;gap:8px">
+            <div>
+              <p style="font-size:9px;color:#00d4ff;font-weight:800;letter-spacing:2px;margin-bottom:2px">🔑 CÓDIGO DE INVITACIÓN</p>
+              <p style="font-size:18px;letter-spacing:4px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900">${t.codigo_inv}</p>
+            </div>
+            <button onclick="navigator.clipboard.writeText('${t.codigo_inv}').then(()=>showToast('¡Código copiado!'))" style="padding:6px 12px;border-radius:6px;border:1px solid #00d4ff60;background:transparent;color:#00d4ff;font-size:11px;font-family:'Barlow Condensed',sans-serif;font-weight:900;cursor:pointer;flex-shrink:0">📋 COPIAR</button>
+          </div>`
+        : `<div onclick="event.stopPropagation()" style="margin-top:8px">
+            <button onclick="window.generarCodigo('${t.id}')" style="width:100%;padding:9px;border-radius:8px;border:1px dashed #00d4ff60;background:transparent;color:#00d4ff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;cursor:pointer">🔑 GENERAR CÓDIGO DE INVITACIÓN</button>
+          </div>`)
+      : ''}
       ${archived ? `<button onclick="event.stopPropagation();window.verHistorialTorneo('${t.id}')" style="width:100%;padding:10px;border-radius:9px;border:1px solid #3a3a5e;background:transparent;color:#a0a0b8;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;cursor:pointer;margin-top:8px">${tr('tour_view')}</button>` : ''}
     </div>`;
   };
@@ -3713,6 +3721,19 @@ async function sTorneos() {
     ` : ''}
   </div>${renderNav()}`);
 }
+
+window.generarCodigo = async function(tid) {
+  const chars = 'abcdefghjkmnpqrstuvwxyz23456789';
+  const codigo = Array.from({length:6}, ()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+  try {
+    const torneos = await getAll('torneos');
+    const t = torneos.find(x=>x.id===tid);
+    if(!t) return;
+    await upsertRow('torneos', {...t, codigo_inv: codigo});
+    showToast('Código generado: ' + codigo);
+    await sTorneos();
+  } catch(e) { showToast('Error: ' + _errMsg(e)); }
+};
 
 window.entrarTorneo = function(tid) {
   const stored = JSON.parse(localStorage.getItem('emb_torneos')||'{}');
