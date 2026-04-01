@@ -29,9 +29,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 .inp{width:100%;padding:13px 16px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:15px;font-family:'Barlow',sans-serif;outline:none;transition:border-color .2s}
 .inp:focus{border-color:var(--gold)}
 .lbl{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:2.5px;color:var(--gold);margin-bottom:8px;display:block}
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid #f5c51840;display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,6px)}
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 7px;cursor:pointer;border:none;background:none;color:var(--dim);font-size:9px;font-weight:800;letter-spacing:1px;gap:3px;font-family:'Barlow Condensed',sans-serif}
-.ni.on{color:var(--gold)}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid #f5c51825;display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,6px);backdrop-filter:blur(10px)}
 .ni-ico{font-size:20px;line-height:1}
 .bk{background:none;border:none;cursor:pointer;color:var(--gold);font-weight:800;font-size:13px;padding:8px 0;display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif}
 .sp{display:inline-block;width:26px;height:26px;border:3px solid #2a2a3e;border-top-color:#f5c518;border-radius:50%;animation:spin .8s linear infinite}
@@ -42,12 +40,32 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1
 .up{animation:up .3s ease forwards}
 .pop{animation:pop .5s cubic-bezier(.175,.885,.32,1.275) forwards}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--card)}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px}
+/* ── ESPN-style utilities ── */
+.sec-hd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.sec-hd::before{content:'';display:block;width:3px;height:16px;background:var(--gold);border-radius:2px;flex-shrink:0}
+.sec-hd span{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:10px;color:var(--gold);letter-spacing:3px}
+.card-sport{border-radius:18px;overflow:hidden;position:relative;margin-bottom:14px;box-shadow:0 8px 32px rgba(0,0,0,.55)}
+.card-sport-body{padding:18px;position:relative;z-index:2}
+.stat-xl{font-family:'Barlow Condensed',sans-serif;font-weight:900;line-height:.9}
+.stat-card{flex:1;min-width:0;background:#0a0a18;border-top:2px solid;border-radius:10px;padding:14px 6px 12px;text-align:center;position:relative;overflow:hidden}
+.stat-card-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:36px;line-height:1;letter-spacing:-1px}
+.stat-card-lbl{font-size:8px;color:var(--dim);font-weight:800;letter-spacing:2px;margin-top:4px}
+.rk-row{display:flex;align-items:center;padding:10px 12px;border-bottom:1px solid #ffffff06;transition:background .15s}
+.rk-row:last-child{border-bottom:none}
+.rk-row:active{background:#ffffff04}
+.rk-pos{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;width:32px;text-align:center;flex-shrink:0}
+.rk-pts{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;min-width:44px;text-align:right}
+/* nav active accent */
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 7px;cursor:pointer;border:none;background:none;color:var(--dim);font-size:9px;font-weight:800;letter-spacing:1px;gap:3px;font-family:'Barlow Condensed',sans-serif;position:relative}
+.ni.on{color:var(--gold)}
+.ni.on::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:2.5px;background:var(--gold);border-radius:0 0 3px 3px}
+/* match card badge */
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.badge-today{animation:blink 1.4s infinite}
 #intro-ov{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .7s ease}
-#intro-ov.gone{opacity:0;pointer-events:none}
-#intro-ov video{width:100%;height:100%;object-fit:cover;display:block}
-<style>
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 #intro-ov.gone{opacity:0;pointer-events:none;transition:opacity .7s ease}
+#intro-ov video{width:100%;height:100%;object-fit:cover;display:block}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 </style>
 <link rel="manifest" href="blob:null/04e1bd48-60aa-49d4-af3a-b2c26872c02b"></head>
 <body>
@@ -1219,15 +1237,20 @@ async function sHome(){
     else if(!conv&&!ME?.admin)
       cta=`<button onclick="go('/match')" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:1px">${tr('sign_up')}</button>`;
 
-    return `<div style="background:${bg};border:1px solid ${color}50;border-radius:18px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:-20px;right:-20px;font-size:90px;opacity:.06;pointer-events:none">${t.emoji}</div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-        <div style="flex:1;min-width:0;padding-right:8px">
-          <p style="font-size:11px;color:${color};font-weight:800;letter-spacing:2px;font-family:'Barlow Condensed',sans-serif;margin-bottom:4px">${t.emoji} ${t.nombre}</p>
-          <p style="font-size:26px;font-weight:900;color:#fff;font-family:'Barlow Condensed',sans-serif;line-height:1;margin-bottom:6px">${fmtFecha(parseFecha(fechaFinal))}</p>
-          <p style="font-size:11px;color:var(--muted)">🕐 ${conv&&conv.hora?conv.hora:'20:00'} hs &nbsp;·&nbsp; ${conv?(conv.convocados_estado||[]).filter(x=>x.estado==='convocado').length:0} convocados</p>
+    return `<div style="background:${bg};border:1px solid ${color}40;border-radius:18px;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:0 8px 32px ${color}12">
+      <div style="position:absolute;top:-10px;right:-10px;font-size:110px;opacity:.05;pointer-events:none;line-height:1">${t.emoji}</div>
+      <div style="padding:16px 18px 14px">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+        <div style="width:3px;height:14px;background:${color};border-radius:2px;flex-shrink:0"></div>
+        <p style="font-size:9px;color:${color};font-weight:900;letter-spacing:3px;font-family:'Barlow Condensed',sans-serif;text-transform:uppercase">${t.nombre}</p>
+        <div style="flex:1"></div>
+        ${badge}
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2px">
+        <div>
+          <p style="font-size:36px;font-weight:900;color:#fff;font-family:'Barlow Condensed',sans-serif;line-height:.95;letter-spacing:-1px">${fmtFecha(parseFecha(fechaFinal))}</p>
+          <p style="font-size:11px;color:var(--muted);margin-top:5px">🕐 ${conv&&conv.hora?conv.hora:'20:00'} hs &nbsp;·&nbsp; <span style="color:${color};font-weight:700">${conv?(conv.convocados_estado||[]).filter(x=>x.estado==='convocado').length:0}</span> convocados</p>
         </div>
-        <div style="flex-shrink:0">${badge}</div>
       </div>
       ${myStatus}${cta}
       ${activeConvs.length > 1 ? `
@@ -1272,7 +1295,7 @@ async function sHome(){
           +'</div>'
           +'</div>';
       })()}
-    </div>`;
+    </div></div>`;
   }).join('');
 
   // Panel quick-access
@@ -1447,7 +1470,7 @@ async function sHome(){
       </div>` : '';
     return `<div style="background:var(--card);border:1px solid #f5c51825;border-radius:14px;margin-bottom:16px;overflow:hidden">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px 8px">
-        <p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:2px">🏆 RANKING</p>
+        <div class="sec-hd" style="margin-bottom:0"><span>🏆 RANKING</span></div>
         <button onclick="go('/ranking')" style="background:none;border:none;color:#f5c518;font-size:10px;font-weight:700;cursor:pointer;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">VER TODO →</button>
       </div>
       <div style="padding:0 4px 8px">
@@ -1463,7 +1486,7 @@ async function sHome(){
     if(novedadesHtml){
       novBlock='<div style="background:linear-gradient(135deg,#0d0d1a,#12122a);border:1px solid #f5c51830;border-radius:14px;padding:16px;margin-bottom:16px">'
         +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
-        +'<p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:2px">📢 NOVEDADES</p>'+editBtn
+        +'<div class="sec-hd" style="margin-bottom:0"><span>📢 NOVEDADES</span></div>'+editBtn
         +'</div>'
         +'<p id="home-nov-text" style="font-size:13px;color:var(--muted);line-height:1.7">'+novedadesHtml+'</p>'
         +'</div>';
@@ -1473,9 +1496,7 @@ async function sHome(){
   })();
 
   setContent(`<div class="screen up" style="padding:16px 15px 18px">
-    <div style="margin-bottom:14px">
-      <p style="font-size:10px;color:var(--gold);font-weight:800;letter-spacing:3px">⚽ PRÓXIMOS PARTIDOS</p>
-    </div>
+    <div class="sec-hd" style="margin-bottom:14px"><span>⚽ PRÓXIMOS PARTIDOS</span></div>
     ${matchCards}
     ${ME&&!ME.admin?figuraBlocks:''}
     ${rankingTop5Block}
@@ -1523,8 +1544,10 @@ async function sPlayers(){if(!ME||!ME.admin){go('/home');return;}
   }
   setContent(`<div class="screen up" style="padding:76px 15px 90px">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px">
-    <div><p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">👥 PLANTILLA</p>
-      <h2 style="font-size:19px;font-family:'Barlow Condensed',sans-serif">${js.length} JUGADORES</h2></div>
+    <div>
+      <div class="sec-hd" style="margin-bottom:4px"><span>👥 PLANTILLA</span></div>
+      <h2 style="font-size:22px;font-family:'Barlow Condensed',sans-serif;font-weight:900">${js.length} JUGADORES</h2>
+    </div>
     ${ME?.admin?`<button class="btn btn-gold" onclick="go('/player-form',{mode:'create'})" style="width:auto;padding:9px 13px;font-size:12px">+ NUEVO</button>`:''}
   </div>
   <input class="inp" id="srch" placeholder="🔍 Buscar..." style="margin-bottom:9px" oninput="flPls(this.value)"/>
@@ -1638,9 +1661,9 @@ async function sMiPerfil(){
   const av=j.foto?`<img src="${j.foto}" style="width:100%;height:100%;object-fit:cover" alt=""/>`:`<span style="font-size:40px">⚽</span>`;
 
   const statBox=function(label,val,color){
-    return `<div style="flex:1;min-width:0;background:var(--card);border:1px solid ${color}30;border-radius:10px;padding:12px 6px;text-align:center">
-      <p style="font-size:22px;font-weight:900;color:${color};font-family:'Barlow Condensed',sans-serif;line-height:1">${val}</p>
-      <p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1.2px;margin-top:3px">${label}</p>
+    return `<div class="stat-card" style="border-color:${color}">
+      <div class="stat-card-val" style="color:${color}">${val}</div>
+      <div class="stat-card-lbl">${label}</div>
     </div>`;
   };
 
@@ -1671,20 +1694,21 @@ async function sMiPerfil(){
   </div>
 
   <!-- HEADER -->
-  <div style="padding:18px 15px 20px;text-align:center;background:linear-gradient(180deg,${pc}14,transparent);border-bottom:1px solid ${pc}28;margin-bottom:16px">
-    <div style="width:88px;height:88px;border-radius:44px;overflow:hidden;margin:0 auto 12px;border:3px solid ${pc}66;background:linear-gradient(135deg,${pc}28,${pc}0e);display:flex;align-items:center;justify-content:center">
+  <div style="padding:18px 15px 22px;text-align:center;background:linear-gradient(180deg,${pc}22,${pc}08,transparent);border-bottom:1px solid ${pc}28;margin-bottom:16px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-10px;right:-10px;font-size:100px;opacity:.04;pointer-events:none">⚽</div>
+    <div style="width:96px;height:96px;border-radius:50%;overflow:hidden;margin:0 auto 14px;border:3px solid ${pc};box-shadow:0 0 24px ${pc}44;background:linear-gradient(135deg,${pc}28,${pc}0e);display:flex;align-items:center;justify-content:center">
       ${av}
     </div>
-    <h2 style="font-size:22px;font-family:'Barlow Condensed',sans-serif;font-weight:900;margin-bottom:8px;letter-spacing:1px">${j.nombre}</h2>
+    <h2 style="font-size:26px;font-family:'Barlow Condensed',sans-serif;font-weight:900;margin-bottom:6px;letter-spacing:1px;text-transform:uppercase">${j.nombre}</h2>
     <div style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap">
-      <span style="padding:3px 11px;border-radius:999px;background:${pc}22;border:1px solid ${pc};font-size:11px;color:${pc};font-weight:800;font-family:'Barlow Condensed',sans-serif">${posLabel}</span>
-      ${rank?`<span style="padding:3px 11px;border-radius:999px;background:#f5c51818;border:1px solid #f5c518;font-size:11px;color:#f5c518;font-weight:800;font-family:'Barlow Condensed',sans-serif">#${rank} · ${pts} pts</span>`:''}
+      <span style="padding:4px 13px;border-radius:999px;background:${pc}22;border:1px solid ${pc};font-size:11px;color:${pc};font-weight:900;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">${posLabel.toUpperCase()}</span>
+      ${rank?`<span style="padding:4px 13px;border-radius:999px;background:#f5c51818;border:1px solid #f5c518;font-size:11px;color:#f5c518;font-weight:900;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">🏆 #${rank} &nbsp;·&nbsp; ${pts} PTS</span>`:''}
     </div>
   </div>
 
   <!-- STATS GRID -->
   <div style="padding:0 15px;margin-bottom:14px">
-    <p class="lbl" style="margin-bottom:8px">📊 ESTADÍSTICAS</p>
+    <div class="sec-hd"><span>ESTADÍSTICAS</span></div>
     <div style="display:flex;gap:7px">
       ${statBox('PJ',pj,'#00d4ff')}
       ${statBox('VIC',victorias,'#00ff88')}
@@ -1695,25 +1719,25 @@ async function sMiPerfil(){
 
   <!-- SECONDARY ROW -->
   <div style="padding:0 15px;margin-bottom:14px;display:flex;gap:7px">
-    <div style="flex:1;background:var(--card);border:1px solid #f5c51830;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px">
-      <span style="font-size:20px">⭐</span>
-      <div><p style="font-size:18px;font-weight:900;color:#f5c518;font-family:'Barlow Condensed',sans-serif;line-height:1">${figuras}</p><p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1px">FIGURAS</p></div>
+    <div class="stat-card" style="border-color:#f5c518;flex:1;min-width:0">
+      <div class="stat-card-val" style="color:#f5c518">${figuras}</div>
+      <div class="stat-card-lbl">FIGURAS</div>
     </div>
-    <div style="flex:1;background:var(--card);border:1px solid #ffffff18;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px">
-      <span style="font-size:20px">📈</span>
-      <div><p style="font-size:18px;font-weight:900;color:#fff;font-family:'Barlow Condensed',sans-serif;line-height:1">${winRate}%</p><p style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:1px">WIN RATE</p></div>
+    <div class="stat-card" style="border-color:#a0a0b8;flex:1;min-width:0">
+      <div class="stat-card-val" style="color:#fff;font-size:28px">${winRate}%</div>
+      <div class="stat-card-lbl">WIN RATE</div>
     </div>
   </div>
 
   <!-- RACHA -->
   ${rachaJugados.length?`<div style="padding:0 15px;margin-bottom:14px">
-    <p class="lbl" style="margin-bottom:8px">🔥 ÚLTIMOS ${rachaJugados.length} PARTIDOS</p>
+    <div class="sec-hd"><span>ÚLTIMOS ${rachaJugados.length} PARTIDOS</span></div>
     <div style="display:flex;gap:7px">${rachaChips}</div>
   </div>`:''}
 
   <!-- ÚLTIMOS PARTIDOS -->
   ${jugados.length?`<div style="padding:0 15px;margin-bottom:14px">
-    <p class="lbl" style="margin-bottom:8px">📅 HISTORIAL</p>
+    <div class="sec-hd"><span>HISTORIAL</span></div>
     <div style="background:var(--card);border:1px solid #2a2a3e;border-radius:11px;padding:2px 14px">
       ${ultimosRows}
     </div>
@@ -1908,9 +1932,7 @@ async function sRanking(p){
   }
 
   setContent(`<div class="screen up" style="padding:76px 15px 90px">
-    <div style="margin-bottom:16px">
-      <p style="font-size:10px;color:#f5c518;font-weight:800;letter-spacing:3px">🏆 ${tr('ranking')}</p>
-    </div>
+    <div class="sec-hd" style="margin-bottom:14px"><span>🏆 ${tr('ranking')}</span></div>
     <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px">
       <button onclick="go('/ranking',{view:'general'})"
         style="padding:8px 14px;border-radius:8px;border:none;background:${view==='general'?'#f5c518':'#1a1a2e'};color:${view==='general'?'#000':'#a0a0b8'};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;cursor:pointer;white-space:nowrap">
@@ -1925,31 +1947,38 @@ async function sRanking(p){
 function renderRankingTable(rows, jMap, torneo) {
   if(!rows.length) return `<p style="color:#5a5a7a;text-align:center;padding:20px">${tr('no_data')}</p>`;
   const color = torneo?.color || '#f5c518';
-  return `<table style="width:100%;border-collapse:collapse">
-    <thead><tr style="font-size:10px;color:#5a5a7a;letter-spacing:1px">
-      <td style="padding:6px 4px">#</td>
-      <td style="padding:6px 4px">JUGADOR</td>
-      <td style="padding:6px 4px;text-align:center">${tr('pts')}</td>
-      <td style="padding:6px 4px;text-align:center">${tr('played')}</td>
-      <td style="padding:6px 4px;text-align:center">${tr('won_short')}</td>
-      <td style="padding:6px 4px;text-align:center">${tr('fig')}</td>
-    </tr></thead>
-    <tbody>${rows.map((r,i)=>{
-      const j = jMap[r.jid];
-      const isMe = ME?.jid===r.jid;
-      return `<tr style="border-top:1px solid #1a1a2e${isMe?';background:#f5c51808':''}">
-        <td style="padding:10px 4px;font-size:14px;color:${i<3?color:'#5a5a7a'};font-weight:900">${i+1}</td>
-        <td style="padding:10px 4px">
-          ${j?.foto?`<img src="${j.foto}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px" onerror="this.style.display='none'"/>`:''}
-          <span style="font-size:13px;color:${isMe?color:'#e0e0e0'};font-weight:${isMe?'900':'400'}">${j?.nombre||r.jid}</span>
-        </td>
-        <td style="padding:10px 4px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:${color}">${r.pts}</td>
-        <td style="padding:10px 4px;text-align:center;font-size:13px;color:#5a5a7a">${r.c}</td>
-        <td style="padding:10px 4px;text-align:center;font-size:13px;color:#5a5a7a">${r.g}</td>
-        <td style="padding:10px 4px;text-align:center;font-size:13px;color:#5a5a7a">${r.f||0}</td>
-      </tr>`;
-    }).join('')}</tbody>
-  </table>`;
+  const medals = ['🥇','🥈','🥉'];
+  const rowsHtml = rows.map((r,i)=>{
+    const j = jMap[r.jid];
+    const isMe = ME?.jid===r.jid;
+    const posColor = i===0?'#f5c518':i===1?'#c0c0c0':i===2?'#cd7f32':color+'55';
+    return `<div class="rk-row${isMe?' rk-row-me':''}" style="${isMe?'background:#f5c51809;':''}border-bottom:1px solid #ffffff06" onclick="j&&go('/player',{id:'${r.jid}'})">
+      <div class="rk-pos" style="color:${posColor}">${i<3?medals[i]:i+1}</div>
+      <div style="flex:1;display:flex;align-items:center;gap:10px;padding:0 10px;min-width:0">
+        <div style="width:34px;height:34px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#1a1a2e;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;border:${isMe?'1.5px solid '+color:'1px solid #2a2a3e'}">
+          ${j?.foto?`<img src="${j.foto}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"/>`:'<span style="font-size:12px;color:#fff">'+((j?.nombre||'?')[0])+'</span>'}
+        </div>
+        <span style="font-size:14px;color:${isMe?color:'#e0e0e0'};font-weight:${isMe?'900':'500'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${j?.nombre||r.jid}</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;flex-shrink:0">
+        <div style="text-align:center;min-width:32px"><div style="font-size:10px;color:#3a3a5e;font-weight:700;letter-spacing:1px">PJ</div><div style="font-size:13px;color:#5a5a7a;font-family:'Barlow Condensed',sans-serif;font-weight:700">${r.c}</div></div>
+        <div style="text-align:center;min-width:32px"><div style="font-size:10px;color:#3a3a5e;font-weight:700;letter-spacing:1px">PG</div><div style="font-size:13px;color:#5a5a7a;font-family:'Barlow Condensed',sans-serif;font-weight:700">${r.g}</div></div>
+        <div class="rk-pts" style="color:${color}">${r.pts}</div>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div style="background:var(--card);border:1px solid #2a2a3e;border-radius:14px;overflow:hidden">
+    <div style="padding:10px 14px;background:#ffffff05;border-bottom:1px solid #2a2a3e;display:flex;align-items:center">
+      <div style="width:32px;font-size:9px;color:#3a3a5e;font-weight:800;letter-spacing:1px">#</div>
+      <div style="flex:1;padding:0 10px;font-size:9px;color:#3a3a5e;font-weight:800;letter-spacing:1px">JUGADOR</div>
+      <div style="display:flex;gap:12px;font-size:9px;color:#3a3a5e;font-weight:800;letter-spacing:1px;flex-shrink:0">
+        <div style="min-width:32px;text-align:center">PJ</div>
+        <div style="min-width:32px;text-align:center">PG</div>
+        <div style="min-width:44px;text-align:right">${tr('pts')}</div>
+      </div>
+    </div>
+    ${rowsHtml}
+  </div>`;
 }
 
 function renderEquipoRankingTable(rows, torneo) {
