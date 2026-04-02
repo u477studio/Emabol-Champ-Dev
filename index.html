@@ -4264,18 +4264,40 @@ async function sHabilitarFechas(tid) {
   ]);
   if(!torneo) { go('/home'); return; }
 
-  // Get fixture dates for this torneo
-  const allFechas = fixtureFor(torneo, 60);
+  // Generate next dates FROM TODAY (never depends on t.ini/t.fin)
   const today = new Date(); today.setHours(0,0,0,0);
-
-  // Only show future dates that don't already have an active convocatoria
+  function nextDatesFromToday(t, count) {
+    const normMap = {'lunes':1,'martes':2,'miercoles':3,'jueves':4,'viernes':5,'sabado':6,'domingo':0,'mi\u00e9rcoles':3,'s\u00e1bado':6};
+    const targets = [];
+    if(t.dias_horarios && t.dias_horarios.length) {
+      t.dias_horarios.forEach(x => {
+        const k = (x.dia||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+        const v = normMap[k] !== undefined ? normMap[k] : normMap[(x.dia||'').toLowerCase()];
+        if(v !== undefined && !targets.includes(v)) targets.push(v);
+      });
+    } else {
+      const diaStr = (t.dia||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      for(const [k,v] of Object.entries(normMap)) {
+        if(diaStr.includes(k) && !targets.includes(v)) targets.push(v);
+      }
+    }
+    if(!targets.length) return [];
+    const dates = []; const d = new Date(today); let tries = 0;
+    while(dates.length < count && tries < 365) {
+      if(targets.includes(d.getDay())) {
+        const dd = d.getDate().toString().padStart(2,'0');
+        const mm = (d.getMonth()+1).toString().padStart(2,'0');
+        dates.push(dd+'/'+mm+'/'+d.getFullYear());
+      }
+      d.setDate(d.getDate()+1); tries++;
+    }
+    return dates;
+  }
   const activeFechas = new Set(
     convs.filter(cv=>cv.tid===tid && cv.estado!=='finalizado').map(cv=>cv.fecha)
   );
-  const futureFechas = allFechas.filter(f => {
-    const d = parseFecha(f);
-    return d && d >= today && !activeFechas.has(f);
-  }).slice(0, 6); // show next 6 available
+  const allFechas = nextDatesFromToday(torneo, 12);
+  const futureFechas = allFechas.filter(f => !activeFechas.has(f)).slice(0, 6);
 
   if(!futureFechas.length) {
     setContent(`<div class="screen up" style="padding:76px 15px 90px">
