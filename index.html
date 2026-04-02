@@ -2212,7 +2212,7 @@ async function sProximos() {
 }
 
 window.votarFiguraHome = async function(pid, figJid) {
-  if(!ME?.jid) return;
+  if(!ME?.jid) { showLinkProfileModal(cvid, accion); return; }
   try {
     const partidos = await getAll('partidos');
     const p = partidos.find(x=>x.id===pid);
@@ -2231,7 +2231,7 @@ window.votarFiguraHome = async function(pid, figJid) {
 };
 
 window.votarFigura = async function(pid, figJid) {
-  if(!ME?.jid) return;
+  if(!ME?.jid) { showLinkProfileModal(cvid, accion); return; }
   try {
     const partidos = await getAll('partidos');
     const p = partidos.find(x=>x.id===pid); if(!p||!p.votacion_abierta) return;
@@ -2249,8 +2249,47 @@ window.votarFigura = async function(pid, figJid) {
   } catch(e){ alert('Error: '+_errMsg(e)); }
 };
 
+window.showLinkProfileModal = async function(cvid, accion) {
+  const jugadores = await getJugadores(false).catch(()=>[]);
+  const disponibles = jugadores.filter(j => j.convocado !== false);
+  const optsHtml = disponibles.map(j => `<option value="${j.id}">${j.nombre}</option>`).join('');
+  const ov = document.createElement('div');
+  ov.id = 'link-profile-modal';
+  ov.style.cssText = 'position:fixed;inset:0;background:#000000cc;z-index:999;display:flex;align-items:flex-end;padding:16px;box-sizing:border-box';
+  ov.innerHTML = `<div style="background:#0d0d1a;border:1px solid #f5c51840;border-radius:16px;padding:24px;width:100%"><h3 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:#f5c518;letter-spacing:2px;margin-bottom:8px">VINCULAR MI PERFIL</h3><p style="font-size:12px;color:#a0a0b8;margin-bottom:16px;line-height:1.5">Seleccioná tu nombre y escribí tu código personal.</p><label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">SOY...</label><select id="lp-jid" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:14px;margin:6px 0 12px;box-sizing:border-box"><option value="">— Seleccioná tu nombre —</option>${optsHtml}</select><label style="font-size:10px;font-weight:900;color:#f5c518;letter-spacing:2px">MI CÓDIGO PERSONAL</label><input id="lp-clave" type="text" placeholder="ej: paredes5" style="width:100%;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:#0d0d1a;color:#fff;font-size:16px;margin:6px 0 4px;box-sizing:border-box;letter-spacing:2px" autocomplete="off"/><p id="lp-err" style="color:#ff4444;font-size:12px;margin:4px 0 12px;display:none"></p><div style="display:flex;gap:8px"><button onclick="document.getElementById('link-profile-modal')?.remove()" style="flex:1;padding:12px;border-radius:9px;border:1px solid #3a3a5e;background:transparent;color:#a0a0b8;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;cursor:pointer">CANCELAR</button><button id="lp-btn" onclick="doLinkProfile('${cvid}','${accion}')" style="flex:2;padding:12px;border-radius:9px;border:none;background:#f5c518;color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;cursor:pointer">VERIFICAR Y ANOTARME</button></div></div>`;
+  document.body.appendChild(ov);
+  setTimeout(()=>{ document.getElementById('lp-clave')?.focus(); }, 100);
+};
+window.doLinkProfile = async function(cvid, accion) {
+  const jid = document.getElementById('lp-jid')?.value;
+  const clave = (document.getElementById('lp-clave')?.value || '').trim();
+  const errEl = document.getElementById('lp-err');
+  const btn = document.getElementById('lp-btn');
+  if(!jid){ if(errEl){errEl.textContent='Seleccioná tu nombre.';errEl.style.display='block';} return; }
+  if(!clave){ if(errEl){errEl.textContent='Ingresá tu código personal.';errEl.style.display='block';} return; }
+  if(btn){ btn.textContent='...'; btn.disabled=true; }
+  try {
+    const jugadores = await getJugadores(false).catch(()=>[]);
+    const j = jugadores.find(x => x.id === jid);
+    if(!j || !j.clave || j.clave.toLowerCase() !== clave.toLowerCase()) {
+      if(errEl){ errEl.textContent='Código incorrecto. Pedíselo al admin del grupo.'; errEl.style.display='block'; }
+      if(btn){ btn.textContent='VERIFICAR Y ANOTARME'; btn.disabled=false; }
+      return;
+    }
+    try { await _req('POST', '/profiles', { id: ME.uid, jugador_id: j.id }); } catch(pe) { console.warn('profiles upsert:', pe.message); }
+    try { await upsertRow('jugadores', {...j, user_id: ME.uid}); invalidateCache('jugadores'); invalidateCache('jugadores_slim'); invalidateCache('jugadores_full'); } catch(je) { console.warn('jugadores user_id:', je.message); }
+    ME.jid = j.id;
+    sessionStorage.setItem('emb_me', JSON.stringify(ME));
+    document.getElementById('link-profile-modal')?.remove();
+    showToast('Perfil vinculado como ' + j.nombre);
+    if(cvid) { await toggleConvocado(cvid, accion); }
+  } catch(e) {
+    if(errEl){ errEl.textContent='Error: ' + _errMsg(e); errEl.style.display='block'; }
+    if(btn){ btn.textContent='VERIFICAR Y ANOTARME'; btn.disabled=false; }
+  }
+};
 window.toggleConvocado = async function(cvid, accion) {
-  if(!ME?.jid) return;
+  if(!ME?.jid) { showLinkProfileModal(cvid, accion); return; }
   try {
     // Always fetch fresh from DB to avoid overwriting concurrent changes
     const fresh = await getOne('convocatorias', cvid);
@@ -2920,7 +2959,7 @@ window.playerSetEstado = async function(nuevoEstado) {
   } catch(e) { alert('Error: '+_errMsg(e)); }
 };
 window.playerPedirEntrar = async function() {
-  if(!ME?.jid) return;
+  if(!ME?.jid) { showLinkProfileModal(cvid, accion); return; }
   setEstado(ME.jid,'convocado');
   await saveConv(); renderConv();
 };
@@ -3774,7 +3813,7 @@ window.entrarTorneo = function(tid) {
     if(ME && CURRENT_TORNEO) {
       // Owner is always admin
       const isOwner = !!(CURRENT_TORNEO.creado_por && CURRENT_TORNEO.creado_por === ME.uid);
-      if(isOwner) {
+      if(isOwner || (ME.jid && (CURRENT_TORNEO.jugadores_admin||[]).includes(ME.jid))) {
         ME.admin = true;
       } else {
         // Check miembros_torneo for granted admin role
@@ -3856,7 +3895,7 @@ async function restoreTorneo() {
   if(ME && CURRENT_TORNEO) {
     const tid = CURRENT_TORNEO.id;
     const isOwner = !!(CURRENT_TORNEO.creado_por && CURRENT_TORNEO.creado_por === ME.uid);
-    if(isOwner) {
+    if(isOwner || (ME.jid && (CURRENT_TORNEO.jugadores_admin||[]).includes(ME.jid))) {
       ME.admin = true;
     } else {
       try {
