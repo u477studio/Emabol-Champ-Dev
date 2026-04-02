@@ -1222,7 +1222,7 @@ async function sHome(){
         // No active convocatoria — show HABILITAR button
         cta=`<button onclick="go('/habilitar-fechas',{tid:'${t.id}'})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">📅 HABILITAR FECHAS</button>`;
       } else {
-        cta=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${conv.fecha}'})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">${conv.estado==='confirmado'?'👁 VER EQUIPOS':'⚽ GESTIONAR CONVOCATORIA'}</button>
+        cta=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${conv.fecha}'})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">${conv.estado==='confirmado'?'👁 VER EQUIPOS':'⚽ GESTIONAR'}</button><button onclick="go('/habilitar-fechas',{tid:'${t.id}'})" title="Habilitar más fechas" style="padding:12px 14px;border-radius:10px;cursor:pointer;border:1.5px solid ${color}70;background:transparent;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px">📅+</button>
         <button onclick="window.toggleMantenimiento('${t.id}')" style="width:100%;margin-top:6px;padding:9px;border-radius:10px;cursor:pointer;border:1.5px solid ${t.app_estado==='mantenimiento'?'#00ff88':'#ff8c00'};background:transparent;color:${t.app_estado==='mantenimiento'?'#00ff88':'#ff8c00'};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:1px">${t.app_estado==='mantenimiento'?'✅ ACTIVAR APP':'🔧 PONER EN MANTENIMIENTO'}</button>`;
       }
     }
@@ -2095,7 +2095,7 @@ async function sProximos() {
       // Action button
       let btn='';
       if(ME?.admin){
-        btn=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${fecha}'})" style="width:100%;padding:12px;border-radius:9px;cursor:pointer;border:1px solid ${color};background:${color}18;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">${isConfirmado?'👁 VER EQUIPOS':'⚽ GESTIONAR CONVOCATORIA'}</button>`;
+        btn=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${fecha}'})" style="width:100%;padding:12px;border-radius:9px;cursor:pointer;border:1px solid ${color};background:${color}18;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">${isConfirmado?'👁 VER EQUIPOS':'⚽ GESTIONAR'}</button><button onclick="go('/habilitar-fechas',{tid:'${t.id}'})" title="Habilitar más fechas" style="padding:12px 14px;border-radius:10px;cursor:pointer;border:1.5px solid ${color}70;background:transparent;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px">📅+</button>`;
       } else if(conv){
         if(isConfirmado){
           btn=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${fecha}',ro:true})" style="width:100%;padding:12px;border-radius:9px;cursor:pointer;border:1px solid ${color};background:${color}18;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px">👁 VER EQUIPOS</button>`;
