@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/ema/Downloads/emabol-champ_2.html -->
+<!-- saved from url=(0050)file:///C:/Users/ema/Downloads/emabol-champ_3.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -55,7 +55,7 @@ html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Barlow'
 }
 
 /* ── Screen ── */
-.screen{flex:1;overflow-y:auto;padding-bottom:90px;background:transparent}
+.screen{flex:1;overflow-y:auto;padding-bottom:110px;background:transparent}
 
 /* ── Typography ── */
 h1,h2{font-family:'Bebas Neue',sans-serif;letter-spacing:3px}
@@ -241,7 +241,7 @@ td{padding:10px 4px;border-top:1px solid rgba(255,255,255,0.04)}
 .glow-gold{text-shadow:0 0 20px rgba(255,215,0,0.5)}
 .glow-blue{text-shadow:0 0 20px rgba(0,180,255,0.5)}
 </style>
-<link rel="manifest" href="blob:null/21b47161-c31c-4d8b-ba2c-b11975fb5273"></head>
+<link rel="manifest" href="blob:null/870bc5b1-1fa8-4a56-b35f-1a51ce821f12"></head>
 <body>
 
   <div style="font-size:12px;color:var(--dim);letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -1409,7 +1409,7 @@ async function sHome(){
       }
     }
     else if(conv&&conv.estado==='confirmado')
-      cta=`<button onclick="go('/convocatoria',{tid:'${t.id}',fecha:'${fecha}',ro:true})" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;cursor:pointer;border:1.5px solid ${color};background:${color}15;color:${color};font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px">👁 VER EQUIPOS</button>`;
+      cta=''; // equipos shown inline, no need for button
     else if(conv&&myEstCTA==='suspendido')
       cta=`<div style="background:#ff444410;border:1px solid #ff444430;border-radius:9px;padding:10px;text-align:center;margin-top:10px"><p style="color:#ff4444;font-weight:800;font-size:12px;font-family:'Barlow Condensed',sans-serif">🚫 SUSPENDIDO PARA ESTE PARTIDO</p></div>`;
     else if(conv&&myEstCTA==='convocado'&&conv.estado!=='confirmado')
@@ -1423,7 +1423,6 @@ async function sHome(){
       <div style="position:absolute;top:-20px;right:-20px;font-size:90px;opacity:.06;pointer-events:none">${t.emoji}</div>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
         <div style="flex:1;min-width:0;padding-right:8px">
-          <p style="font-size:11px;color:${color};font-weight:800;letter-spacing:2px;font-family:'Barlow Condensed',sans-serif;margin-bottom:4px">${t.emoji} ${t.nombre}</p>
           <p style="font-size:26px;font-weight:900;color:var(--txt);font-family:'Barlow Condensed',sans-serif;line-height:1;margin-bottom:6px">${fmtFecha(parseFecha(fechaFinal))}</p>
           <p style="font-size:11px;color:var(--muted)">🕐 ${conv&&conv.hora?conv.hora:'20:00'} hs &nbsp;·&nbsp; ${conv?(conv.convocados_estado||[]).filter(x=>x.estado==='convocado').length:0} convocados</p>
         </div>
@@ -1558,10 +1557,9 @@ async function sHome(){
           ? `<img src="${figJ.foto}" style="width:100%;height:100%;object-fit:cover"/>`
           : `<span style="font-size:32px;font-weight:900;color:var(--gold);font-family:'Barlow Condensed',sans-serif">${figJ.nombre[0]}</span>`;
         const esSelf = figJ.id === ME?.jid;
-        return `<div style="background:linear-gradient(145deg,#08082a,#12124a);border:2px solid var(--gold2);border-radius:16px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden;text-align:center;box-shadow:0 0 30px rgba(255,215,0,0.15)">
+        return `<div style="flex:1;min-width:0;background:linear-gradient(145deg,#08082a,#12124a);border:2px solid var(--gold2);border-radius:14px;padding:14px;margin-bottom:0;position:relative;overflow:hidden;text-align:center;box-shadow:0 0 20px rgba(255,215,0,0.15)">
           <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)"></div>
           <div style="position:absolute;top:-20px;right:-20px;font-size:90px;opacity:.04;pointer-events:none">${t.emoji}</div>
-          <p style="font-size:11px;color:${tColor2};font-weight:800;letter-spacing:2px;font-family:'Barlow Condensed',sans-serif;margin-bottom:4px">${t.emoji} ${t.nombre}</p>
           <p style="font-size:14px;font-weight:700;color:var(--dim);margin-bottom:14px">${fmtFecha(parseFecha(p.fecha))}</p>
           <div style="width:84px;height:84px;border-radius:50%;overflow:hidden;margin:0 auto 12px;border:3px solid var(--gold);box-shadow:0 0 28px var(--gold)60;background:#2a1800;display:flex;align-items:center;justify-content:center">${av}</div>
           <p style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--gold);margin-bottom:6px">⭐ ${figJ.nombre}</p>
@@ -1578,9 +1576,8 @@ async function sHome(){
         const candidates = jugaron.filter(jid=>jid!==ME?.jid).map(jid=>jMap[jid]).filter(Boolean);
         const chips = candidates.map(j=>`<button onclick="votarFiguraHome('${p.id}','${j.id}')"
           style="padding:7px 12px;border-radius:999px;cursor:pointer;border:1.5px solid var(--gold)60;background:var(--gold)15;color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px">${j.nombre}</button>`).join('');
-        return `<div style="background:${tBg};border:1px solid ${tColor}50;border-radius:18px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden">
+        return `<div style="background:${tBg};border:1px solid ${tColor}50;flex:1;min-width:0;border-radius:14px;padding:14px;margin-bottom:0;position:relative;overflow:hidden">
           <div style="position:absolute;top:-20px;right:-20px;font-size:90px;opacity:.06;pointer-events:none">${t.emoji}</div>
-          <p style="font-size:11px;color:${tColor};font-weight:800;letter-spacing:2px;font-family:'Barlow Condensed',sans-serif;margin-bottom:4px">${t.emoji} ${t.nombre}</p>
           <p style="font-size:22px;font-weight:900;color:var(--txt);font-family:'Barlow Condensed',sans-serif;line-height:1;margin-bottom:8px">${fmtFecha(parseFecha(p.fecha))}</p>
           <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
             <div style="width:56px;height:56px;border-radius:50%;background:#2a2a3e;border:2px dashed var(--gold)60;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:28px">🕵️</div>
@@ -1596,9 +1593,8 @@ async function sHome(){
       } else if(p.votacion_abierta && alreadyVoted) {
         const tColor4 = p.tid==='t1'?'var(--blue)':'#9f7aea';
         const tBg4 = p.tid==='t1'?'linear-gradient(135deg,#001525,#003050)':'linear-gradient(135deg,#1a0030,#2d004d)';
-        return `<div style="background:${tBg4};border:1px solid ${tColor4}30;border-radius:18px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden">
+        return `<div style="background:${tBg4};border:1px solid ${tColor4}30;flex:1;min-width:0;border-radius:14px;padding:14px;margin-bottom:12px;position:relative;overflow:hidden">
           <div style="position:absolute;top:-20px;right:-20px;font-size:90px;opacity:.06;pointer-events:none">${t.emoji}</div>
-          <p style="font-size:11px;color:${tColor4};font-weight:800;letter-spacing:2px;font-family:'Barlow Condensed',sans-serif;margin-bottom:4px">${t.emoji} ${t.nombre}</p>
           <p style="font-size:22px;font-weight:900;color:var(--txt);font-family:'Barlow Condensed',sans-serif;line-height:1;margin-bottom:14px">${fmtFecha(parseFecha(p.fecha))}</p>
           <div style="display:flex;align-items:center;gap:14px">
             <div style="width:56px;height:56px;border-radius:50%;background:#2a2a3e;border:2px dashed var(--gold)60;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:28px">🕵️</div>
@@ -1614,9 +1610,8 @@ async function sHome(){
         // Non-participant sees informational card
         const tColorNP = t.color || 'var(--gold)';
         const horasNP = p.votacion_cierre ? Math.max(0, Math.round((p.votacion_cierre - now_fig)/3600000)) : 24;
-        return `<div style="background:linear-gradient(160deg,var(--card),var(--surf));border:1px solid var(--bdr2);border-radius:18px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden">
+        return `<div style="background:linear-gradient(160deg,var(--card),var(--surf));border:1px solid var(--bdr2);flex:1;min-width:0;border-radius:14px;padding:14px;margin-bottom:0;position:relative;overflow:hidden">
           <div style="position:absolute;top:-20px;right:-20px;font-size:90px;opacity:.06;pointer-events:none">${t.emoji}</div>
-          <p style="font-size:11px;color:var(--gold);font-weight:900;letter-spacing:2px;font-family:'Barlow Condensed',sans-serif;margin-bottom:4px">${t.emoji} ${t.nombre}</p>
           <p style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--txt);letter-spacing:2px;margin-bottom:12px">${fmtFecha(parseFecha(p.fecha))}</p>
           <div style="display:flex;align-items:center;gap:12px;background:var(--surf2);border-radius:10px;padding:12px">
             <span style="font-size:28px">🗳️</span>
@@ -1633,7 +1628,6 @@ async function sHome(){
         const tBg3 = p.tid==='t1'?'linear-gradient(135deg,#001525,#003050)':'linear-gradient(135deg,#1a0030,#2d004d)';
         return `<div style="background:${tBg3};border:1px solid ${tColor3}30;border-radius:18px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden">
           <div style="position:absolute;top:-20px;right:-20px;font-size:90px;opacity:.06;pointer-events:none">${t.emoji}</div>
-          <p style="font-size:11px;color:${tColor3};font-weight:800;letter-spacing:2px;font-family:'Barlow Condensed',sans-serif;margin-bottom:4px">${t.emoji} ${t.nombre}</p>
           <p style="font-size:22px;font-weight:900;color:var(--txt);font-family:'Barlow Condensed',sans-serif;line-height:1;margin-bottom:14px">${fmtFecha(parseFecha(p.fecha))}</p>
           <div style="display:flex;align-items:center;gap:14px">
             <div style="width:56px;height:56px;border-radius:50%;background:#2a2a3e;border:2px dashed ${tColor3}40;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:28px">🕵️</div>
@@ -1705,13 +1699,12 @@ async function sHome(){
     }
   })();
 
-  setContent(`<div class="screen up" style="padding:16px 15px 18px">
+  setContent(`<div class="screen up" style="padding:32px 15px 18px">
     <div style="margin-bottom:14px">
       <p style="font-size:10px;color:var(--gold);font-weight:800;letter-spacing:3px">⚽ PRÓXIMOS PARTIDOS</p>
     </div>
     ${matchCards}
-    ${ME&&(!ME.admin||ME.jid)?figuraBlocks:''}
-    ${rankingTop5Block}
+    ${ME&&(!ME.admin||ME.jid)?`<div style="display:flex;gap:10px;margin-bottom:4px">${figuraBlocks}</div>`:''}
     ${novBlock}
     ${adminTiles}${playerTiles}
     ${shareBlock}
