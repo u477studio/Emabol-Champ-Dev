@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/ema/Downloads/emabol-champ_3.html -->
+<!-- saved from url=(0050)file:///C:/Users/ema/Downloads/emabol-champ_4.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -241,7 +241,7 @@ td{padding:10px 4px;border-top:1px solid rgba(255,255,255,0.04)}
 .glow-gold{text-shadow:0 0 20px rgba(255,215,0,0.5)}
 .glow-blue{text-shadow:0 0 20px rgba(0,180,255,0.5)}
 </style>
-<link rel="manifest" href="blob:null/870bc5b1-1fa8-4a56-b35f-1a51ce821f12"></head>
+<link rel="manifest" href="blob:null/2bfa09cc-c3de-4d74-8cdc-bdcdf33490b0"></head>
 <body>
 
   <div style="font-size:12px;color:var(--dim);letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -1549,24 +1549,44 @@ async function sHome(){
       const iParticipated = !!myJid && jugadoresPartido.includes(myJid);
 
       if(p.fig) {
-        const tColor2 = p.tid==='t1'?'var(--blue)':'#9f7aea';
-        const tBg2 = p.tid==='t1'?'linear-gradient(135deg,#001525,#003050)':'linear-gradient(135deg,#1a0030,#2d004d)';
         const figJ = jMap[p.fig];
         if(!figJ) return '';
-        const av = figJ.foto
-          ? `<img src="${figJ.foto}" style="width:100%;height:100%;object-fit:cover"/>`
-          : `<span style="font-size:32px;font-weight:900;color:var(--gold);font-family:'Barlow Condensed',sans-serif">${figJ.nombre[0]}</span>`;
         const esSelf = figJ.id === ME?.jid;
-        return `<div style="flex:1;min-width:0;background:linear-gradient(145deg,#08082a,#12124a);border:2px solid var(--gold2);border-radius:14px;padding:14px;margin-bottom:0;position:relative;overflow:hidden;text-align:center;box-shadow:0 0 20px rgba(255,215,0,0.15)">
-          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)"></div>
-          <div style="position:absolute;top:-20px;right:-20px;font-size:90px;opacity:.04;pointer-events:none">${t.emoji}</div>
-          <p style="font-size:14px;font-weight:700;color:var(--dim);margin-bottom:14px">${fmtFecha(parseFecha(p.fecha))}</p>
-          <div style="width:84px;height:84px;border-radius:50%;overflow:hidden;margin:0 auto 12px;border:3px solid var(--gold);box-shadow:0 0 28px var(--gold)60;background:#2a1800;display:flex;align-items:center;justify-content:center">${av}</div>
-          <p style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--gold);margin-bottom:6px">⭐ ${figJ.nombre}</p>
-          ${esSelf
-            ? `<p style="font-size:14px;color:var(--txt);font-weight:800">🎉 ¡Felicitaciones, sos la figura del partido!</p>`
-            : `<p style="font-size:11px;color:var(--dim)">Figura del partido</p>`
-          }
+        const rating = Math.min(99, Math.max(70, Math.round(72 + (figJ.rating||0)*0.3)));
+        const posLabel = figJ.pos==='ARQ'?'ARQ':'DEL';
+        const av = figJ.foto
+          ? `<img src="${figJ.foto}" style="width:100%;height:100%;object-fit:cover;object-position:top"/>`
+          : `<span style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:#c9a800">${figJ.nombre[0]}</span>`;
+        const apellido = figJ.nombre.split(' ').pop().toUpperCase();
+        return `<div style="flex:1;min-width:0;position:relative;border-radius:12px;overflow:hidden;text-align:center;cursor:pointer;
+            background:linear-gradient(160deg,#1a1200 0%,#2d1f00 30%,#1a1000 60%,#0d0800 100%);
+            border:1.5px solid rgba(255,200,50,0.5);
+            box-shadow:0 0 25px rgba(255,160,0,0.25),0 8px 24px rgba(0,0,0,0.6)">
+          <!-- Gold corner glow -->
+          <div style="position:absolute;top:-30px;left:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(255,200,0,0.3),transparent 70%);pointer-events:none"></div>
+          <div style="position:absolute;bottom:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(255,140,0,0.2),transparent 70%);pointer-events:none"></div>
+          <!-- Top line -->
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,200,50,0.8),transparent)"></div>
+          <div style="padding:10px 8px 10px">
+            <!-- Rating + pos top left -->
+            <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:6px">
+              <div style="text-align:left">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;color:#ffd700;text-shadow:0 0 12px rgba(255,200,0,0.6)">${rating}</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:9px;letter-spacing:1.5px;color:#c9a800;margin-top:-2px">${posLabel}</div>
+              </div>
+              <div style="flex:1">
+                <!-- Player photo -->
+                <div style="width:58px;height:58px;border-radius:50%;overflow:hidden;margin:0 auto;border:2px solid rgba(255,200,50,0.6);background:linear-gradient(135deg,rgba(255,180,0,0.2),rgba(0,0,0,0.5));display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(255,160,0,0.3)">${av}</div>
+              </div>
+            </div>
+            <!-- Name -->
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.8);line-height:1;margin-bottom:6px">${apellido}</div>
+            <!-- Divider -->
+            <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,200,50,0.4),transparent);margin-bottom:6px"></div>
+            <!-- Date + star -->
+            <div style="font-size:10px;color:rgba(255,220,100,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px">⭐ ${fmtFecha(parseFecha(p.fecha))}</div>
+            ${esSelf ? `<div style="font-size:9px;color:#ffd700;font-weight:900;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;margin-top:3px">🎉 ¡TU FIGURA!</div>` : ''}
+          </div>
         </div>`;
 
       } else if(p.votacion_abierta && iParticipated && !alreadyVoted) {
@@ -1576,7 +1596,7 @@ async function sHome(){
         const candidates = jugaron.filter(jid=>jid!==ME?.jid).map(jid=>jMap[jid]).filter(Boolean);
         const chips = candidates.map(j=>`<button onclick="votarFiguraHome('${p.id}','${j.id}')"
           style="padding:7px 12px;border-radius:999px;cursor:pointer;border:1.5px solid var(--gold)60;background:var(--gold)15;color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px">${j.nombre}</button>`).join('');
-        return `<div style="background:${tBg};border:1px solid ${tColor}50;flex:1;min-width:0;border-radius:14px;padding:14px;margin-bottom:0;position:relative;overflow:hidden">
+        return `<div style="background:linear-gradient(160deg,#0e1020,#181830);border:1px solid rgba(255,255,255,0.12);flex:1;min-width:0;border-radius:14px;padding:14px;margin-bottom:0;position:relative;overflow:hidden">
           <div style="position:absolute;top:-20px;right:-20px;font-size:90px;opacity:.06;pointer-events:none">${t.emoji}</div>
           <p style="font-size:22px;font-weight:900;color:var(--txt);font-family:'Barlow Condensed',sans-serif;line-height:1;margin-bottom:8px">${fmtFecha(parseFecha(p.fecha))}</p>
           <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
@@ -1593,7 +1613,7 @@ async function sHome(){
       } else if(p.votacion_abierta && alreadyVoted) {
         const tColor4 = p.tid==='t1'?'var(--blue)':'#9f7aea';
         const tBg4 = p.tid==='t1'?'linear-gradient(135deg,#001525,#003050)':'linear-gradient(135deg,#1a0030,#2d004d)';
-        return `<div style="background:${tBg4};border:1px solid ${tColor4}30;flex:1;min-width:0;border-radius:14px;padding:14px;margin-bottom:12px;position:relative;overflow:hidden">
+        return `<div style="background:linear-gradient(160deg,#0e1020,#181830);border:1px solid rgba(255,255,255,0.08);flex:1;min-width:0;border-radius:14px;padding:14px;margin-bottom:12px;position:relative;overflow:hidden">
           <div style="position:absolute;top:-20px;right:-20px;font-size:90px;opacity:.06;pointer-events:none">${t.emoji}</div>
           <p style="font-size:22px;font-weight:900;color:var(--txt);font-family:'Barlow Condensed',sans-serif;line-height:1;margin-bottom:14px">${fmtFecha(parseFecha(p.fecha))}</p>
           <div style="display:flex;align-items:center;gap:14px">
