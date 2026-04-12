@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/ema/Downloads/emabol-champ_4.html -->
+<!-- saved from url=(0050)file:///C:/Users/ema/Downloads/emabol-champ_5.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -241,7 +241,7 @@ td{padding:10px 4px;border-top:1px solid rgba(255,255,255,0.04)}
 .glow-gold{text-shadow:0 0 20px rgba(255,215,0,0.5)}
 .glow-blue{text-shadow:0 0 20px rgba(0,180,255,0.5)}
 </style>
-<link rel="manifest" href="blob:null/2bfa09cc-c3de-4d74-8cdc-bdcdf33490b0"></head>
+<link rel="manifest" href="blob:null/de27d643-22b6-4b9b-833d-efb7b75b6979"></head>
 <body>
 
   <div style="font-size:12px;color:var(--dim);letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -1552,40 +1552,82 @@ async function sHome(){
         const figJ = jMap[p.fig];
         if(!figJ) return '';
         const esSelf = figJ.id === ME?.jid;
-        const rating = Math.min(99, Math.max(70, Math.round(72 + (figJ.rating||0)*0.3)));
-        const posLabel = figJ.pos==='ARQ'?'ARQ':'DEL';
+
+        // Get stats from ranking
+        const figRk = allRk.filter(r=>r.jid===figJ.id&&r.tid===p.tid);
+        const figPts = figRk.reduce((a,r)=>a+(r.pts||0),0);
+        const figG   = figRk.reduce((a,r)=>a+(r.g||0),0);
+        const figC   = figRk.reduce((a,r)=>a+(r.c||0),0);
+        const figF   = figRk.reduce((a,r)=>a+(r.f||0),0);
+        const figD   = Math.max(0, figC - figG - (figRk.reduce((a,r)=>a+(r.empates||0),0)));
+        // Calc rank position
+        const totPtsFig = {};
+        allRk.filter(r=>r.tid===p.tid&&r.jid).forEach(r=>{totPtsFig[r.jid]=(totPtsFig[r.jid]||0)+(r.pts||0);});
+        const sortedFig = Object.entries(totPtsFig).sort((a,b)=>b[1]-a[1]);
+        const figRankPos = sortedFig.findIndex(([jid])=>jid===figJ.id);
+        const figRankNum = figRankPos >= 0 ? figRankPos+1 : '—';
+
         const av = figJ.foto
-          ? `<img src="${figJ.foto}" style="width:100%;height:100%;object-fit:cover;object-position:top"/>`
-          : `<span style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:#c9a800">${figJ.nombre[0]}</span>`;
-        const apellido = figJ.nombre.split(' ').pop().toUpperCase();
-        return `<div style="flex:1;min-width:0;position:relative;border-radius:12px;overflow:hidden;text-align:center;cursor:pointer;
-            background:linear-gradient(160deg,#1a1200 0%,#2d1f00 30%,#1a1000 60%,#0d0800 100%);
-            border:1.5px solid rgba(255,200,50,0.5);
-            box-shadow:0 0 25px rgba(255,160,0,0.25),0 8px 24px rgba(0,0,0,0.6)">
-          <!-- Gold corner glow -->
-          <div style="position:absolute;top:-30px;left:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(255,200,0,0.3),transparent 70%);pointer-events:none"></div>
-          <div style="position:absolute;bottom:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(255,140,0,0.2),transparent 70%);pointer-events:none"></div>
-          <!-- Top line -->
-          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,200,50,0.8),transparent)"></div>
-          <div style="padding:10px 8px 10px">
-            <!-- Rating + pos top left -->
-            <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:6px">
-              <div style="text-align:left">
-                <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;color:#ffd700;text-shadow:0 0 12px rgba(255,200,0,0.6)">${rating}</div>
-                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:9px;letter-spacing:1.5px;color:#c9a800;margin-top:-2px">${posLabel}</div>
-              </div>
+          ? `<img src="${figJ.foto}" style="width:100%;height:100%;object-fit:cover;object-position:top center"/>`
+          : `<div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#c9a800;line-height:1">${figJ.nombre[0]}</div>`;
+
+        const nombre = figJ.nombre.split(' ')[0].toUpperCase();
+
+        return `<div style="flex:1;min-width:0;position:relative;border-radius:12px;overflow:hidden;
+            background:linear-gradient(135deg,#1c1400 0%,#2e2000 40%,#161000 100%);
+            border:1.5px solid rgba(255,195,0,0.45);
+            box-shadow:0 0 20px rgba(255,150,0,0.2),0 6px 20px rgba(0,0,0,0.7)">
+          <!-- Shimmer top border -->
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#ffd700,rgba(255,200,100,0.6),transparent)"></div>
+          <!-- Corner glows -->
+          <div style="position:absolute;top:-20px;left:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(255,180,0,0.25),transparent);pointer-events:none"></div>
+          <div style="position:absolute;bottom:-15px;right:-15px;width:60px;height:60px;background:radial-gradient(circle,rgba(255,120,0,0.15),transparent);pointer-events:none"></div>
+
+          <div style="padding:10px 10px 10px">
+            <!-- Header row: date left, photo right -->
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
               <div style="flex:1">
-                <!-- Player photo -->
-                <div style="width:58px;height:58px;border-radius:50%;overflow:hidden;margin:0 auto;border:2px solid rgba(255,200,50,0.6);background:linear-gradient(135deg,rgba(255,180,0,0.2),rgba(0,0,0,0.5));display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(255,160,0,0.3)">${av}</div>
+                <!-- Date -->
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;color:rgba(255,200,80,0.7);text-transform:uppercase">${fmtFecha(parseFecha(p.fecha))}</div>
+                <!-- RANKING label -->
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:9px;letter-spacing:2px;color:rgba(255,200,80,0.6);margin-top:4px">RANKING</div>
+                <!-- Rank number -->
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:38px;line-height:1;color:#ffd700;text-shadow:0 0 16px rgba(255,200,0,0.7),0 2px 4px rgba(0,0,0,0.8)">${figRankNum}</div>
+                <!-- Name -->
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:#fff;line-height:1;text-shadow:0 1px 3px rgba(0,0,0,0.9);margin-top:2px">${nombre}</div>
+              </div>
+              <!-- Photo -->
+              <div style="width:64px;height:64px;border-radius:8px;overflow:hidden;border:1.5px solid rgba(255,195,0,0.5);background:#1a1000;flex-shrink:0;box-shadow:0 0 14px rgba(255,150,0,0.25)">
+                ${av}
               </div>
             </div>
-            <!-- Name -->
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.8);line-height:1;margin-bottom:6px">${apellido}</div>
+
             <!-- Divider -->
-            <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,200,50,0.4),transparent);margin-bottom:6px"></div>
-            <!-- Date + star -->
-            <div style="font-size:10px;color:rgba(255,220,100,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px">⭐ ${fmtFecha(parseFecha(p.fecha))}</div>
-            ${esSelf ? `<div style="font-size:9px;color:#ffd700;font-weight:900;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;margin-top:3px">🎉 ¡TU FIGURA!</div>` : ''}
+            <div style="height:1px;background:linear-gradient(90deg,rgba(255,195,0,0.4),rgba(255,195,0,0.1));margin-bottom:8px"></div>
+
+            <!-- Stats row -->
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="text-align:center">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#00e676;line-height:1">${figG}</div>
+                <div style="font-size:8px;color:rgba(255,255,255,0.4);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">G</div>
+              </div>
+              <div style="width:1px;height:20px;background:rgba(255,255,255,0.1)"></div>
+              <div style="text-align:center">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#ffd700;line-height:1">${figC-figG-figD}</div>
+                <div style="font-size:8px;color:rgba(255,255,255,0.4);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">E</div>
+              </div>
+              <div style="width:1px;height:20px;background:rgba(255,255,255,0.1)"></div>
+              <div style="text-align:center">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#ff5555;line-height:1">${figD}</div>
+                <div style="font-size:8px;color:rgba(255,255,255,0.4);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">P</div>
+              </div>
+              <div style="width:1px;height:20px;background:rgba(255,255,255,0.1)"></div>
+              <div style="text-align:center">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#ffd700;line-height:1">⭐${figF}</div>
+                <div style="font-size:8px;color:rgba(255,255,255,0.4);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">FIG</div>
+              </div>
+            </div>
+            ${esSelf?`<div style="margin-top:6px;font-size:9px;color:#ffd700;font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1px;text-align:center">🎉 ¡TU FIGURA!</div>`:''}
           </div>
         </div>`;
 
