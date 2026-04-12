@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/ema/Downloads/emabol-champ_8.html -->
+<!-- saved from url=(0050)file:///C:/Users/ema/Downloads/emabol-champ_9.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -241,7 +241,7 @@ td{padding:10px 4px;border-top:1px solid rgba(255,255,255,0.04)}
 .glow-gold{text-shadow:0 0 20px rgba(255,215,0,0.5)}
 .glow-blue{text-shadow:0 0 20px rgba(0,180,255,0.5)}
 </style>
-<link rel="manifest" href="blob:null/76d14223-ff09-4b0f-8714-4ae0437223d5"></head>
+<link rel="manifest" href="blob:null/6232f632-f6a7-4e6e-9338-8fd5cd3267ee"></head>
 <body>
 
   <div style="font-size:12px;color:var(--dim);letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -1558,8 +1558,9 @@ async function sHome(){
         const figG   = figRk.reduce((a,r)=>a+(r.g||0),0);
         const figC   = figRk.reduce((a,r)=>a+(r.c||0),0);
         const figF   = figRk.reduce((a,r)=>a+(r.f||0),0);
-        const figD   = Math.max(0, figC - figG - Math.max(0, figC - figG - figD));
-        const figEmp = Math.max(0, figC - figG - figD);
+        const figPts = figRk.reduce((a,r)=>a+(r.pts||0),0);
+        const figEmp = Math.max(0, figPts - figG*4 - figC); // pts = G*4 + E*2 + jugó*1 — aproximado
+        const figD   = Math.max(0, figC - figG - figEmp);
         // Rank position
         const totPtsFig = {};
         allRk.filter(r=>r.tid===p.tid&&r.jid).forEach(r=>{totPtsFig[r.jid]=(totPtsFig[r.jid]||0)+(r.pts||0);});
