@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_13.html -->
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_15.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -233,7 +233,7 @@ table{width:100%;border-collapse:collapse}
 th{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;padding:8px 4px;border-bottom:1px solid var(--bdr2)}
 td{padding:10px 4px;border-top:1px solid rgba(255,255,255,0.04)}
 </style>
-<link rel="manifest" href="blob:null/63f5ec17-5b66-4d55-8c4f-869a1d404e83"></head>
+<link rel="manifest" href="blob:null/24bd257c-8d47-4c26-af8b-817ea8a61dfe"></head>
 <body>
 
   <div style="font-size:12px;color:var(--dim);letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -320,7 +320,7 @@ td{padding:10px 4px;border-top:1px solid rgba(255,255,255,0.04)}
   <div style="text-align:center;margin-bottom:40px;position:relative">
     <div style="position:relative;display:inline-block">
       <!-- EMABOL text -->
-      <div style="font-family:&#39;Barlow Condensed&#39;,sans-serif;font-weight:900;font-style:italic;font-size:80px;letter-spacing:2px;line-height:1;background:linear-gradient(170deg,#ffffff 0%,#ffe0e0 30%,#ff9090 60%,#ff4040 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 1px 0px rgba(255,255,255,0.9)) drop-shadow(0 -1px 0px rgba(40,60,120,0.8)) drop-shadow(2px 2px 0px rgba(20,30,80,0.9)) drop-shadow(-1px -1px 0px rgba(255,255,255,0.4)) drop-shadow(0 0 25px rgba(150,200,255,0.8)) drop-shadow(0 0 50px rgba(80,140,255,0.4))">EMABOL</div>
+      <div style="font-family:&#39;Barlow Condensed&#39;,sans-serif;font-weight:900;font-style:italic;font-size:80px;letter-spacing:2px;line-height:1;background:linear-gradient(170deg,#ffffff 0%,#fff5cc 30%,#ffd700 65%,#c9a000 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 1px 0px rgba(255,255,255,0.9)) drop-shadow(0 -1px 0px rgba(40,60,120,0.8)) drop-shadow(2px 2px 0px rgba(20,30,80,0.9)) drop-shadow(-1px -1px 0px rgba(255,255,255,0.4)) drop-shadow(0 0 25px rgba(150,200,255,0.8)) drop-shadow(0 0 50px rgba(80,140,255,0.4))">EMABOL</div>
       <!-- CHAMP with decorative lines -->
       <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:-4px">
         <div style="height:1px;width:28px;background:linear-gradient(90deg,transparent,rgba(255,100,100,0.5))"></div>
@@ -1124,7 +1124,7 @@ function sLogin(){
   <div style="text-align:center;margin-bottom:40px;position:relative">
     <div style="position:relative;display:inline-block">
       <!-- EMABOL text -->
-      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-style:italic;font-size:80px;letter-spacing:2px;line-height:1;background:linear-gradient(170deg,#ffffff 0%,#ffe0e0 30%,#ff9090 60%,#ff4040 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 1px 0px rgba(255,255,255,0.9)) drop-shadow(0 -1px 0px rgba(40,60,120,0.8)) drop-shadow(2px 2px 0px rgba(20,30,80,0.9)) drop-shadow(-1px -1px 0px rgba(255,255,255,0.4)) drop-shadow(0 0 25px rgba(150,200,255,0.8)) drop-shadow(0 0 50px rgba(80,140,255,0.4))">EMABOL</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-style:italic;font-size:80px;letter-spacing:2px;line-height:1;background:linear-gradient(170deg,#ffffff 0%,#fff5cc 30%,#ffd700 65%,#c9a000 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 1px 0px rgba(255,255,255,0.9)) drop-shadow(0 -1px 0px rgba(40,60,120,0.8)) drop-shadow(2px 2px 0px rgba(20,30,80,0.9)) drop-shadow(-1px -1px 0px rgba(255,255,255,0.4)) drop-shadow(0 0 25px rgba(150,200,255,0.8)) drop-shadow(0 0 50px rgba(80,140,255,0.4))">EMABOL</div>
       <!-- CHAMP with decorative lines -->
       <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:-4px">
         <div style="height:1px;width:28px;background:linear-gradient(90deg,transparent,rgba(255,100,100,0.5))"></div>
@@ -1545,84 +1545,82 @@ async function sHome(){
         if(!figJ) return '';
         const esSelf = figJ.id === ME?.jid;
 
-        // Get stats from ranking
         const figRk = allRk.filter(r=>r.jid===figJ.id&&r.tid===p.tid);
         const figG   = figRk.reduce((a,r)=>a+(r.g||0),0);
         const figC   = figRk.reduce((a,r)=>a+(r.c||0),0);
         const figF   = figRk.reduce((a,r)=>a+(r.f||0),0);
         const figPts = figRk.reduce((a,r)=>a+(r.pts||0),0);
-        const figEmp = Math.max(0, figPts - figG*4 - figC); // pts = G*4 + E*2 + jugó*1 — aproximado
+        const figEmp = Math.max(0, figPts - figG*4 - figC);
         const figD   = Math.max(0, figC - figG - figEmp);
-        // Rank position
         const totPtsFig = {};
         allRk.filter(r=>r.tid===p.tid&&r.jid).forEach(r=>{totPtsFig[r.jid]=(totPtsFig[r.jid]||0)+(r.pts||0);});
-        const sortedFig = Object.entries(totPtsFig).sort((a,b)=>b[1]-a[1]);
-        const figRankPos = sortedFig.findIndex(([jid])=>jid===figJ.id);
-        const figRankNum = figRankPos >= 0 ? figRankPos+1 : '—';
+        const figRankNum = Object.entries(totPtsFig).sort((a,b)=>b[1]-a[1]).findIndex(([j])=>j===figJ.id)+1 || '—';
         const nombre = figJ.nombre.split(' ')[0].toUpperCase();
-
         const av = figJ.foto
           ? `<img src="${figJ.foto}" style="width:100%;height:100%;object-fit:cover;object-position:top center"/>`
-          : `<div style="font-family:'Bebas Neue',sans-serif;font-size:44px;color:#c9a800;line-height:1;display:flex;align-items:center;justify-content:center;height:100%">${figJ.nombre[0]}</div>`;
+          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:60px;color:rgba(255,215,0,0.3)">${figJ.nombre[0]}</div>`;
 
-        return `<div style="flex:1;min-width:0;position:relative;border-radius:12px;overflow:hidden;
-            background:linear-gradient(135deg,#1c1400 0%,#2e2000 40%,#161000 100%);
-            border:1.5px solid rgba(255,195,0,0.45);
-            box-shadow:0 0 20px rgba(255,150,0,0.2),0 6px 20px rgba(0,0,0,0.7)">
-          <!-- Shimmer border -->
-          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#ffd700,rgba(255,200,100,0.6),transparent);z-index:2"></div>
-          <!-- Corner glows -->
-          <div style="position:absolute;top:-20px;left:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(255,180,0,0.3),transparent);pointer-events:none;z-index:1"></div>
+        return `<div style="flex:1;min-width:0;position:relative;border-radius:14px;overflow:hidden;
+            background:#0a0a0a;
+            border:1.5px solid rgba(255,200,0,0.35);
+            box-shadow:0 0 24px rgba(255,160,0,0.15),0 8px 28px rgba(0,0,0,0.8)">
+          <!-- Top shimmer -->
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#ffd700,transparent);z-index:3"></div>
 
-          <!-- PHOTO — full width, tall, portrait-optimized -->
-          <div style="width:100%;height:160px;overflow:hidden;position:relative">
-            ${av}
-            <!-- Gradient overlay bottom -->
-            <div style="position:absolute;bottom:0;left:0;right:0;height:70px;background:linear-gradient(0deg,#1c1400 20%,transparent);z-index:1"></div>
-            <!-- Date top left -->
-            <div style="position:absolute;top:6px;left:8px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:10px;letter-spacing:2px;color:#ffe066;text-transform:uppercase;z-index:2;text-shadow:0 1px 4px rgba(0,0,0,0.9)">${fmtFecha(parseFecha(p.fecha))}</div>
-            <!-- Star badge top right -->
-            <div style="position:absolute;top:6px;right:8px;background:rgba(0,0,0,0.65);border:1px solid rgba(255,200,0,0.6);border-radius:4px;padding:3px 7px;font-size:10px;font-family:'Barlow Condensed',sans-serif;font-weight:900;color:#ffd700;z-index:2;text-shadow:0 0 8px rgba(255,200,0,0.6)">⭐ FIG</div>
+          <!-- TOP SECTION: date + star badge -->
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px 0;position:relative;z-index:2">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:10px;letter-spacing:2px;color:rgba(255,210,80,0.8);text-transform:uppercase">${fmtFecha(parseFecha(p.fecha))}</div>
+            <div style="background:rgba(0,0,0,0.7);border:1px solid rgba(255,200,0,0.5);border-radius:4px;padding:2px 7px;font-size:10px;font-family:'Barlow Condensed',sans-serif;font-weight:900;color:#ffd700;text-shadow:0 0 8px rgba(255,200,0,0.6)">⭐ FIG</div>
           </div>
 
-          <!-- Info below photo -->
-          <div style="padding:6px 8px 8px">
-            <!-- Name full width -->
-            <div style="text-align:center;margin-bottom:4px">
-              <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:4px;color:#fff;text-shadow:0 0 20px rgba(255,230,120,0.6),0 0 40px rgba(255,180,0,0.3),0 2px 6px rgba(0,0,0,0.9);line-height:1">${nombre}</div>
+          <!-- MAIN: photo full height left side + right panel -->
+          <div style="display:flex;height:160px;margin-top:6px">
+
+            <!-- PHOTO — left half, full height -->
+            <div style="flex:1.2;position:relative;overflow:hidden">
+              ${av}
+              <!-- Right fade -->
+              <div style="position:absolute;top:0;right:0;width:40px;height:100%;background:linear-gradient(90deg,transparent,#0a0a0a);z-index:1"></div>
+              <!-- Bottom fade -->
+              <div style="position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(0deg,#0a0a0a,transparent);z-index:1"></div>
             </div>
-            <!-- Ranking row -->
-            <div style="display:flex;justify-content:center;align-items:baseline;gap:3px;margin-bottom:5px">
-              <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:rgba(255,200,80,0.8);font-weight:900">#</span>
-              <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#ffd700;line-height:1;text-shadow:0 0 16px rgba(255,200,0,0.8)">${figRankNum}</span>
-              <span style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:rgba(255,200,80,0.5);font-weight:700;letter-spacing:1px">RANKING</span>
+
+            <!-- RIGHT PANEL: name + rank + stats -->
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:4px 10px 8px 4px">
+              <!-- Name -->
+              <div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:#fff;line-height:1;text-shadow:0 0 16px rgba(255,220,100,0.5)">${nombre}</div>
+                <!-- Rank -->
+                <div style="display:flex;align-items:baseline;gap:2px;margin-top:2px">
+                  <span style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:rgba(255,200,80,0.6);font-weight:700">#</span>
+                  <span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#ffd700;line-height:1;text-shadow:0 0 16px rgba(255,200,0,0.7)">${figRankNum}</span>
+                  <span style="font-family:'Barlow Condensed',sans-serif;font-size:8px;color:rgba(255,200,80,0.5);font-weight:700;letter-spacing:1px">RNK</span>
+                </div>
+              </div>
+
+              <!-- Stats 2x2 grid -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+                <div style="background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);border-radius:6px;padding:4px 6px;text-align:center">
+                  <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#00e676;line-height:1;text-shadow:0 0 10px rgba(0,230,118,0.5)">${figG}</div>
+                  <div style="font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;color:rgba(0,230,118,0.6);letter-spacing:1px">GANÓ</div>
+                </div>
+                <div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.15);border-radius:6px;padding:4px 6px;text-align:center">
+                  <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#ffd700;line-height:1;text-shadow:0 0 10px rgba(255,215,0,0.4)">${figEmp}</div>
+                  <div style="font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;color:rgba(255,215,0,0.5);letter-spacing:1px">EMPATÓ</div>
+                </div>
+                <div style="background:rgba(255,40,40,0.08);border:1px solid rgba(255,40,40,0.2);border-radius:6px;padding:4px 6px;text-align:center">
+                  <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#ff5555;line-height:1;text-shadow:0 0 10px rgba(255,50,50,0.4)">${figD}</div>
+                  <div style="font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;color:rgba(255,80,80,0.5);letter-spacing:1px">PERDIÓ</div>
+                </div>
+                <div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:6px;padding:4px 6px;text-align:center">
+                  <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#ffd700;line-height:1;text-shadow:0 0 10px rgba(255,215,0,0.5)">${figF}</div>
+                  <div style="font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;color:rgba(255,215,0,0.5);letter-spacing:1px">⭐ FIG</div>
+                </div>
+              </div>
             </div>
-            <!-- Divider -->
-            <div style="height:1px;background:linear-gradient(90deg,rgba(255,195,0,0.35),transparent);margin-bottom:5px"></div>
-            <!-- Stats -->
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div style="text-align:center">
-                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#00e676;line-height:1;text-shadow:0 0 8px rgba(0,230,118,0.5)">${figG}</div>
-                <div style="font-size:9px;color:rgba(255,255,255,0.55);font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1.5px">G</div>
-              </div>
-              <div style="width:1px;height:16px;background:rgba(255,255,255,0.1)"></div>
-              <div style="text-align:center">
-                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#ffd700;line-height:1;text-shadow:0 0 8px rgba(255,215,0,0.5)">${figEmp}</div>
-                <div style="font-size:9px;color:rgba(255,255,255,0.55);font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1.5px">E</div>
-              </div>
-              <div style="width:1px;height:16px;background:rgba(255,255,255,0.1)"></div>
-              <div style="text-align:center">
-                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#ff5555;line-height:1;text-shadow:0 0 8px rgba(255,85,85,0.5)">${Math.max(0,figC-figG-figEmp)}</div>
-                <div style="font-size:9px;color:rgba(255,255,255,0.55);font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1.5px">P</div>
-              </div>
-              <div style="width:1px;height:16px;background:rgba(255,255,255,0.1)"></div>
-              <div style="text-align:center">
-                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#ffd700;line-height:1;text-shadow:0 0 8px rgba(255,215,0,0.5)">${figF}</div>
-                <div style="font-size:9px;color:rgba(255,255,255,0.55);font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1.5px">⭐</div>
-              </div>
-            </div>
-            ${esSelf?`<div style="margin-top:5px;font-size:8px;color:#ffd700;font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:1px;text-align:center">🎉 ¡TU FIGURA!</div>`:''}
           </div>
+
+          ${esSelf?`<div style="padding:4px 10px 6px;text-align:center;font-size:9px;color:#ffd700;font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:2px">🎉 ¡TU FIGURA!</div>`:'<div style="height:6px"></div>'}
         </div>`;
 
       } else if(p.votacion_abierta && iParticipated && !alreadyVoted) {
