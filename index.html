@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_16.html -->
+<!-- saved from url=(0051)file:///C:/Users/ema/Downloads/emabol-champ_17.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -233,7 +233,7 @@ table{width:100%;border-collapse:collapse}
 th{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;padding:8px 4px;border-bottom:1px solid var(--bdr2)}
 td{padding:10px 4px;border-top:1px solid rgba(255,255,255,0.04)}
 </style>
-<link rel="manifest" href="blob:null/b49d70c1-c621-4403-8a74-de4266d74423"></head>
+<link rel="manifest" href="blob:null/86889244-b779-4319-ab80-38ce8ba1a982"></head>
 <body>
 
   <div style="font-size:12px;color:var(--dim);letter-spacing:3px">LA LIGA · CUNA DE TITANES</div>
@@ -1512,7 +1512,7 @@ async function sHome(){
   const figTorneoId = CURRENT_TORNEO?.id || activeTorneoIds[0] || null;
   // Show figura blocks to: all non-admin players, AND admins who have a jid (are real players)
   const shouldShowFigura = !ME?.admin || !!ME?.jid;
-  const figuraBlocks = !shouldShowFigura ? [] : partidos
+  const figuraBlocks = !shouldShowFigura ? '' : partidos
     .filter(p => !figTorneoId || p.tid === figTorneoId) // filter by current torneo
     .sort((a,b)=>{
       const da = parseFecha(a.fecha)||new Date(0);
@@ -1759,7 +1759,7 @@ async function sHome(){
       <p style="font-size:10px;color:var(--red);font-weight:800;letter-spacing:3px">⚽ PRÓXIMOS PARTIDOS</p>
     </div>
     ${matchCards}
-    ${ME&&(!ME.admin||ME.jid)?`<div style="display:flex;gap:10px;margin-bottom:4px">${figuraBlocks.join('')}</div>`:''}
+    ${ME&&(!ME.admin||ME.jid)?`<div style="display:flex;gap:10px;margin-bottom:4px">${figuraBlocks}</div>`:''}
     ${ME&&(!ME.admin||ME.jid)?rankingTop5Block:''}
     ${novBlock}
     ${adminTiles}${playerTiles}
